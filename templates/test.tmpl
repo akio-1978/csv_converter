@@ -1,3 +1,11 @@
-jinja2
-{{value}}
-jinja2
+{
+    "members" : [
+        {% for line in lines %}
+        {
+            "Number" : "{{line.column_00}}",
+            "Name" : "{{line.column_01}}",
+            "Role" : "{{line.column_02}}"
+        }{%if not loop.last %},{%endif%}
+        {%- endfor -%}
+    ]
+}
