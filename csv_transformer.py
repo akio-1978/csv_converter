@@ -1,5 +1,6 @@
 import io
 import sys
+import argparse
 from pathlib import Path
 from jinja2 import Template, Environment, FileSystemLoader
 
@@ -8,15 +9,13 @@ class CsvTransformer:
     # jinja2テンプレートの生成
     def __init__(self, *, template):
         path = Path(template)
-        self.loader_directory = path.parent
-        self.template_file = path.name
-        environment = Environment(loader = FileSystemLoader(self.loader_directory, encoding='utf-8'))
-        self.template = environment.get_template(self.template_file)
+        environment = Environment(loader = FileSystemLoader(path.parent, encoding='utf-8'))
+        self.template = environment.get_template(path.name)
 
     # CSVファイルの各行にテンプレートを適用して、出力する
-    def transform(self, *, file):
+    def transform(self, *, source, output):
         lines = []
-        with open(file, 'r', encoding='utf-8') as source:
+        with open(source, 'r', encoding='utf-8') as source:
             for line in source:
                 lines.append(self.transform_columns(columns = self.parse_tokens(line = line)))
         print(
@@ -59,11 +58,9 @@ class CsvTransformer:
         # 今回はそのまま返す
         return result
 
+class TransfomerOptions:
 
-if __name__ == '__main__':
-    # windows対策
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
-
-    template_file = sys.argv[1]
-    format_changer = CsvTransformer(template = template_file)
-    format_changer.transform(file = sys.argv[2])
+    def __init__(self):
+        self.header = False
+        self.encoding = 'utf8'
+        self.separator = ','
