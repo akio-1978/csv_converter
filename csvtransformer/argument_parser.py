@@ -1,7 +1,7 @@
 import io
 import sys
 import argparse
-from csvtransformer.csv_transformer import CsvTransformer, TransfomerOptions
+from csvtransformer.csv_transformer import CsvTransformer, TransfomerParameters
 
 def parse_additinal(values):
     addtional = {}
@@ -29,7 +29,7 @@ def parse_argument():
     # output file (default stdout)
     parser.add_argument('-O', '--output', metavar='file', help='output file.', nargs=1)
 
-    options = TransfomerOptions()
+    options = TransfomerParameters()
     parser.parse_args(namespace=options)
     options.additional = parse_additinal(options.additional)
 

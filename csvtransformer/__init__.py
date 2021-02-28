@@ -1,1 +1,1 @@
-from csvtransformer.csv_transformer import CsvTransformer, TransfomerOptions
+from csvtransformer.csv_transformer import CsvTransformer, TransfomerParameters
