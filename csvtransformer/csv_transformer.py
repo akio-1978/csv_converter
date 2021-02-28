@@ -3,21 +3,33 @@ import sys
 import argparse
 from pathlib import Path
 from jinja2 import Template, Environment, FileSystemLoader
+from csv import reader as csvreader
 
 class CsvTransformer:
 
     # jinja2テンプレートの生成
-    def __init__(self, *, template):
-        path = Path(template)
+    def __init__(self, *, parameters):
+        self.parameters = parameters
+        self.init_template(template_source=parameters)
+
+    # オーバーライドすると、ファイル名指定以外の方法でテンプレートを取得できる
+    def init_template(self, *, parameters):
+        path = Path(parameters.source)
         environment = Environment(loader = FileSystemLoader(path.parent, encoding='utf-8'))
         self.template = environment.get_template(path.name)
 
     # CSVファイルの各行にテンプレートを適用して、出力する
     def transform(self, *, source, output):
         lines = []
-        with open(source, 'r', encoding='utf-8') as source:
-            for line in source:
-                lines.append(self.transform_columns(columns = self.parse_tokens(line = line)))
+        with open(source, 'r', encoding='utf-8', newline='') as csvfile:
+            reader = csvreader(csvfile)
+            firstline = True
+            for columns in reader:
+                # ヘッダ設定
+                if self.parameters.header and firstline:
+                    firstline = False
+                    continue
+                lines.append(self.transform_columns(columns = columns))
         print(
             self.template.render(
                 {'lines' : lines}
@@ -25,12 +37,6 @@ class CsvTransformer:
         )
 
     # 以下はオーバーライドできるようにメソッドを細かく分けた
-
-    # 行をカラムに分解
-    def parse_tokens(self, *, line):
-        # 今回は単純なsplitを使う
-        # エスケープの必要なcsvはテンプレートの適用も大変なので、単純に
-        return line.split(',')
 
     # 1行分の分解されたカラムを処理する
     def transform_columns(self, *, columns):
@@ -58,9 +64,10 @@ class CsvTransformer:
         # 今回はそのまま返す
         return result
 
-class TransfomerOptions:
+class TransfomerParameters:
 
     def __init__(self):
         self.header = False
         self.encoding = 'utf8'
         self.separator = ','
+        self.source = None
