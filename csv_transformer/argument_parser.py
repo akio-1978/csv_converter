@@ -1,7 +1,7 @@
 import io
 import sys
 import argparse
-from csvtransformer.csv_transformer import CsvTransformer, TransfomerParameters
+from csv_transformer.csv_transformer import CsvTransformer, TransfomerParameters
 
 
 class TransformArgumentParser():

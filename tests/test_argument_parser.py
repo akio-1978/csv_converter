@@ -1,5 +1,6 @@
 import unittest
-from csvtransformer import TransformArgumentParser, TransfomerParameters
+from csv_transformer import TransfomerParameters
+from csv_transformer import TransformArgumentParser
 
 
 class ArgumentParserTest(unittest.TestCase):
