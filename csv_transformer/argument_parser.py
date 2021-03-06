@@ -51,8 +51,6 @@ class KeyValuesParseAction(argparse.Action):
 class DelimiterSelectAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string):
-        print('call action.')
-
         delimiter = ''
         if option_string == '-T' or option_string == '--tab':
             delimiter = '\t'
