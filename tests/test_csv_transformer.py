@@ -41,31 +41,29 @@ G02,SG02, val201,val202,val203
 '''
 
     result_json='''/
-    {
-        "groups" : [
-            {
-                "group" : "G01",
-                "subgroups" : [
-                    {
-                        "subgroup" : "SG01",
-                        "V1" : "val001",
-                        "V2" : "val002",
-                        "V3" : "val003"
-                    }
-                    {
-                        "subgroup" : "SG02",
-                        "V1" : "val101",
-                        "V2" : "val102",
-                        "V3" : "val103"
-                    }
-                    {
-                        "subgroup" : "SG03",
-                        "V1" : "val201",
-                        "V2" : "val202",
-                        "V3" : "val203"
-                    }
-                ]
-            },
-        ]
-    }
+{
+    "list" : [
+        {
+            group="G01",
+            sungroup="SG01"
+            "V1" : "val001",
+            "V2" : "val002",
+            "V3" : "val003"
+        },
+        {
+            group="G01",
+            sungroup="SG02"
+            "V1" : "val101",
+            "V2" : "val102",
+            "V3" : "val103"
+        },
+        {
+            group="G02",
+            sungroup="SG01"
+            "V1" : "val201",
+            "V2" : "val202",
+            "V3" : "val203"
+        },
+    ]
+}
 '''
