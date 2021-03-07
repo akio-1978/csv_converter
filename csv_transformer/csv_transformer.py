@@ -1,6 +1,6 @@
 import io
 import sys
-import argparse
+import itertools
 from pathlib import Path
 from jinja2 import Template, Environment, FileSystemLoader
 from csv import reader as csvreader
@@ -23,16 +23,19 @@ class CsvTransformer:
     def transform(self, *, source, output):
         lines = []
         with self.get_datasource(source=source) as csvfile:
-            reader = csvreader(csvfile)
+            # csvreaderを使って読み込み
+            reader = csvreader(csvfile, delimiter = self.parameters.delimiter)
             firstline = True
             for columns in reader:
-                # ヘッダ設定
+                # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
                 if firstline:
                     self.headers = self.get_headers(parameters = self.parameters, columns = columns)
                     firstline = False
+                # 先頭行がヘッダだった場合は読み飛ばす
                 if self.parameters.header:
                     continue
-                lines.append(self.transform_columns(columns = columns))
+                # カラムに分けられた行の処理
+                lines.append(self.parse_columns(columns = columns))
         print(
             self.template.render(
                 {'lines' : lines}
@@ -42,38 +45,46 @@ class CsvTransformer:
     # 以下はオーバーライドできるようにメソッドを細かく分けた
     # jinja2カスタムテンプレートのインストール
     def install_jinja2_filters(self, *, environment, parameters):
-        environment.filters['groups'] = jinja2_filters.groups
+        # environment.filters['groups'] = jinja2_filters.groups
         return environment
 
     def get_headers(self, *, parameters, columns):
         headers = []
         for idx in range[len(columns)]:
-            column = column[idx] \
-                if parameters.header else parameters.header + parameters.raw_colmun_prefix.zfill(2)
-            headers.append(idx).strip()
+            header = None
+            if parameters.header:
+                # ヘッダあり指定の場合、カラム文字列をそのままヘッダにする
+                header = columns[idx].strip()
+            else:
+                # ヘッダなしの場合、カラムのインデックスからヘッダを作る
+                header = parameters.raw_colmun_prefix + ''.zfill(2)
+
+            headers.append(header)
         return headers
 
+    # csvファイル読込
     def get_datasource(self, *, source, input_encoding='utf-8'):
         return open(source, 'r', encoding=input_encoding, newline='')
 
-    # 1行分の分解されたカラムを処理する
-    def transform_columns(self, *, columns):
+    # カラムに分けられた行の処理
+    def parse_columns(self, *, columns):
         line_no = 0
         result = {}
-        for column in columns:
-            header_name = self.column_name(column_no = line_no)
-            result[header_name] = self.column(value = column)
-            line_no = line_no + 1
-        return self.transformed_line(result = result)
+        # カラムとヘッダの長さは揃っていることが前提
+        for header, column in zip(self.headers, columns):
+            # カラム単体の変換処理を行う
+            result[header] = self.parsed_column(header, column)
+        # 行全体の変換処理を行う
+        return self.parsed_line(result = result)
 
     # 分解されたひとつのカラムの処理
-    def column(self, *, value, line_no=None, column_name=None):
+    def parsed_column(self, *, column_name, value):
         # stripだけ
         return value.strip()
 
     # 1行分の処理結果
-    def transformed_line(self, *, result):
-        # 今回はそのまま返す
+    def parsed_line(self, *, result):
+        # 何もしない
         return result
 
 class TransfomerParameters:
@@ -81,6 +92,6 @@ class TransfomerParameters:
     def __init__(self):
         self.header = False
         self.encoding = 'utf8'
-        self.separator = ','
-        self.source = None
+        self.delimiter = ','
         self.raw_colmun_prefix='col_'
+        self.option=None
