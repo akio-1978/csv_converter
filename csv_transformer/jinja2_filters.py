@@ -18,3 +18,4 @@ if __name__ == '__main__':
     groups_object = groups(records, 'a')
     for item in groups_object:
         print(item)
+
