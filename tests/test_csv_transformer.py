@@ -1,8 +1,9 @@
 import unittest
+from io import StringIO
 from csv_transformer import TransfomerParameters
-from csv_transformer import CsvTransformar
+from csv_transformer import CsvTransformer
 from csv_transformer import __version__
-
+from jinja2 import Environment, DictLoader
 
 def test_version():
     assert __version__ == '0.1.0'
@@ -67,3 +68,27 @@ G02,SG02, val201,val202,val203
     ]
 }
 '''
+
+    def test_transformer_work(self):
+
+        parameters = TransfomerParameters(template_source={'template' : "{% for line in lines %}{{line.col_00}}{% endfor %}"})
+        parameters.template_name = 'template'
+        transformer = DictTransformer(parameters = parameters)
+
+        source = StringIO('C0001,C0002')
+        result = StringIO()
+
+        transformer.transform(source = source, output = result)
+
+        self.assertEqual('C0001\n', result.getvalue())
+
+# テスト用にDictLoaderを使うTransformer
+class DictTransformer(CsvTransformer):
+
+    def init_template(self, *, parameters):
+        print(parameters.template_source)
+        environment = Environment(loader = DictLoader(parameters.template_source))
+        self.template = environment.get_template(parameters.template_name)
+
+if __name__ == '__main__':
+    unittest.main()
