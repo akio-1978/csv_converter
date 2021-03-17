@@ -69,18 +69,45 @@ G02,SG02, val201,val202,val203
 }
 '''
 
-    def test_transformer_work(self):
+    def test_transforme_headless(self):
 
-        parameters = TransfomerParameters(template_source={'template' : "{% for line in lines %}{{line.col_00}}{% endfor %}"})
+        parameters = TransfomerParameters(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
         parameters.template_name = 'template'
         transformer = DictTransformer(parameters = parameters)
 
-        source = StringIO('C0001,C0002')
+        source = StringIO('A0001,C0002 \n B0001,C0002  \n   C0001,C0002')
         result = StringIO()
 
         transformer.transform(source = source, output = result)
 
-        self.assertEqual('C0001\n', result.getvalue())
+        self.assertEqual('A0001\nB0001\nC0001\n\n', result.getvalue())
+
+    def test_transforme_headered(self):
+
+        parameters = TransfomerParameters(template_source={'template' : "{% for line in lines %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
+        parameters.template_name = 'template'
+        parameters.header = True
+        transformer = DictTransformer(parameters = parameters)
+
+        source = StringIO('FIRST, SECOND\n C0001,C0002')
+        result = StringIO()
+
+        transformer.transform(source = source, output = result)
+
+        self.assertEqual('C0001<=>C0002\n', result.getvalue())
+
+    def test_simple_json(self):
+        parameters = TransfomerParameters(template_source='tests/templates/simple_json.tmpl')
+        parameters.header = True
+        transformer = CsvTransformer(parameters = parameters)
+        transformed = StringIO()
+
+        with open('tests/transform_file/simple_json.csv') as source:
+            transformer.transform(source=source, output=transformed)
+
+        with open('tests/transformed_file/simple_json.txt') as expect:
+            self.assertEqual(expect.read(), transformed.getvalue())
+
 
 # テスト用にDictLoaderを使うTransformer
 class DictTransformer(CsvTransformer):
