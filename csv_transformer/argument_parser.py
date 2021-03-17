@@ -14,20 +14,33 @@ class TransformArgumentParser():
         # jinja2 template to use.
         parser.add_argument('template', help='jinja2 template to use.')
         parser.add_argument('csv', help='transform csv.')
-        parser.add_argument('key_values', nargs='*', help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
+        parser.add_argument('key_value_options', nargs='*', help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
         # flag first line is header
         parser.add_argument('-H', '--header', help='first line is header.', action='store_true')
         # flag tab separate values
         parser.add_argument('-T', '--tab', help='tab separate values.', dest='delimiter', default=',', action=DelimiterSelectAction)
-        # source encoding
-        parser.add_argument('--input-encoding', metavar='enc', help='file encoding.', default='utf-8')
         # output file (default stdout)
         parser.add_argument('-O', '--output', metavar='file', help='output file.', nargs=1)
+        # source encoding
+        parser.add_argument('--input-encoding', metavar='enc', help='file encoding.', default='utf-8')
+        # dest encoding
+        parser.add_argument('--output-encoding', metavar='enc', help='output file encoding.', default='utf-8')
 
-        options = TransfomerParameters()
-        parser.parse_args(args=args, namespace=options)
+        parameters = self.create_parameters(namespace = parser.parse_args(args=args))
 
-        return options
+        return parameters
+
+    def create_parameters(self, *, namespace):
+        parameters = TransfomerParameters(template_source = namespace.template)        
+
+        parameters.csv = namespace.csv
+        parameters.options = namespace.key_value_options
+        parameters.header = namespace.header
+        parameters.delimiter = namespace.delimiter
+        parameters.input_encoding = namespace.input_encoding
+        parameters.output_encoding = namespace.output_encoding
+
+        return parameters
 
     # def parse_addtional(self, values):
     #     addtional = {}

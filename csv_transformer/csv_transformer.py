@@ -14,7 +14,7 @@ class TransfomerParameters:
         self.encoding = 'utf8'
         self.delimiter = ','
         self.raw_colmun_prefix='col_'
-        self.option=None
+        self.options={}
         self.template_source = template_source
 
 class CsvTransformer:
@@ -27,7 +27,7 @@ class CsvTransformer:
     # オーバーライドすると、ファイル名指定以外の方法でテンプレートを取得できる
     def init_template(self, *, parameters):
         path = Path(parameters.template_source)
-        environment = Environment(loader = FileSystemLoader(path.parent, encoding='utf-8'))
+        environment = Environment(loader = FileSystemLoader(path.parent, encoding=parameters.encoding))
         self.template = environment.get_template(path.name)
 
     # CSVファイルの各行にテンプレートを適用して、出力する
@@ -35,14 +35,12 @@ class CsvTransformer:
         lines = []
         # csvreaderを使って読み込み
         reader = csvreader(source, delimiter = self.parameters.delimiter)
-        firstline = True
-        for columns in reader:
+        for line_no, columns in enumerate(reader):
             # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
-            if firstline:
+            if line_no == 0:
                 self.headers = self.get_headers(parameters = self.parameters, columns = columns)
-                firstline = False
-            # 先頭行がヘッダだった場合は読み飛ばす
-            if self.parameters.header:
+            # 先頭行がヘッダだった場合は先頭行をデータとして扱わない
+            if line_no == 0 and self.parameters.header:
                 continue
             # 1行分の読み込みと変換
             transformed_line = self.transform_line(line = self.read_columns(columns = columns))
@@ -65,7 +63,7 @@ class CsvTransformer:
         # カラムとヘッダの長さは揃っていることが前提
         for header, column in zip(self.headers, columns):
             # カラム単体の変換処理を行う
-            line[header] = column
+            line[header] = self.transform_column(column = column)
 
         return line
 
@@ -88,6 +86,13 @@ class CsvTransformer:
     def install_jinja2_filters(self, *, environment, parameters):
         # environment.filters['groups'] = jinja2_filters.groups
         return environment
+
+    # 1カラム分の読込結果を変換する。
+    # デフォルトではstripをかけて余分なスペースを取り除く
+    def transform_column(self, *, column):
+        # 何もしない
+        return column.strip()
+
 
     # 1行分の読込結果を変換する。
     # resultはヘッダをキーにしたカラムのリスト
