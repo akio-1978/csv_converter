@@ -84,7 +84,6 @@ class CsvTransformer:
     # 以下をオーバーライドして変換をカスタマイズできる
     # jinja2カスタムテンプレートのインストール
     def install_jinja2_filters(self, *, environment, parameters):
-        # environment.filters['groups'] = jinja2_filters.groups
         return environment
 
     # 1カラム分の読込結果を変換する。
