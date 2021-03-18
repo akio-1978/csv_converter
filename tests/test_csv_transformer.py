@@ -1,6 +1,6 @@
 import unittest
 from io import StringIO
-from csv_transformer import TransfomerParameters
+from csv_transformer import TransfomerContext
 from csv_transformer import CsvTransformer
 from csv_transformer import __version__
 from jinja2 import Environment, DictLoader
@@ -12,9 +12,9 @@ class CsvTransformerTest(unittest.TestCase):
 
     def test_transforme_headless(self):
 
-        parameters = TransfomerParameters(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
-        parameters.template_name = 'template'
-        transformer = DictTransformer(parameters = parameters)
+        context = TransfomerContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
+        context.template_name = 'template'
+        transformer = DictTransformer(context = context)
 
         source = StringIO('A0001,C0002 \n B0001,C0002  \n   C0001,C0002')
         result = StringIO()
@@ -25,10 +25,10 @@ class CsvTransformerTest(unittest.TestCase):
 
     def test_transforme_headered(self):
 
-        parameters = TransfomerParameters(template_source={'template' : "{% for line in lines %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
-        parameters.template_name = 'template'
-        parameters.use_header = True
-        transformer = DictTransformer(parameters = parameters)
+        context = TransfomerContext(template_source={'template' : "{% for line in lines %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
+        context.template_name = 'template'
+        context.use_header = True
+        transformer = DictTransformer(context = context)
 
         source = StringIO('FIRST, SECOND\n C0001,C0002')
         result = StringIO()
@@ -38,9 +38,9 @@ class CsvTransformerTest(unittest.TestCase):
         self.assertEqual('C0001<=>C0002\n', result.getvalue())
 
     def test_simple_json(self):
-        parameters = TransfomerParameters(template_source='tests/templates/simple_json.tmpl')
-        parameters.use_header = True
-        transformer = CsvTransformer(parameters = parameters)
+        context = TransfomerContext(template_source='tests/templates/simple_json.tmpl')
+        context.use_header = True
+        transformer = CsvTransformer(context = context)
         transformed = StringIO()
 
         with open('tests/transform_file/simple_json.csv') as source:
@@ -53,10 +53,10 @@ class CsvTransformerTest(unittest.TestCase):
 # テスト用にDictLoaderを使うTransformer
 class DictTransformer(CsvTransformer):
 
-    def init_template(self, *, parameters):
-        print(parameters.template_source)
-        environment = Environment(loader = DictLoader(parameters.template_source))
-        self.template = environment.get_template(parameters.template_name)
+    def init_template(self, *, context):
+        print(context.template_source)
+        environment = Environment(loader = DictLoader(context.template_source))
+        self.template = environment.get_template(context.template_name)
 
 if __name__ == '__main__':
     unittest.main()

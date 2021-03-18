@@ -1,5 +1,5 @@
 import unittest
-from csv_transformer import TransfomerParameters
+from csv_transformer import TransfomerContext
 from csv_transformer import TransformArgumentParser
 
 

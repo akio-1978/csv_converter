@@ -1,7 +1,7 @@
 import io
 import sys
 import argparse
-from csv_transformer.csv_transformer import CsvTransformer, TransfomerParameters
+from csv_transformer.csv_transformer import CsvTransformer, TransfomerContext
 
 
 class TransformArgumentParser():
@@ -26,21 +26,21 @@ class TransformArgumentParser():
         # dest encoding
         parser.add_argument('--output-encoding', metavar='enc', help='output file encoding.', default='utf-8')
 
-        parameters = self.create_parameters(namespace = parser.parse_args(args=args))
+        context = self.create_context(namespace = parser.parse_args(args=args))
 
-        return parameters
+        return context
 
-    def create_parameters(self, *, namespace):
-        parameters = TransfomerParameters(template_source = namespace.template)        
+    def create_context(self, *, namespace):
+        context = TransfomerContext(template_source = namespace.template)        
 
-        parameters.csv = namespace.csv
-        parameters.options = namespace.key_value_options
-        parameters.use_header = namespace.use_header
-        parameters.delimiter = namespace.delimiter
-        parameters.input_encoding = namespace.input_encoding
-        parameters.output_encoding = namespace.output_encoding
+        context.csv = namespace.csv
+        context.options = namespace.key_value_options
+        context.use_header = namespace.use_header
+        context.delimiter = namespace.delimiter
+        context.input_encoding = namespace.input_encoding
+        context.output_encoding = namespace.output_encoding
 
-        return parameters
+        return context
 
     # def parse_addtional(self, values):
     #     addtional = {}

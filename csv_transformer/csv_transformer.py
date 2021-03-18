@@ -3,7 +3,7 @@ from jinja2 import Environment, FileSystemLoader
 import csv
 
 # transformerに渡すパラメータクラス
-class TransfomerParameters:
+class TransfomerContext:
 
     def __init__(self, *, template_source):
         self.use_header = False
@@ -12,31 +12,32 @@ class TransfomerParameters:
         self.header_prefix='col_'
         self.options={}
         self.template_source = template_source
+        self.headers = None
 
 class CsvTransformer:
 
     # jinja2テンプレートの生成
-    def __init__(self, *, parameters):
-        self.parameters = parameters
-        self.init_template(parameters = parameters)
+    def __init__(self, *, context):
+        self.context = context
+        self.init_template(context = context)
 
     # オーバーライドすると、ファイル名指定以外の方法でテンプレートを取得できる
-    def init_template(self, *, parameters):
-        path = Path(parameters.template_source)
-        environment = Environment(loader = FileSystemLoader(path.parent, encoding=parameters.encoding))
+    def init_template(self, *, context):
+        path = Path(context.template_source)
+        environment = Environment(loader = FileSystemLoader(path.parent, encoding=context.encoding))
         self.template = environment.get_template(path.name)
 
     # CSVファイルの各行にテンプレートを適用して、出力する
     def transform(self, *, source, output):
         lines = []
         # csvreaderを使って読み込み
-        reader = csv.reader(source, delimiter = self.parameters.delimiter)
+        reader = csv.reader(source, delimiter = self.context.delimiter)
         for line_no, columns in enumerate(reader):
             # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
             if line_no == 0:
-                self.headers = self.get_headers(parameters = self.parameters, columns = columns)
+                self.headers = self.get_headers(context = self.context, columns = columns)
             # 先頭行がヘッダだった場合は先頭行をデータとして扱わない
-            if line_no == 0 and self.parameters.use_header:
+            if line_no == 0 and self.context.use_header:
                 continue
             # 1行分の読み込みと変換
             transformed_line = self.transform_line(line = self.read_line_columns_hook(columns = columns))
@@ -63,23 +64,23 @@ class CsvTransformer:
 
         return line
 
-    def get_headers(self, *, parameters, columns):
+    def get_headers(self, *, context, columns):
         headers = []
         for idx, column in enumerate(columns):
             header = None
-            if parameters.use_header:
+            if context.use_header:
                 # ヘッダあり指定の場合、カラム文字列をそのままヘッダにする
                 header = column.strip()
             else:
                 # ヘッダなしの場合、カラムのインデックスからヘッダを作る
-                header = parameters.header_prefix + str(idx).zfill(2)
+                header = context.header_prefix + str(idx).zfill(2)
 
             headers.append(header)
         return headers
 
     # 以下をオーバーライドして変換をカスタマイズできる
     # jinja2カスタムテンプレートのインストール
-    def install_jinja2_filters(self, *, environment, parameters):
+    def install_jinja2_filters(self, *, environment, context):
         return environment
 
     # 1カラム分の読込結果を変換する。
