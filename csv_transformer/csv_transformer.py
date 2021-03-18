@@ -1,19 +1,15 @@
-import io
-import sys
-import itertools
 from pathlib import Path
-from jinja2 import Template, Environment, FileSystemLoader
-from csv import reader as csvreader
-from csv_transformer import jinja2_filters
+from jinja2 import Environment, FileSystemLoader
+import csv
 
 # transformerに渡すパラメータクラス
 class TransfomerParameters:
 
     def __init__(self, *, template_source):
-        self.header = False
+        self.use_header = False
         self.encoding = 'utf8'
         self.delimiter = ','
-        self.raw_colmun_prefix='col_'
+        self.header_prefix='col_'
         self.options={}
         self.template_source = template_source
 
@@ -34,20 +30,20 @@ class CsvTransformer:
     def transform(self, *, source, output):
         lines = []
         # csvreaderを使って読み込み
-        reader = csvreader(source, delimiter = self.parameters.delimiter)
+        reader = csv.reader(source, delimiter = self.parameters.delimiter)
         for line_no, columns in enumerate(reader):
             # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
             if line_no == 0:
                 self.headers = self.get_headers(parameters = self.parameters, columns = columns)
             # 先頭行がヘッダだった場合は先頭行をデータとして扱わない
-            if line_no == 0 and self.parameters.header:
+            if line_no == 0 and self.parameters.use_header:
                 continue
             # 1行分の読み込みと変換
-            transformed_line = self.transform_line(line = self.read_columns(columns = columns))
+            transformed_line = self.transform_line(line = self.read_line_columns_hook(columns = columns))
             lines.append(transformed_line)
 
         # 全体読み込み後の変換
-        transformed_all = self.transform_all(all_lines = lines)
+        transformed_all = self.read_all_line_hook(all_lines = lines)
 
         print(
             self.template.render(
@@ -58,12 +54,12 @@ class CsvTransformer:
 
 
     # カラムのlistをdictに変換する。dictのキーはself.headers
-    def read_columns(self, *, columns):
+    def read_line_columns_hook(self, *, columns):
         line = {}
         # カラムとヘッダの長さは揃っていることが前提
         for header, column in zip(self.headers, columns):
             # カラム単体の変換処理を行う
-            line[header] = self.transform_column(column = column)
+            line[header] = self.read_column_hook(column = column)
 
         return line
 
@@ -71,12 +67,12 @@ class CsvTransformer:
         headers = []
         for idx, column in enumerate(columns):
             header = None
-            if parameters.header:
+            if parameters.use_header:
                 # ヘッダあり指定の場合、カラム文字列をそのままヘッダにする
                 header = column.strip()
             else:
                 # ヘッダなしの場合、カラムのインデックスからヘッダを作る
-                header = parameters.raw_colmun_prefix + str(idx).zfill(2)
+                header = parameters.header_prefix + str(idx).zfill(2)
 
             headers.append(header)
         return headers
@@ -88,10 +84,8 @@ class CsvTransformer:
 
     # 1カラム分の読込結果を変換する。
     # デフォルトではstripをかけて余分なスペースを取り除く
-    def transform_column(self, *, column):
-        # 何もしない
+    def read_column_hook(self, *, column):
         return column.strip()
-
 
     # 1行分の読込結果を変換する。
     # resultはヘッダをキーにしたカラムのリスト
@@ -101,8 +95,7 @@ class CsvTransformer:
         return line
 
     # 全て読み込みが終わった後に変換が必要な場合の処理
-    def transform_all(self, *, all_lines):
+    def read_all_line_hook(self, *, all_lines):
         # 何もしない
-        print(all_lines)
         return all_lines
 

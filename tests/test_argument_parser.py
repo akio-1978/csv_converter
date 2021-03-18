@@ -10,18 +10,18 @@ class ArgumentParserTest(unittest.TestCase):
         
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
-        self.assertFalse(params.header)
+        self.assertFalse(params.use_header)
 
     def test_header(self):
         params = TransformArgumentParser().parse_parameters(['template', 'csv', '-H'])
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
-        self.assertTrue(params.header)
+        self.assertTrue(params.use_header)
 
         params = TransformArgumentParser().parse_parameters(['template', 'csv', '--header'])
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
-        self.assertTrue(params.header)
+        self.assertTrue(params.use_header)
 
     def test_encoding(self):
         params = TransformArgumentParser().parse_parameters(['template', 'csv'])
@@ -39,7 +39,7 @@ class ArgumentParserTest(unittest.TestCase):
         
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
-        self.assertFalse(params.header)
+        self.assertFalse(params.use_header)
         self.assertEqual(params.options['A'], 'B')
         self.assertEqual(params.options['C'], 'D')
 
@@ -48,20 +48,20 @@ class ArgumentParserTest(unittest.TestCase):
         
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
-        self.assertFalse(params.header)
+        self.assertFalse(params.use_header)
         self.assertEqual(params.delimiter, ',')
 
     def test_delimiter_tab_action(self):
         params = TransformArgumentParser().parse_parameters(['template', 'csv', '-T' , 'A=B'])
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
-        self.assertFalse(params.header)
+        self.assertFalse(params.use_header)
         self.assertEqual(params.delimiter, '\t')
 
         params = TransformArgumentParser().parse_parameters(['template', 'csv', '--tab' , 'A=B'])
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
-        self.assertFalse(params.header)
+        self.assertFalse(params.use_header)
         self.assertEqual(params.delimiter, '\t')
 
 if __name__ == '__main__':

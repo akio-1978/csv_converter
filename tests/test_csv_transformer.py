@@ -27,7 +27,7 @@ class CsvTransformerTest(unittest.TestCase):
 
         parameters = TransfomerParameters(template_source={'template' : "{% for line in lines %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
         parameters.template_name = 'template'
-        parameters.header = True
+        parameters.use_header = True
         transformer = DictTransformer(parameters = parameters)
 
         source = StringIO('FIRST, SECOND\n C0001,C0002')
@@ -39,7 +39,7 @@ class CsvTransformerTest(unittest.TestCase):
 
     def test_simple_json(self):
         parameters = TransfomerParameters(template_source='tests/templates/simple_json.tmpl')
-        parameters.header = True
+        parameters.use_header = True
         transformer = CsvTransformer(parameters = parameters)
         transformed = StringIO()
 

@@ -16,7 +16,7 @@ class TransformArgumentParser():
         parser.add_argument('csv', help='transform csv.')
         parser.add_argument('key_value_options', nargs='*', help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
         # flag first line is header
-        parser.add_argument('-H', '--header', help='first line is header.', action='store_true')
+        parser.add_argument('-H', '--header', help='first line is header.', dest='use_header', action='store_true')
         # flag tab separate values
         parser.add_argument('-T', '--tab', help='tab separate values.', dest='delimiter', default=',', action=DelimiterSelectAction)
         # output file (default stdout)
@@ -35,7 +35,7 @@ class TransformArgumentParser():
 
         parameters.csv = namespace.csv
         parameters.options = namespace.key_value_options
-        parameters.header = namespace.header
+        parameters.use_header = namespace.use_header
         parameters.delimiter = namespace.delimiter
         parameters.input_encoding = namespace.input_encoding
         parameters.output_encoding = namespace.output_encoding
