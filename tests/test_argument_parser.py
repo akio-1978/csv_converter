@@ -1,41 +1,41 @@
 import unittest
-from csv_transformer import TransfomerContext
-from csv_transformer import TransformArgumentParser
+from csv_converter import ConverterContext
+from csv_converter import ConverterArgumentParser
 
 
 class ArgumentParserTest(unittest.TestCase):
     
     def test_minimum_args(self):
-        params = TransformArgumentParser().parse_parameters(['template', 'csv'])
+        params = ConverterArgumentParser().parse_parameters(['template', 'csv'])
         
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
         self.assertFalse(params.use_header)
 
     def test_header(self):
-        params = TransformArgumentParser().parse_parameters(['template', 'csv', '-H'])
+        params = ConverterArgumentParser().parse_parameters(['template', 'csv', '-H'])
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
         self.assertTrue(params.use_header)
 
-        params = TransformArgumentParser().parse_parameters(['template', 'csv', '--header'])
+        params = ConverterArgumentParser().parse_parameters(['template', 'csv', '--header'])
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
         self.assertTrue(params.use_header)
 
     def test_encoding(self):
-        params = TransformArgumentParser().parse_parameters(['template', 'csv'])
+        params = ConverterArgumentParser().parse_parameters(['template', 'csv'])
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
         self.assertEqual('utf-8', params.input_encoding)
 
-        params = TransformArgumentParser().parse_parameters(['template', 'csv', '--input-encoding', 'sjis'])
+        params = ConverterArgumentParser().parse_parameters(['template', 'csv', '--input-encoding', 'sjis'])
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
         self.assertEqual('sjis', params.input_encoding)
 
     def test_key_values_action(self):
-        params = TransformArgumentParser().parse_parameters(['template', 'csv', 'A=B', 'C=D'])
+        params = ConverterArgumentParser().parse_parameters(['template', 'csv', 'A=B', 'C=D'])
         
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
@@ -44,7 +44,7 @@ class ArgumentParserTest(unittest.TestCase):
         self.assertEqual(params.options['C'], 'D')
 
     def test_delimiter_comma_action(self):
-        params = TransformArgumentParser().parse_parameters(['template', 'csv', 'A=B'])
+        params = ConverterArgumentParser().parse_parameters(['template', 'csv', 'A=B'])
         
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
@@ -52,13 +52,13 @@ class ArgumentParserTest(unittest.TestCase):
         self.assertEqual(params.delimiter, ',')
 
     def test_delimiter_tab_action(self):
-        params = TransformArgumentParser().parse_parameters(['template', 'csv', '-T' , 'A=B'])
+        params = ConverterArgumentParser().parse_parameters(['template', 'csv', '-T' , 'A=B'])
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
         self.assertFalse(params.use_header)
         self.assertEqual(params.delimiter, '\t')
 
-        params = TransformArgumentParser().parse_parameters(['template', 'csv', '--tab' , 'A=B'])
+        params = ConverterArgumentParser().parse_parameters(['template', 'csv', '--tab' , 'A=B'])
         self.assertEqual('template', params.template_source)
         self.assertEqual('csv', params.csv)
         self.assertFalse(params.use_header)

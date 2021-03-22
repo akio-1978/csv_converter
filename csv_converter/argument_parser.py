@@ -1,10 +1,10 @@
 import io
 import sys
 import argparse
-from csv_transformer.csv_transformer import CsvTransformer, TransfomerContext
+from csv_converter.csv_converter import CsvConverter, ConverterContext
 
 
-class TransformArgumentParser():
+class ConverterArgumentParser():
 
     def parse_parameters(self, args):
         # コマンドライン引数の処理
@@ -31,7 +31,7 @@ class TransformArgumentParser():
         return context
 
     def create_context(self, *, namespace):
-        context = TransfomerContext(template_source = namespace.template)        
+        context = ConverterContext(template_source = namespace.template)        
 
         context.csv = namespace.csv
         context.options = namespace.key_value_options

@@ -1,8 +1,8 @@
 import unittest
 from io import StringIO
-from csv_transformer import TransfomerContext
-from csv_transformer import CsvTransformer
-from csv_transformer import __version__
+from csv_converter import ConverterContext
+from csv_converter import CsvConverter
+from csv_converter import __version__
 from jinja2 import Environment, DictLoader
 
 def test_version():
@@ -12,7 +12,7 @@ class CsvTransformerTest(unittest.TestCase):
 
     def test_transforme_headless(self):
 
-        context = TransfomerContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
+        context = ConverterContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
         context.template_name = 'template'
         transformer = DictTransformer(context = context)
 
@@ -25,7 +25,7 @@ class CsvTransformerTest(unittest.TestCase):
 
     def test_transforme_headered(self):
 
-        context = TransfomerContext(template_source={'template' : "{% for line in lines %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
+        context = ConverterContext(template_source={'template' : "{% for line in lines %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
         context.template_name = 'template'
         context.use_header = True
         transformer = DictTransformer(context = context)
@@ -38,9 +38,9 @@ class CsvTransformerTest(unittest.TestCase):
         self.assertEqual('C0001<=>C0002\n', result.getvalue())
 
     def test_simple_json(self):
-        context = TransfomerContext(template_source='tests/templates/simple_json.tmpl')
+        context = ConverterContext(template_source='tests/templates/simple_json.tmpl')
         context.use_header = True
-        transformer = CsvTransformer(context = context)
+        transformer = CsvConverter(context = context)
         transformed = StringIO()
 
         with open('tests/transform_file/simple_json.csv') as source:
@@ -51,7 +51,7 @@ class CsvTransformerTest(unittest.TestCase):
 
 
 # テスト用にDictLoaderを使うTransformer
-class DictTransformer(CsvTransformer):
+class DictTransformer(CsvConverter):
 
     def init_template(self, *, context):
         print(context.template_source)

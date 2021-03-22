@@ -3,7 +3,7 @@ from jinja2 import Environment, FileSystemLoader
 import csv
 
 # transformerに渡すパラメータクラス
-class TransfomerContext:
+class ConverterContext:
 
     def __init__(self, *, template_source):
         self.use_header = False
@@ -14,7 +14,7 @@ class TransfomerContext:
         self.template_source = template_source
         self.headers = None
 
-class CsvTransformer:
+class CsvConverter:
 
     # jinja2テンプレートの生成
     def __init__(self, *, context):
@@ -36,26 +36,27 @@ class CsvTransformer:
             # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
             if line_no == 0:
                 self.headers = self.get_headers(context = self.context, columns = columns)
-            # 先頭行がヘッダだった場合は先頭行をデータとして扱わない
-            if line_no == 0 and self.context.use_header:
-                continue
+                # ヘッダとして先頭行を読み込んだ場合
+                if self.context.use_header:
+                    continue
+
             # 1行分の読み込みと変換
-            transformed_line = self.transform_line(line = self.read_line_columns_hook(columns = columns))
-            lines.append(transformed_line)
+            line = self.read_line_hook(line = self.columns_to_dict(columns = columns))
+            lines.append(line)
 
         # 全体読み込み後の変換
-        transformed_all = self.read_all_line_hook(all_lines = lines)
+        all_lines = self.read_all_line_hook(all_lines = lines)
 
         print(
             self.template.render(
-                {'lines' : transformed_all}
+                {'lines' : all_lines}
             ),
             file = output
         )
 
 
     # カラムのlistをdictに変換する。dictのキーはself.headers
-    def read_line_columns_hook(self, *, columns):
+    def columns_to_dict(self, *, columns):
         line = {}
         # カラムとヘッダの長さは揃っていることが前提
         for header, column in zip(self.headers, columns):
@@ -91,7 +92,7 @@ class CsvTransformer:
     # 1行分の読込結果を変換する。
     # resultはヘッダをキーにしたカラムのリスト
     # 返値はdictであること。デフォルトではresultをそのまま返す。
-    def transform_line(self, *, line):
+    def read_line_hook(self, *, line):
         # 何もしない
         return line
 
