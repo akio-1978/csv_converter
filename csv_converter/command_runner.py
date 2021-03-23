@@ -4,7 +4,7 @@ import argparse
 from csv_converter.csv_converter import CsvConverter, ConverterContext
 
 
-class ConverterArgumentParser():
+class CsvConvert():
 
     def parse_parameters(self, args):
         # コマンドライン引数の処理
