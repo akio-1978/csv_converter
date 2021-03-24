@@ -13,6 +13,10 @@ class ConverterContext:
         self.options={}
         self.template_source = template_source
         self.headers = None
+        self.line_object = LineValues
+
+class LineValues:
+    pass
 
 class CsvConverter:
 
@@ -28,7 +32,7 @@ class CsvConverter:
         self.template = environment.get_template(path.name)
 
     # CSVファイルの各行にテンプレートを適用して、出力する
-    def transform(self, *, source, output):
+    def convert(self, *, source, output):
         lines = []
         # csvreaderを使って読み込み
         reader = csv.reader(source, delimiter = self.context.delimiter)
@@ -57,11 +61,12 @@ class CsvConverter:
 
     # カラムのlistをdictに変換する。dictのキーはself.headers
     def columns_to_dict(self, *, columns):
-        line = {}
+        line = self.context.line_object()
         # カラムとヘッダの長さは揃っていることが前提
         for header, column in zip(self.headers, columns):
             # カラム単体の変換処理を行う
-            line[header] = self.read_column_hook(column = column)
+            setattr(line, header, self.read_column_hook(header = header, column = column))
+#            line[header] = self.read_column_hook(header = header, column = column)
 
         return line
 
@@ -86,7 +91,7 @@ class CsvConverter:
 
     # 1カラム分の読込結果を変換する。
     # デフォルトではstripをかけて余分なスペースを取り除く
-    def read_column_hook(self, *, column):
+    def read_column_hook(self, *, header, column):
         return column.strip()
 
     # 1行分の読込結果を変換する。

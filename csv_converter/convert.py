@@ -1,12 +1,13 @@
+# from csv_converter.converter import CsvConverter, ConverterContext
+from .converter import CsvConverter, ConverterContext
 import io
 import sys
 import argparse
-from csv_converter.csv_converter import CsvConverter, ConverterContext
 
 
-class CsvConvert():
+class ContextBuilder():
 
-    def parse_parameters(self, args):
+    def argument_to_context(self, args):
         # コマンドライン引数の処理
         parser = argparse.ArgumentParser()
         
@@ -74,3 +75,8 @@ if __name__ == '__main__':
     # windows対策
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
+    context = ContextBuilder().argument_to_context(sys.argv)
+    converter = CsvConverter(context=context)
+
+    with open(context.csv) as source:
+        converter.convert(source=source, output=sys.stdout)
