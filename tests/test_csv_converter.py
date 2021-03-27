@@ -71,7 +71,7 @@ class CsvConverterTest(unittest.TestCase):
 # テスト用にDictLoaderを使うTransformer
 class DictConverter(CsvConverter):
 
-    def init_template(self, *, context):
+    def build_convert_engine(self, *, context):
         print(context.template_source)
         environment = Environment(loader = DictLoader(context.template_source))
         self.template = environment.get_template(context.template_name)
