@@ -8,7 +8,7 @@ def test_version():
 
 class CsvConverterTest(unittest.TestCase):
 
-    def test_transforme_headless(self):
+    def test_convert_headless(self):
 
         context = ConverterContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
         context.template_name = 'template'
@@ -21,7 +21,20 @@ class CsvConverterTest(unittest.TestCase):
 
         self.assertEqual('A0001\nB0001\nC0001\n\n', result.getvalue())
 
-    def test_transforme_headered(self):
+    def test_convert_escaped(self):
+
+        context = ConverterContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
+        context.template_name = 'template'
+        converter = DictConverter(context = context)
+
+        source = StringIO('"A00,01",C0002 \n B0001,C0002  \n   C0001,C0002')
+        result = StringIO()
+
+        converter.convert(source = source, output = result)
+
+        self.assertEqual('A00,01\nB0001\nC0001\n\n', result.getvalue())
+
+    def test_convert_headered(self):
 
         context = ConverterContext(template_source={'template' : "{% for line in lines %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
         context.template_name = 'template'
