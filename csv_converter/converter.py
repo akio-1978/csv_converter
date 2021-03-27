@@ -1,6 +1,7 @@
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 import csv
+from . jinja2_custom_filter import sequential_group_by
 
 # transformerに渡すパラメータクラス
 class ConverterContext:
@@ -23,12 +24,13 @@ class CsvConverter:
     # jinja2テンプレートの生成
     def __init__(self, *, context):
         self.context = context
-        self.init_template(context = context)
+        self.build_convert_engine(context = context)
 
-    # オーバーライドすると、ファイル名指定以外の方法でテンプレートを取得できる
-    def init_template(self, *, context):
+    # 別の方法でテンプレートを生成する場合はオーバーライドする
+    def build_convert_engine(self, *, context):
         path = Path(context.template_source)
         environment = Environment(loader = FileSystemLoader(path.parent, encoding=context.encoding))
+        environment.filters['sequential_group_by'] = sequential_group_by
         self.template = environment.get_template(path.name)
 
     # CSVファイルの各行にテンプレートを適用して、出力する
@@ -83,11 +85,6 @@ class CsvConverter:
 
             headers.append(header)
         return headers
-
-    # 以下をオーバーライドして変換をカスタマイズできる
-    # jinja2カスタムテンプレートのインストール
-    def install_jinja2_filters(self, *, environment, context):
-        return environment
 
     # 1カラム分の読込結果を変換する。
     # デフォルトではstripをかけて余分なスペースを取り除く

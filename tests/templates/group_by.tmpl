@@ -1,0 +1,8 @@
+stations:
+  ward:
+{%- for ward, stations in lines | sequential_group_by('ward') %}
+    - {{ward}}: 
+{%- for station in stations %}
+      - {{station.line}}-{{station.number}}: {{station.name}}
+{%- endfor %}
+{%- endfor %}

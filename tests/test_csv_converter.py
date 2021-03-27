@@ -36,17 +36,37 @@ class CsvConverterTest(unittest.TestCase):
         self.assertEqual('C0001<=>C0002\n', result.getvalue())
 
     def test_simple_json(self):
-        context = ConverterContext(template_source='tests/templates/simple_json.tmpl')
+        self.file_convert_test(template = 'tests/templates/simple_json.tmpl',
+                                expect = 'tests/converted_file/simple_json.txt',
+                                source='tests/convert_source_file/simple_json.csv')
+
+    def test_group_by(self):
+        self.file_convert_test(template = 'tests/templates/group_by.tmpl',
+                                expect = 'tests/converted_file/group_by.yml',
+                                source='tests/convert_source_file/group_by.csv')
+        # context = ConverterContext(template_source='tests/templates/simple_json.tmpl')
+        # context.use_header = True
+        # converter = CsvConverter(context = context)
+        # converted = StringIO()
+
+        # with open('tests/convert_source_file/simple_json.csv') as source:
+        #     converter.convert(source=source, output=converted)
+
+        # with open('tests/converted_file/simple_json.txt') as expect:
+        #     self.assertEqual(expect.read(), converted.getvalue())
+
+
+    def file_convert_test(self, *, template, expect, source):
+        context = ConverterContext(template_source=template)
         context.use_header = True
         converter = CsvConverter(context = context)
         converted = StringIO()
 
-        with open('tests/convert_source_file/simple_json.csv') as source:
-            converter.convert(source=source, output=converted)
+        with open(source) as source_reader:
+            converter.convert(source=source_reader, output=converted)
 
-        with open('tests/converted_file/simple_json.txt') as expect:
-            self.assertEqual(expect.read(), converted.getvalue())
-
+        with open(expect) as expect_reader:
+            self.assertEqual(expect_reader.read(), converted.getvalue())
 
 # テスト用にDictLoaderを使うTransformer
 class DictConverter(CsvConverter):
