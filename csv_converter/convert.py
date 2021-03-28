@@ -1,8 +1,7 @@
-# from csv_converter.converter import CsvConverter, ConverterContext
-from .converter import CsvConverter, ConverterContext
-import io
 import sys
+import io
 import argparse
+from csv_converter.converter import CsvConverter, ConverterContext
 
 
 class ContextBuilder():
@@ -21,7 +20,7 @@ class ContextBuilder():
         # flag tab separate values
         parser.add_argument('-T', '--tab', help='tab separate values.', dest='delimiter', default=',', action=DelimiterSelectAction)
         # output file (default stdout)
-        parser.add_argument('-O', '--output', metavar='file', help='output file.', nargs=1)
+        parser.add_argument('-O', '--output', metavar='file', help='output file.')
         # source encoding
         parser.add_argument('--input-encoding', metavar='enc', help='file encoding.', default='utf-8')
         # dest encoding
@@ -40,6 +39,7 @@ class ContextBuilder():
         context.delimiter = namespace.delimiter
         context.input_encoding = namespace.input_encoding
         context.output_encoding = namespace.output_encoding
+        context.output = namespace.output
 
         return context
 
@@ -58,8 +58,8 @@ class KeyValuesParseAction(argparse.Action):
     def parse_key_values(self, values):
         key_values = {}
         for value in values:
-            key_value = value.split('=')
-            key_values[key_value[0]] = key_value[1]
+            key_value = value.partition('=')
+            key_values[key_value[0]] = key_value[2]
         return key_values
 
 class DelimiterSelectAction(argparse.Action):
@@ -71,12 +71,26 @@ class DelimiterSelectAction(argparse.Action):
 
         setattr(namespace, self.dest, delimiter)
 
+
+def convertToFile(*, converter, source, file):
+    with open(file, mode='w') as output:
+        with open(source) as input:
+            converter.convert(source=input, output=output)
+
+
+def convertToStdout(*, converter, source):
+        with open(source) as input:
+            converter.convert(source=input, output=sys.stdout)
+
+
 if __name__ == '__main__':
     # windows対策
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-    context = ContextBuilder().argument_to_context(sys.argv)
+    context = ContextBuilder().argument_to_context(sys.argv[1:])
     converter = CsvConverter(context=context)
 
-    with open(context.csv) as source:
-        converter.convert(source=source, output=sys.stdout)
+    if context.output is not None:
+        convertToFile(converter=converter, source=context.csv, file=context.output)
+    else:
+        convertToStdout(converter=converter, source=context.csv)

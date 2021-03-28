@@ -55,7 +55,10 @@ class CsvConverter:
 
         print(
             self.template.render(
-                {'lines' : all_lines}
+                {
+                    'lines' : all_lines,
+                    'options' : self.context.options
+                }
             ),
             file = output
         )

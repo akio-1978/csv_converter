@@ -51,27 +51,24 @@ class CsvConverterTest(unittest.TestCase):
     def test_simple_json(self):
         self.file_convert_test(template = 'tests/templates/simple_json.tmpl',
                                 expect = 'tests/converted_file/simple_json.txt',
-                                source='tests/convert_source_file/simple_json.csv')
+                                source = 'tests/convert_source_file/simple_json.csv')
 
     def test_group_by(self):
         self.file_convert_test(template = 'tests/templates/group_by.tmpl',
                                 expect = 'tests/converted_file/group_by.yml',
-                                source='tests/convert_source_file/group_by.csv')
-        # context = ConverterContext(template_source='tests/templates/simple_json.tmpl')
-        # context.use_header = True
-        # converter = CsvConverter(context = context)
-        # converted = StringIO()
+                                source ='tests/convert_source_file/group_by.csv')
 
-        # with open('tests/convert_source_file/simple_json.csv') as source:
-        #     converter.convert(source=source, output=converted)
-
-        # with open('tests/converted_file/simple_json.txt') as expect:
-        #     self.assertEqual(expect.read(), converted.getvalue())
+    def test_options(self):
+        self.file_convert_test(template = 'tests/templates/group_by.tmpl',
+                                expect = 'tests/converted_file/group_by.yml',
+                                source = 'tests/convert_source_file/group_by.csv',
+                                options = {'list_name' : 'Yurakucho-line-stations-in-ward'})
 
 
-    def file_convert_test(self, *, template, expect, source):
+    def file_convert_test(self, *, template, expect, source, options={}):
         context = ConverterContext(template_source=template)
         context.use_header = True
+        context.options = options
         converter = CsvConverter(context = context)
         converted = StringIO()
 
