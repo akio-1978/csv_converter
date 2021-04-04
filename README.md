@@ -1,22 +1,26 @@
 # csv_converter
-**rewriting to english slowly. **
+機械翻訳英語に少しづつ修正中当分日英併記
+rewriting to english slowly. 
 
 convert CSV format by Jinja2 Template Engine.
 
-## 特徴
-* convert csv any format by template
+## Features
+* convert csv any format by template.
+* can specify the extra value to not included in csv by argument.
+* if hard to convert by janja template only. can pre process by python.
+  * require converter class override
+* for keep line sequence. added unsorted group filter.(like uniq)
+
 * テンプレートを使うことによって、csvファイルの内容を構造化した形式に変換できる
-* can specify the extra value to not included in csv by argument
 * csvファイルに含まれる内容だけでない、任意の文字列をオプションとして追加できる
-* jinja2テンプレートだけでは変換しづらい部分をpythonのコードで直接変換できる
-  * クラスのオーバーライドが必要にはなりますが
-* jinja2に"ソートを伴わないgroupbyフィルタ"を追加している
-  * `uniq`コマンドみたいな動作をします
-  * これにより、csvファイル中の「行の出現順」を意識しながらgroupをまとめていくことができます。
+* if jijna2テンプレート変換しづらい場合、pythonコードで変換の前処理ができます
+  * 変換クラスのオーバーライドが必要になります
+* jinja2にソートしない"group_by"フィルタを追加(`uniq`コマンドみたいな動作をします)
   
-## 使用例
+## Example
+This is an example of converting stations on the Tokyo Metro Yurakucho Line into YAML classified by location.
 東京メトロ有楽町線の駅を所在地の市区ごとに分類したYAMLに変換する例です。
-### 変換元ファイル
+### source csv file
 ``` csv
 line,number,name,ward
 Y,1,Wakoshi,Wako-shi
@@ -29,7 +33,7 @@ Y,7,Senkawa,Toshima-Ku
 Y,8,Kanamecho,Toshima-Ku
 Y,9,Ikebukuro,Toshima-Ku
 ```
-### テンプレートファイル
+### Template to use
 ```
 stations:
   ward:
@@ -40,12 +44,11 @@ stations:
 {%- endfor %}
 {%- endfor %}
 ```
-### コマンド
-ちゃんとしたコマンドの形式にするのはこの後のバージョンの予定です。
+### command line
 ``` sh
-python -m csv_converter.convert -H -O ./result.yml  ./templates/options.tmpl
+python -m csv_converter.convert -H -O [converted file]  [template to use]
 ```
-### 変換結果
+### Conversion result
 ``` yml
 stations:
   ward:
