@@ -1,14 +1,17 @@
 # csv_converter
-※書きかけです
+**rewriting to english slowly. **
 
-csvファイルを読み込んで、jinja2テンプレートを使って変換するコマンドラインツールです。
-特徴として、以下の機能を盛り込んでいます。
+convert CSV format by Jinja2 Template Engine.
 
-* csvファイルに含まれる内容だけでない、任意の文字列をオプションとして追加できる。
-* jinja2テンプレートだけでは変換しづらい部分をpythonのコードで直接変換できる。
-  * クラスのオーバーライドが必要にはなりますが。
-* 素のjinja2が持っていない「ソートを伴わないgroupbyフィルタ」を追加している。
-  * `uniq`コマンドみたいな動作をします。
+## 特徴
+* convert csv any format by template
+* テンプレートを使うことによって、csvファイルの内容を構造化した形式に変換できる
+* can specify the extra value to not included in csv by argument
+* csvファイルに含まれる内容だけでない、任意の文字列をオプションとして追加できる
+* jinja2テンプレートだけでは変換しづらい部分をpythonのコードで直接変換できる
+  * クラスのオーバーライドが必要にはなりますが
+* jinja2に"ソートを伴わないgroupbyフィルタ"を追加している
+  * `uniq`コマンドみたいな動作をします
   * これにより、csvファイル中の「行の出現順」を意識しながらgroupをまとめていくことができます。
   
 ## 使用例
