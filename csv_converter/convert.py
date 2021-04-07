@@ -43,13 +43,6 @@ class ContextBuilder():
 
         return context
 
-    # def parse_addtional(self, values):
-    #     addtional = {}
-    #     for value in values:
-    #         key_value = value.split('=')
-    #         addtional[key_value[0]] = key_value[1]
-    #     return addtional
-
 class KeyValuesParseAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):
