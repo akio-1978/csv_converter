@@ -43,6 +43,9 @@ class ContextBuilder():
 
         return context
 
+    def on_parser_created(self, parser):
+        return parser
+
 class KeyValuesParseAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string=None):

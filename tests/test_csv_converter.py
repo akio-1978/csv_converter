@@ -1,6 +1,6 @@
 import unittest
 from io import StringIO
-from csv_converter import CsvConverter, ConverterContext,__version__
+from csv_converter import CsvConverter, CsvConverterContext,__version__
 from jinja2 import Environment, DictLoader
 
 def test_version():
@@ -10,7 +10,7 @@ class CsvConverterTest(unittest.TestCase):
 
     def test_convert_headless(self):
 
-        context = ConverterContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
+        context = CsvConverterContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
         context.template_name = 'template'
         converter = DictConverter(context = context)
 
@@ -23,7 +23,7 @@ class CsvConverterTest(unittest.TestCase):
 
     def test_convert_escaped(self):
 
-        context = ConverterContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
+        context = CsvConverterContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
         context.template_name = 'template'
         converter = DictConverter(context = context)
 
@@ -36,7 +36,7 @@ class CsvConverterTest(unittest.TestCase):
 
     def test_convert_headered(self):
 
-        context = ConverterContext(template_source={'template' : "{% for line in lines %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
+        context = CsvConverterContext(template_source={'template' : "{% for line in lines %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
         context.template_name = 'template'
         context.use_header = True
         converter = DictConverter(context = context)
@@ -66,7 +66,7 @@ class CsvConverterTest(unittest.TestCase):
 
 
     def file_convert_test(self, *, template, expect, source, options={}):
-        context = ConverterContext(template_source=template)
+        context = CsvConverterContext(template_source=template)
         context.use_header = True
         context.options = options
         converter = CsvConverter(context = context)

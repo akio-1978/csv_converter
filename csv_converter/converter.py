@@ -2,17 +2,18 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 import csv
 from . jinja2_custom_filter import sequential_group_by
+from . converter_context import ConverterContext
 
 # transformerに渡すパラメータクラス
-class ConverterContext:
+class CsvConverterContext(ConverterContext):
 
     def __init__(self, *, template_source):
+        super().__init__(template_source = template_source)
         self.use_header = False
         self.encoding = 'utf8'
         self.delimiter = ','
         self.header_prefix='col_'
         self.options={}
-        self.template_source = template_source
         self.headers = None
         self.line_object = LineValues
 
