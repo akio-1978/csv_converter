@@ -1,6 +1,6 @@
 import unittest
 from io import StringIO
-from csv_converter import CsvConverter, CsvConverterContext,__version__
+from text_converter import CsvConverter, CsvConverterContext,__version__
 from jinja2 import Environment, DictLoader
 
 def test_version():

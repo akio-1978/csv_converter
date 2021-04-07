@@ -1,7 +1,7 @@
 import sys
 import io
 import argparse
-from csv_converter.converter import CsvConverter, CsvConverterContext
+from text_converter.csv_converter import CsvConverter, CsvConverterContext
 
 
 class ContextBuilder():

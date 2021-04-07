@@ -1,5 +1,5 @@
 import unittest
-from csv_converter import ContextBuilder
+from text_converter import ContextBuilder
 
 
 class ArgumentParserTest(unittest.TestCase):
