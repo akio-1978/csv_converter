@@ -44,10 +44,6 @@ stations:
 {%- endfor %}
 {%- endfor %}
 ```
-### command line
-``` sh
-python -m csv_converter.convert -H -O [converted file]  [template to use]
-```
 ### Conversion result
 ``` yml
 stations:
@@ -65,4 +61,27 @@ stations:
       - Y-7: Senkawa
       - Y-8: Kanamecho
       - Y-9: Ikebukuro
+```
+## Command
+``` 
+python -m csv_converter.convert [-h] [-H] [-T DELIMITER] [-O file] [--input-encoding enc] [--output-encoding enc] template csv [key_value_options ...]
+```
+arguments
+``` 
+usage: convert.py [-h] [-H] [-T] [-O file] [--input-encoding enc] [--output-encoding enc] template csv [key_value_options ...]
+
+positional arguments:
+  template              jinja2 template to use.
+  csv                   transform csv.
+  key_value_options     additional values [KEY=VALUE] format.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -H, --header          first line is header.
+  -T , --tab            tab separate values.
+  -O file, --output file
+                        output file.
+  --input-encoding enc  file encoding.
+  --output-encoding enc
+                        output file encoding.
 ```
