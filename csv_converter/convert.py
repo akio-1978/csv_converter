@@ -18,7 +18,7 @@ class ContextBuilder():
         # flag first line is header
         parser.add_argument('-H', '--header', help='first line is header.', dest='use_header', action='store_true')
         # flag tab separate values
-        parser.add_argument('-T', '--tab', help='tab separate values.', dest='delimiter', default=',', action=DelimiterSelectAction)
+        parser.add_argument('-T', '--tab', metavar='', help='tab separate values.', dest='delimiter', default=',', action=DelimiterSelectAction)
         # output file (default stdout)
         parser.add_argument('-O', '--output', metavar='file', help='output file.')
         # source encoding
@@ -65,7 +65,7 @@ class KeyValuesParseAction(argparse.Action):
 class DelimiterSelectAction(argparse.Action):
 
     def __call__(self, parser, namespace, values, option_string):
-        delimiter = ''
+        delimiter = ','
         if option_string == '-T' or option_string == '--tab':
             delimiter = '\t'
 
