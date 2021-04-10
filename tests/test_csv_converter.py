@@ -10,7 +10,7 @@ class CsvConverterTest(unittest.TestCase):
 
     def test_convert_headless(self):
 
-        context = CsvConverterContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
+        context = CsvConverterContext(template_source={'template' : "{% for line in data %}{{line.col_00}}\n{% endfor %}"})
         context.template_name = 'template'
         converter = DictConverter(context = context)
 
@@ -23,7 +23,7 @@ class CsvConverterTest(unittest.TestCase):
 
     def test_convert_escaped(self):
 
-        context = CsvConverterContext(template_source={'template' : "{% for line in lines %}{{line.col_00}}\n{% endfor %}"})
+        context = CsvConverterContext(template_source={'template' : "{% for line in data %}{{line.col_00}}\n{% endfor %}"})
         context.template_name = 'template'
         converter = DictConverter(context = context)
 
@@ -36,7 +36,7 @@ class CsvConverterTest(unittest.TestCase):
 
     def test_convert_headered(self):
 
-        context = CsvConverterContext(template_source={'template' : "{% for line in lines %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
+        context = CsvConverterContext(template_source={'template' : "{% for line in data %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
         context.template_name = 'template'
         context.use_header = True
         converter = DictConverter(context = context)

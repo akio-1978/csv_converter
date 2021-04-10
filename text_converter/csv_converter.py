@@ -34,11 +34,18 @@ class CsvConverter:
         environment.filters['sequential_group_by'] = sequential_group_by
         self.template = environment.get_template(path.name)
 
+    def build_reader(self, *, source):
+        # csvreaderを使って読み込み
+        return csv.reader(source, delimiter = self.context.delimiter)
+
     # CSVファイルの各行にテンプレートを適用して、出力する
     def convert(self, *, source, output):
+        reader = self.build_reader(source = source)
+        read_result = self.read_source(reader = reader)
+        self.output_result(read_result = read_result, output = output)
+
+    def read_source(self, *, reader):
         lines = []
-        # csvreaderを使って読み込み
-        reader = csv.reader(source, delimiter = self.context.delimiter)
         for line_no, columns in enumerate(reader):
             # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
             if line_no == 0:
@@ -46,33 +53,26 @@ class CsvConverter:
                 # ヘッダとして先頭行を読み込んだ場合
                 if self.context.use_header:
                     continue
-
-            # 1行分の読み込みと変換
-            line = self.read_line_hook(line = self.columns_to_dict(columns = columns))
+            line = self.read_line(columns = columns)
             lines.append(line)
-
         # 全体読み込み後の変換
-        all_lines = self.read_all_line_hook(all_lines = lines)
+        return self.read_finish(all_lines = lines)
 
+    def output_result(self, *, read_result, output):
         print(
             self.template.render(
-                {
-                    'lines' : all_lines,
-                    'options' : self.context.options
-                }
+                {'data' : read_result, 'options' : self.context.options}
             ),
             file = output
         )
 
-
     # カラムのlistをdictに変換する。dictのキーはself.headers
-    def columns_to_dict(self, *, columns):
+    def read_line(self, *, columns):
         line = self.context.line_object()
         # カラムとヘッダの長さは揃っていることが前提
         for header, column in zip(self.headers, columns):
             # カラム単体の変換処理を行う
-            setattr(line, header, self.read_column_hook(header = header, column = column))
-#            line[header] = self.read_column_hook(header = header, column = column)
+            setattr(line, header, self.read_column(name = header, column = column))
 
         return line
 
@@ -92,18 +92,11 @@ class CsvConverter:
 
     # 1カラム分の読込結果を変換する。
     # デフォルトではstripをかけて余分なスペースを取り除く
-    def read_column_hook(self, *, header, column):
+    def read_column(self, *, name, column):
         return column.strip()
 
-    # 1行分の読込結果を変換する。
-    # resultはヘッダをキーにしたカラムのリスト
-    # 返値はdictであること。デフォルトではresultをそのまま返す。
-    def read_line_hook(self, *, line):
-        # 何もしない
-        return line
-
     # 全て読み込みが終わった後に変換が必要な場合の処理
-    def read_all_line_hook(self, *, all_lines):
+    def read_finish(self, *, all_lines):
         # 何もしない
         return all_lines
 
