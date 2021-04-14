@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "csv_transformer"
+name = "j2render"
 version = "0.1.0"
 description = ""
 authors = ["akio-1978 <akio.ogawa01@gmail.com>"]
