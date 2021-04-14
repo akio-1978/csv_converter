@@ -1,10 +1,10 @@
 import sys
 import io
 import argparse
-from text_converter.csv_converter import CsvConverter, CsvConverterContext
+from j2render.csvrenderlogic import CsvRenderLogic, CsvRenderContext
 
 
-class ContextBuilder():
+class CsvContextBuilder():
 
     def argument_to_context(self, args):
         # コマンドライン引数の処理
@@ -31,7 +31,7 @@ class ContextBuilder():
         return context
 
     def create_context(self, *, namespace):
-        context = CsvConverterContext(template_source = namespace.template)        
+        context = CsvRenderContext(template_source = namespace.template)        
 
         context.csv = namespace.csv
         context.options = namespace.key_value_options
@@ -42,9 +42,6 @@ class ContextBuilder():
         context.output = namespace.output
 
         return context
-
-    def on_parser_created(self, parser):
-        return parser
 
 class KeyValuesParseAction(argparse.Action):
 
@@ -69,10 +66,9 @@ class DelimiterSelectAction(argparse.Action):
 
 
 def convertToFile(*, converter, source, file):
-    with open(file, mode='w') as output:
+    with open(file, mode='w', encoding=converter.context.output_encoding) as output:
         with open(source) as input:
             converter.convert(source=input, output=output)
-
 
 def convertToStdout(*, converter, source):
         with open(source) as input:
@@ -83,8 +79,8 @@ if __name__ == '__main__':
     # windows対策
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
-    context = ContextBuilder().argument_to_context(sys.argv[1:])
-    converter = CsvConverter(context=context)
+    context = CsvContextBuilder().argument_to_context(sys.argv[1:])
+    converter = CsvRenderLogic(context=context)
 
     if context.output is not None:
         convertToFile(converter=converter, source=context.csv, file=context.output)

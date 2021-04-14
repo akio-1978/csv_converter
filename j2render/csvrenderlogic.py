@@ -2,10 +2,10 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 import csv
 from . jinja2_custom_filter import sequential_group_by
-from . converter_context import ConverterContext
+from . rendercontext import RenderContext
 
 # transformerに渡すパラメータクラス
-class CsvConverterContext(ConverterContext):
+class CsvRenderContext(RenderContext):
 
     def __init__(self, *, template_source):
         super().__init__(template_source = template_source)
@@ -20,7 +20,7 @@ class CsvConverterContext(ConverterContext):
 class LineValues:
     pass
 
-class CsvConverter:
+class CsvRenderLogic:
 
     # jinja2テンプレートの生成
     def __init__(self, *, context):

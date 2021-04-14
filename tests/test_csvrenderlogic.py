@@ -1,16 +1,16 @@
 import unittest
 from io import StringIO
-from text_converter import CsvConverter, CsvConverterContext,__version__
+from j2render import CsvRenderLogic, CsvRenderContext,__version__
 from jinja2 import Environment, DictLoader
 
 def test_version():
     assert __version__ == '0.1.0'
 
-class CsvConverterTest(unittest.TestCase):
+class CsvRenderLogicTest(unittest.TestCase):
 
     def test_convert_headless(self):
 
-        context = CsvConverterContext(template_source={'template' : "{% for line in data %}{{line.col_00}}\n{% endfor %}"})
+        context = CsvRenderContext(template_source={'template' : "{% for line in data %}{{line.col_00}}\n{% endfor %}"})
         context.template_name = 'template'
         converter = DictConverter(context = context)
 
@@ -23,7 +23,7 @@ class CsvConverterTest(unittest.TestCase):
 
     def test_convert_escaped(self):
 
-        context = CsvConverterContext(template_source={'template' : "{% for line in data %}{{line.col_00}}\n{% endfor %}"})
+        context = CsvRenderContext(template_source={'template' : "{% for line in data %}{{line.col_00}}\n{% endfor %}"})
         context.template_name = 'template'
         converter = DictConverter(context = context)
 
@@ -36,7 +36,7 @@ class CsvConverterTest(unittest.TestCase):
 
     def test_convert_headered(self):
 
-        context = CsvConverterContext(template_source={'template' : "{% for line in data %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
+        context = CsvRenderContext(template_source={'template' : "{% for line in data %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
         context.template_name = 'template'
         context.use_header = True
         converter = DictConverter(context = context)
@@ -66,10 +66,10 @@ class CsvConverterTest(unittest.TestCase):
 
 
     def file_convert_test(self, *, template, expect, source, options={}):
-        context = CsvConverterContext(template_source=template)
+        context = CsvRenderContext(template_source=template)
         context.use_header = True
         context.options = options
-        converter = CsvConverter(context = context)
+        converter = CsvRenderLogic(context = context)
         converted = StringIO()
 
         with open(source) as source_reader:
@@ -79,7 +79,7 @@ class CsvConverterTest(unittest.TestCase):
             self.assertEqual(expect_reader.read(), converted.getvalue())
 
 # テスト用にDictLoaderを使うTransformer
-class DictConverter(CsvConverter):
+class DictConverter (CsvRenderLogic):
 
     def build_convert_engine(self, *, context):
         print(context.template_source)
