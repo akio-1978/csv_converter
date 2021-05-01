@@ -14,11 +14,11 @@ class CsvContextBuilder():
         # jinja2 template to use.
         parser.add_argument('template', help='jinja2 template to use.')
         parser.add_argument('csv', help='transform csv.')
-        parser.add_argument('key_value_options', nargs='*', help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
+        parser.add_argument('-O', '--options', nargs='*', help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
         # flag first line is header
-        parser.add_argument('-H', '--header', help='first line is header.', dest='use_header', action='store_true')
+        parser.add_argument('-H', '--header', help='use first line is header.', dest='use_header', action='store_true')
         # flag tab separate values
-        parser.add_argument('-T', '--tab', metavar='', help='tab separate values.', dest='delimiter', default=',', action=DelimiterSelectAction)
+        parser.add_argument('-D', '--delimiter', metavar='', help='values delimiter.', default=',')
         # output file (default stdout)
         parser.add_argument('-O', '--output', metavar='file', help='output file.')
         # source encoding
@@ -34,7 +34,7 @@ class CsvContextBuilder():
         context = CsvRenderContext(template_source = namespace.template)        
 
         context.csv = namespace.csv
-        context.options = namespace.key_value_options
+        context.options = namespace.options
         context.use_header = namespace.use_header
         context.delimiter = namespace.delimiter
         context.input_encoding = namespace.input_encoding
@@ -54,16 +54,6 @@ class KeyValuesParseAction(argparse.Action):
             key_value = value.partition('=')
             key_values[key_value[0]] = key_value[2]
         return key_values
-
-class DelimiterSelectAction(argparse.Action):
-
-    def __call__(self, parser, namespace, values, option_string):
-        delimiter = ','
-        if option_string == '-T' or option_string == '--tab':
-            delimiter = '\t'
-
-        setattr(namespace, self.dest, delimiter)
-
 
 def convertToFile(*, converter, source, file):
     with open(file, mode='w', encoding=converter.context.output_encoding) as output:

@@ -17,7 +17,7 @@ class CsvRenderLogicTest(unittest.TestCase):
         source = StringIO('A0001,C0002 \n B0001,C0002  \n   C0001,C0002')
         result = StringIO()
 
-        converter.convert(source = source, output = result)
+        converter.render(source = source, output = result)
 
         self.assertEqual('A0001\nB0001\nC0001\n\n', result.getvalue())
 
@@ -30,7 +30,7 @@ class CsvRenderLogicTest(unittest.TestCase):
         source = StringIO('"A00,01",C0002 \n B0001,C0002  \n   C0001,C0002')
         result = StringIO()
 
-        converter.convert(source = source, output = result)
+        converter.render(source = source, output = result)
 
         self.assertEqual('A00,01\nB0001\nC0001\n\n', result.getvalue())
 
@@ -44,7 +44,7 @@ class CsvRenderLogicTest(unittest.TestCase):
         source = StringIO('FIRST, SECOND\n C0001,C0002')
         result = StringIO()
 
-        converter.convert(source = source, output = result)
+        converter.render(source = source, output = result)
 
         self.assertEqual('C0001<=>C0002\n', result.getvalue())
 
@@ -73,7 +73,7 @@ class CsvRenderLogicTest(unittest.TestCase):
         converted = StringIO()
 
         with open(source) as source_reader:
-            converter.convert(source=source_reader, output=converted)
+            converter.render(source=source_reader, output=converted)
 
         with open(expect) as expect_reader:
             self.assertEqual(expect_reader.read(), converted.getvalue())
