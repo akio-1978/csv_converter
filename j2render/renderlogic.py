@@ -32,7 +32,7 @@ class RenderLogic:
     def result(self, *, result, output):
         print(
             self.template.render(
-                {'data' : result, 'options' : self.context.options}
+                {'data' : result, 'parameters' : self.context.parameters}
             ),
             file = output
         )

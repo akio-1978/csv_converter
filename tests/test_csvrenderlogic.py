@@ -50,33 +50,35 @@ class CsvRenderLogicTest(unittest.TestCase):
 
     def test_simple_json(self):
         self.file_convert_test(template = 'tests/templates/simple_json.tmpl',
-                                expect = 'tests/converted_file/simple_json.txt',
-                                source = 'tests/convert_source_file/simple_json.csv')
+                                expect = 'tests/rendered_file/simple_json.txt',
+                                source = 'tests/render_source_file/simple_json.csv')
 
     def test_group_by(self):
         self.file_convert_test(template = 'tests/templates/group_by.tmpl',
-                                expect = 'tests/converted_file/group_by.yml',
-                                source ='tests/convert_source_file/group_by.csv')
+                                expect = 'tests/rendered_file/group_by.yml',
+                                source ='tests/render_source_file/group_by.csv')
 
-    def test_options(self):
-        self.file_convert_test(template = 'tests/templates/group_by.tmpl',
-                                expect = 'tests/converted_file/group_by.yml',
-                                source = 'tests/convert_source_file/group_by.csv',
-                                options = {'list_name' : 'Yurakucho-line-stations-in-ward'})
+    def test_parameters(self):
+        self.file_convert_test(template = 'tests/templates/options.tmpl',
+                                expect = 'tests/rendered_file/options.yml',
+                                source = 'tests/render_source_file/options.csv',
+                                parameters = {'list_name' : 'Yurakucho-line-stations-in-ward'})
 
 
-    def file_convert_test(self, *, template, expect, source, options={}):
-        context = CsvRenderContext(template_source=template)
+    def file_convert_test(self, *, template, expect, source, parameters={}):
+        context = CsvRenderContext(template_source=template, parameters=parameters)
         context.use_header = True
-        context.options = options
+        context.parameters = parameters
         converter = CsvRenderLogic(context = context)
-        converted = StringIO()
+        rendered = StringIO()
 
         with open(source) as source_reader:
-            converter.render(source=source_reader, output=converted)
+            converter.render(source=source_reader, output=rendered)
 
         with open(expect) as expect_reader:
-            self.assertEqual(expect_reader.read(), converted.getvalue())
+            self.assertEqual(expect_reader.read(), rendered.getvalue())
+        
+        return rendered
 
 # テスト用にDictLoaderを使うTransformer
 class DictConverter (CsvRenderLogic):

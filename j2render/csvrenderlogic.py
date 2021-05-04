@@ -8,13 +8,12 @@ from . renderlogic import RenderLogic
 # transformerに渡すパラメータクラス
 class CsvRenderContext(RenderContext):
 
-    def __init__(self, *, template_source):
-        super().__init__(template_source = template_source)
+    def __init__(self, *, template_source, parameters={}):
+        super().__init__(template_source = template_source, parameters = parameters)
         self.use_header = False
         self.encoding = 'utf8'
         self.delimiter = ','
         self.header_prefix='col_'
-        self.options={}
         self.headers = None
         self.line_object = LineValues
 
