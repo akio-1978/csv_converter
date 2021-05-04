@@ -1,4 +1,4 @@
-{{options.list_name}}:
+{{parameters.list_name}}:
   ward:
 {%- for ward, stations in data | sequential_group_by('ward') %}
     - {{ward}}: 
