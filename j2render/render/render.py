@@ -3,7 +3,7 @@ from jinja2 import Environment, FileSystemLoader
 from . jinja2_custom_filter import sequential_group_by
 
 
-class RenderLogic:
+class Render:
 
     # jinja2テンプレートの生成
     def __init__(self, *, context):
@@ -27,7 +27,7 @@ class RenderLogic:
         self.result(result = result, output = output)
 
     def read_source(self, *, reader):
-        return reader.read()
+        return reader
 
     def result(self, *, result, output):
         print(

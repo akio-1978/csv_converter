@@ -1,22 +1,20 @@
 import sys
-import io
 import argparse
-from j2render.command.csv_command import CsvCommand
-from j2render.render.csvrenderlogic import CsvRenderContext
+from . command.csv_command import CsvCommand
+from . render.csv_render import CsvRenderContext
 
 
 class Starter():
 
-    def execute(self):
+    def setup(self):
         self.parser = self.create_mainparser()
         self.subparsers = self.parser.add_subparsers(required=True)
-        self.create_subparsers()
+        self.set_subparsers()
 
-    def execute_render(self, *, render, namespace):
-        namespace = self.parser.parse_args()
-        render = namespace.command_class()
-        context = render.create_context()
-        self.assign_args(context=context, namespace=namespace)
+    def set_subparsers(self):
+        csv_parser = self.parser.add_parser('csv', help = 'rendaring csv format')
+        csv_parser.set_defaults(command_class = CsvCommand)
+        csv_parser.set_defaults(context_class = CsvRenderContext)
 
     def create_mainparser():
         base_parser = argparse.ArgumentParser()
@@ -32,10 +30,32 @@ class Starter():
 
         return base_parser
 
-    def create_subparsers(self):
-        csv_parser = self.parser.add_parser('csv', help = 'rendaring csv format')
-        csv_parser.set_defaults(command_class = CsvCommand)
-        csv_parser.set_defaults(context_class = CsvRenderContext)
+    def create_render(self):
+        namespace = self.parser.parse_args()
+        command = namespace.command_class()
+        context = command.create_context()
+        self.assign_args(context=context, namespace=namespace)
+        return command.render_class(context=context)
+
+    def execute(self, *, context):
+
+        render = self.create_render()
+
+        in_stream = sys.stdin
+        out_stream = sys.stdout
+        try:
+            if in_stream is not context.source:
+                in_stream = open(context.source, encoding=context.input_encoding)
+            if out_stream is not context.out:
+                out_stream = open(context.out, encoding=context.output_encoding)
+
+            render.render(source = in_stream, output = out_stream)
+        finally:
+            if in_stream is not context.source:
+                in_stream.close()
+            if out_stream is not context.out:
+                out_stream.close()
+
 
     # コマンド引数からコンテキストを作る
     def assign_args(self, *, context, namespace):
@@ -43,7 +63,6 @@ class Starter():
         for (key, value) in arguments:
             setattr(context, key, value)
         return context
-
 
 class KeyValuesParseAction(argparse.Action):
 
@@ -58,12 +77,7 @@ class KeyValuesParseAction(argparse.Action):
         return key_values
 
 
-def convertToFile(*, converter, source, file):
-    with open(file, mode='w', encoding=converter.context.output_encoding) as output:
-        with open(source) as input:
-            converter.convert(source=input, output=output)
-
-def convertToStdout(*, converter, source):
-        with open(source) as input:
-            converter.convert(source=input, output=sys.stdout)
-
+if __name__ == '__main__':
+    starter = Starter()
+    starter.setup()
+    starter.execute()

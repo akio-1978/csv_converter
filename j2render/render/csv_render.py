@@ -1,24 +1,19 @@
-from pathlib import Path
-from jinja2 import Environment, FileSystemLoader
 import csv
-from . jinja2_custom_filter import sequential_group_by
-from . rendercontext import RenderContext
-from . renderlogic import RenderLogic
+from .render_context import RenderContext
+from . render import Render
 
 # transformerに渡すパラメータクラス
-class CsvRenderContext(RenderContext):
+class CsvRenderContext(Render):
     def __init__(self):
         self.use_header = False
         self.encoding = 'utf8'
         self.delimiter = ','
         self.header_prefix='col_'
-        self.headers = None
-        self.line_object = LineValues
+        self.headers = []
+        self.skip_lines = 0
 
-class LineValues:
-    pass
 
-class CsvRenderLogic(RenderLogic):
+class CsvRender(RenderLogic):
 
     # jinja2テンプレートの生成
     def __init__(self, *, context):
@@ -45,11 +40,11 @@ class CsvRenderLogic(RenderLogic):
 
     # カラムのlistをdictに変換する。dictのキーはself.headers
     def columns_to_dict(self, *, columns):
-        line = self.context.line_object()
+        line = {}
         # カラムとヘッダの長さは揃っていることが前提
         for header, column in zip(self.headers, columns):
             # カラム単体の変換処理を行う
-            setattr(line, header, self.read_column(name = header, column = column))
+            line[header] = self.read_column(name = header, column = column)
 
         return line
 
