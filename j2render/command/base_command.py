@@ -1,7 +1,7 @@
 import sys
 import argparse
 
-from ..render.base_render import Render
+from ..render.base_render import Render, RenderContext
 
 # CommandRunnerのデフォルト実装
 class Command():
@@ -19,7 +19,7 @@ class Command():
         return subparser
 
     def context_class(self):
-        return {}
+        return RenderContext()
 
     def render_class(self, *, context):
         return Render(context=context)
