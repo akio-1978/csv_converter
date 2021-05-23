@@ -15,14 +15,12 @@ class Starter():
     def set_subparsers(self, *, subparser):
         csv_command = CsvCommand()
         csv_parser = subparser.add_parser('csv', help = 'rendaring csv format')
-        csv_command.set_subparser(subparser=csv_parser)
+        csv_command.add_arguments(subparser=csv_parser)
         csv_parser.set_defaults(command_instance = csv_command)
-        csv_parser.set_defaults(context_class = CsvRenderContext)
         nop_command = Command()
         nop_parser = subparser.add_parser('nop', help = 'NOP for test')
-        nop_command.set_subparser(subparser=nop_parser)
+        nop_command.add_arguments(subparser=nop_parser)
         nop_parser.set_defaults(command_instance = nop_command)
-        nop_parser.set_defaults(context_class = RenderContext)
 
     def create_mainparser(self):
         base_parser = argparse.ArgumentParser(prog='j2render')
@@ -36,9 +34,9 @@ class Starter():
 
         namespace = self.parser.parse_args(self.args)
         command = namespace.command_instance
-        context = command.context_class()
+        context = command.context()
         self.assign_args(context=context, namespace=namespace)
-        render = command.render_class(context=context)
+        render = command.render(context=context)
 
         self.render_io(render=render, context=context)
 

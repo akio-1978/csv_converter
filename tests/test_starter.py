@@ -9,6 +9,15 @@ class StarterTest(unittest.TestCase):
         sys.stdout = io.StringIO()
         Starter(args=['csv', 'tests/templates/simple_json.tmpl', 'tests/render_source_file/simple_json.csv', '-p' ,'A=B']).execute()
 
+    def test_start_args(self):
+        sys.stdout = io.StringIO()
+        Starter(args=['csv', 'tests/templates/simple_json.tmpl', 'tests/render_source_file/simple_json.csv',
+             '-d',',', '-p' ,'A=B']).execute()
+    def test_start_basic_args(self):
+        sys.stdout = io.StringIO()
+        Starter(args=['csv', 'tests/templates/simple_json.tmpl', 'tests/render_source_file/simple_json.csv',
+             '--input-encoding','euc-jp', '-p' ,'A=B']).execute()
+
     # <pending> test the show help
     # def test_help(self):
     #     Starter(args=['-h']).execute()

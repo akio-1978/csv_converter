@@ -1,12 +1,12 @@
 import sys
 import argparse
 
-from ..render.base_render import Render
+from ..render.base_render import Render, RenderContext
 
 # CommandRunnerのデフォルト実装
 class Command():
 
-    def set_subparser(self, subparser):
+    def add_arguments(self, subparser):
         subparser.add_argument('template', help='jinja2 template to use.')
         subparser.add_argument('source', help='rendering text.', nargs='?', default=sys.stdin)
         # output file (default stdout)
@@ -18,10 +18,10 @@ class Command():
         subparser.add_argument('-p', '--parameters', nargs='*', help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
         return subparser
 
-    def context_class(self):
-        return {}
+    def context(self):
+        return RenderContext()
 
-    def render_class(self, *, context):
+    def render(self, *, context):
         return Render(context=context)
 
 
