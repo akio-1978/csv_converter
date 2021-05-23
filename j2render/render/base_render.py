@@ -2,6 +2,12 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 from . jinja2_custom_filter import sequential_group_by
 
+# renderの動作を決定するコンテキスト
+class RenderContext:
+
+    def __init__(self, *, template=None, parameters={}):
+        self.template = template
+        self.parameters = parameters
 
 class Render:
 
@@ -12,7 +18,7 @@ class Render:
 
     # 別の方法でテンプレートを生成する場合はオーバーライドする
     def build_convert_engine(self, *, context):
-        path = Path(context.template_source)
+        path = Path(context.template)
         environment = Environment(loader = FileSystemLoader(path.parent, encoding=context.encoding))
         environment.filters['sequential_group_by'] = sequential_group_by
         self.template = environment.get_template(path.name)

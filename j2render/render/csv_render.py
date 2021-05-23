@@ -1,10 +1,10 @@
 import csv
-from .render_context import RenderContext
-from . render import Render
+from . base_render import Render, RenderContext
 
 # transformerに渡すパラメータクラス
-class CsvRenderContext(Render):
-    def __init__(self):
+class CsvRenderContext(RenderContext):
+    def __init__(self, *, template=None, parameters={}):
+        super().__init__(template=template, parameters=parameters)
         self.use_header = False
         self.encoding = 'utf8'
         self.delimiter = ','
@@ -13,7 +13,7 @@ class CsvRenderContext(Render):
         self.skip_lines = 0
 
 
-class CsvRender(RenderLogic):
+class CsvRender(Render):
 
     # jinja2テンプレートの生成
     def __init__(self, *, context):
@@ -46,7 +46,11 @@ class CsvRender(RenderLogic):
             # カラム単体の変換処理を行う
             line[header] = self.read_column(name = header, column = column)
 
+        print('dict: ', line)
         return line
+
+    def columns_dict(self, *, columns_dict):
+        return columns_dict
 
     def read_headers(self, *, context, columns):
         headers = []
@@ -60,6 +64,7 @@ class CsvRender(RenderLogic):
                 header = context.header_prefix + str(idx).zfill(2)
 
             headers.append(header)
+        print('header: ', headers)
         return headers
 
     # hook by every column
