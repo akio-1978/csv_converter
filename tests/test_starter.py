@@ -7,15 +7,15 @@ class StarterTest(unittest.TestCase):
 
     def test_start(self):
         sys.stdout = io.StringIO()
-        Starter(args=['csv', 'tests/templates/simple_json.tmpl', 'tests/render_source_file/simple_json.csv', '-p' ,'A=B']).execute()
+        Starter(args=['csv', 'tests/csv/templates/simple_json.tmpl', 'tests/csv/render_source_file/simple_json.csv', '-p' ,'A=B']).execute()
 
     def test_start_args(self):
         sys.stdout = io.StringIO()
-        Starter(args=['csv', 'tests/templates/simple_json.tmpl', 'tests/render_source_file/simple_json.csv',
+        Starter(args=['csv', 'tests/csv/templates/simple_json.tmpl', 'tests/csv/render_source_file/simple_json.csv',
              '-d',',', '-p' ,'A=B']).execute()
     def test_start_basic_args(self):
         sys.stdout = io.StringIO()
-        Starter(args=['csv', 'tests/templates/simple_json.tmpl', 'tests/render_source_file/simple_json.csv',
+        Starter(args=['csv', 'tests/csv/templates/simple_json.tmpl', 'tests/csv/render_source_file/simple_json.csv',
              '--input-encoding','euc-jp', '-p' ,'A=B']).execute()
 
     # <pending> test the show help

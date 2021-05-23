@@ -48,19 +48,19 @@ class CsvRenderTest(unittest.TestCase):
         self.assertEqual('C0001<=>C0002\n', result.getvalue())
 
     def test_simple_json(self):
-        self.file_convert_test(template = 'tests/templates/simple_json.tmpl',
-                                expect = 'tests/rendered_file/simple_json.txt',
-                                source = 'tests/render_source_file/simple_json.csv')
+        self.file_convert_test(template = 'tests/csv/templates/simple_json.tmpl',
+                                expect = 'tests/csv/rendered_file/simple_json.txt',
+                                source = 'tests/csv/render_source_file/simple_json.csv')
 
     def test_group_by(self):
-        self.file_convert_test(template = 'tests/templates/group_by.tmpl',
-                                expect = 'tests/rendered_file/group_by.yml',
-                                source ='tests/render_source_file/group_by.csv')
+        self.file_convert_test(template = 'tests/csv/templates/group_by.tmpl',
+                                expect = 'tests/csv/rendered_file/group_by.yml',
+                                source ='tests/csv/render_source_file/group_by.csv')
 
     def test_parameters(self):
-        self.file_convert_test(template = 'tests/templates/options.tmpl',
-                                expect = 'tests/rendered_file/options.yml',
-                                source = 'tests/render_source_file/options.csv',
+        self.file_convert_test(template = 'tests/csv/templates/options.tmpl',
+                                expect = 'tests/csv/rendered_file/options.yml',
+                                source = 'tests/csv/render_source_file/options.csv',
                                 parameters = {'list_name' : 'Yurakucho-line-stations-in-ward'})
 
 
