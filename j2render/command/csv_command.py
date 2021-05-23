@@ -10,8 +10,7 @@ class CsvCommand(Command):
         # flag tab separate values
         csv_command_parser.add_argument('-d', '--delimiter', metavar='', help='values delimiter.', default=',')
         # skip head lines
-        csv_command_parser.add_argument('-s', '--skip-lines', metavar='', help='skip head lines.', default=0)
-        print('csv parser ready')
+        csv_command_parser.add_argument('-s', '--skip-lines', metavar='', help='skip first n lines.', default=0)
         return csv_command_parser
 
     def context_class(self):
