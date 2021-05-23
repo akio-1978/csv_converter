@@ -66,6 +66,9 @@ class Starter():
         return context
 
 
-if __name__ == '__main__':
-    starter = Starter(sys.argv)
+def main():
+    starter = Starter(args=sys.argv[1:])
     starter.execute()
+
+if __name__ == '__main__':
+    main()
