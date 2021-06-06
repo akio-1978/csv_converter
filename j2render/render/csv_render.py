@@ -3,8 +3,8 @@ from . base_render import Render, RenderContext
 
 # transformerに渡すパラメータクラス
 class CsvRenderContext(RenderContext):
-    def __init__(self, *, template=None, parameters={}):
-        super().__init__(template=template, parameters=parameters)
+    def __init__(self, *, template=None, template_encoding='utf8', parameters={}):
+        super().__init__(template=template, template_encoding=template_encoding, parameters=parameters)
         self.use_header = False
         self.encoding = 'utf8'
         self.delimiter = ','

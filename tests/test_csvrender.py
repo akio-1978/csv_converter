@@ -83,7 +83,6 @@ class CsvRenderTest(unittest.TestCase):
 class DictConverter (CsvRender):
 
     def build_convert_engine(self, *, context):
-        print(context.template)
         environment = Environment(loader = DictLoader(context.template))
         self.template = environment.get_template(context.template_name)
 

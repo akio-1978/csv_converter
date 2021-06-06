@@ -1,0 +1,9 @@
+create table {{ data.table_name }}(
+{%- for column in data.columns %}
+    {% if column.type == 'id' -%}
+        {{column.name}} integer not null primary key{% if not loop.last %},{% endif %}
+    {%- else -%}
+        {{column.name}} {{column.type}} not null{%- if not loop.last %},{% endif -%}
+    {%- endif -%}
+{% endfor %}
+)

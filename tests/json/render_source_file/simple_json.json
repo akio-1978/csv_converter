@@ -1,0 +1,22 @@
+{
+    "table_name" : "item_shop",
+    "columns" : [
+        {
+            "name" : "id",
+            "type" : "id",
+            "primary_key" : true
+        },
+        {
+            "name" : "item_name",
+            "type" : "varchar(255)"
+        },
+        {
+            "name" : "price",
+            "type" : "integer"
+        },
+        {
+            "name" : "comment",
+            "type" : "varchar(255)"
+        }
+    ]
+}

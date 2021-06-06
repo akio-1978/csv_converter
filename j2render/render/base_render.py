@@ -5,9 +5,10 @@ from . jinja2_custom_filter import sequential_group_by
 # renderの動作を決定するコンテキスト
 class RenderContext:
 
-    def __init__(self, *, template=None, parameters={}):
+    def __init__(self, *, template=None, template_encoding='utf8', parameters={}):
         self.template = template
         self.parameters = parameters
+        self.template_encoding = template_encoding
 
 class Render:
 
@@ -19,7 +20,7 @@ class Render:
     # 別の方法でテンプレートを生成する場合はオーバーライドする
     def build_convert_engine(self, *, context):
         path = Path(context.template)
-        environment = Environment(loader = FileSystemLoader(path.parent, encoding=context.encoding))
+        environment = Environment(loader = FileSystemLoader(path.parent, encoding=context.template_encoding))
         environment.filters['sequential_group_by'] = sequential_group_by
         self.template = environment.get_template(path.name)
 

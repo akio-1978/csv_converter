@@ -1,13 +1,12 @@
+from . base_render import Render, RenderContext
 import json
-from pathlib import Path
-from jinja2 import Environment, FileSystemLoader
-from . jinja2_custom_filter import sequential_group_by
 
 # renderの動作を決定するコンテキスト
-class JsonRenderContext:
-    pass
+class JsonRenderContext(RenderContext):
+    def __init__(self, *, template=None, parameters={}):
+        super().__init__(template=template, parameters=parameters)
 
-class JsonRender:
+class JsonRender(Render):
 
     # jinja2テンプレートの生成
     def __init__(self, *, context):
