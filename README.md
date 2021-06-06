@@ -1,26 +1,23 @@
-# csv_converter
-機械翻訳英語に少しづつ修正中当分日英併記
-rewriting to english slowly. 
+# j2render
+pythonのテンプレートjinja2を使用して、任意のテキストのレンダリングを行うプログラムです。
 
-convert CSV format by Jinja2 Template Engine.
+## 同じようなプログラムは既に存在しますが？
+* j2renderは他のプログラムがサポートしない**csvファイルのレンダリング**をサポートします。
+* レンダリングの前処理のためのカスタマイズ性を重視しています。
+* json/yaml等のファイル形式もサポート予定です。
 
-## Features
-* convert csv any format by template.
-* can specify the extra value to not included in csv by argument.
-* if hard to convert by janja template only. can pre process by python.
-  * require converter class override
-* for keep line sequence. added unsorted group filter.(like uniq)
+このreadmeは当面日本語のみで書きます。
 
-* テンプレートを使うことによって、csvファイルの内容を構造化した形式に変換できる
-* csvファイルに含まれる内容だけでない、任意の文字列をオプションとして追加できる
-* if jijna2テンプレート変換しづらい場合、pythonコードで変換の前処理ができます
-  * 変換クラスのオーバーライドが必要になります
-* jinja2にソートしない"group_by"フィルタを追加(`uniq`コマンドみたいな動作をします)
   
-## Example
-This is an example of converting stations on the Tokyo Metro Yurakucho Line into YAML classified by location.
-東京メトロ有楽町線の駅を所在地の市区ごとに分類したYAMLに変換する例です。
-### source csv file
+## サンプル
+駅に関するデータを並べたcsvファイルを、所在地ごとにグルーピングしたyamlに変換します。
+### ソースcsvファイル
+csvファイルには、東京メトロ有楽町線に関する以下のデータが含まれます。
+* 路線コード
+  * 有楽町線は全て"Y"です。
+* 駅番号
+* 駅名
+* 駅の所在する自治体
 ``` csv
 line,number,name,ward
 Y,1,Wakoshi,Wako-shi
@@ -33,7 +30,8 @@ Y,7,Senkawa,Toshima-Ku
 Y,8,Kanamecho,Toshima-Ku
 Y,9,Ikebukuro,Toshima-Ku
 ```
-### Template to use
+### 適用するテンプレート
+j2renderを使って、csvファイルに以下のテンプレートを適用します。
 ```
 stations:
   ward:
@@ -44,7 +42,8 @@ stations:
 {%- endfor %}
 {%- endfor %}
 ```
-### Conversion result
+### 変換結果
+自治体ごとにグルーピングされたyamlが出力されます
 ``` yml
 stations:
   ward:
@@ -62,26 +61,5 @@ stations:
       - Y-8: Kanamecho
       - Y-9: Ikebukuro
 ```
-## Command
-``` 
-python -m csv_converter.convert [-h] [-H] [-T DELIMITER] [-O file] [--input-encoding enc] [--output-encoding enc] template csv [key_value_options ...]
-```
-arguments
-``` 
-usage: convert.py [-h] [-H] [-T] [-O file] [--input-encoding enc] [--output-encoding enc] template csv [key_value_options ...]
-
-positional arguments:
-  template              jinja2 template to use.
-  csv                   transform csv.
-  key_value_options     additional values [KEY=VALUE] format.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -H, --header          first line is header.
-  -T , --tab            tab separate values.
-  -O file, --output file
-                        output file.
-  --input-encoding enc  file encoding.
-  --output-encoding enc
-                        output file encoding.
-```
+## コマンド
+**大幅に変更したため書き直しています。**
