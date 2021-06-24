@@ -1,6 +1,6 @@
 import unittest
 from io import StringIO
-from j2render.render.csv_render import CsvRender, CsvRenderContext
+from j2shrine.render.csv_render import CsvRender, CsvRenderContext
 from jinja2 import Environment, DictLoader
 
 class CsvRenderTest(unittest.TestCase):

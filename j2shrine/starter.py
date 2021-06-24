@@ -4,7 +4,6 @@ from . command.base_command import Command
 from . command.csv_command import CsvCommand
 from . render.base_render import RenderContext
 from . render.csv_render import CsvRenderContext
-from j2render.command import csv_command
 
 
 class Starter():
@@ -23,7 +22,7 @@ class Starter():
         nop_parser.set_defaults(command_instance = nop_command)
 
     def create_mainparser(self):
-        base_parser = argparse.ArgumentParser(prog='j2render')
+        base_parser = argparse.ArgumentParser(prog='j2render', add_help=True)
 
         return base_parser
 
@@ -65,7 +64,7 @@ class Starter():
 
 
 def main():
-    starter = Starter(args=sys.argv[1:])
+    starter = Starter(args=sys.argv[1:] if len(sys.argv) > 1 else ['', ''])
     starter.execute()
 
 if __name__ == '__main__':

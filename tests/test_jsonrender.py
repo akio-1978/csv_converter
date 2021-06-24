@@ -1,6 +1,6 @@
 import unittest
 from io import StringIO
-from j2render.render.json_render import JsonRender, JsonRenderContext
+from j2shrine.render.json_render import JsonRender, JsonRenderContext
 
 class CsvRenderTest(unittest.TestCase):
 

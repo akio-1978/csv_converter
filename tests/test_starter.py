@@ -1,7 +1,7 @@
 import sys
 import io
 import unittest
-from j2render.starter import Starter
+from j2shrine.starter import Starter
 
 class StarterTest(unittest.TestCase):
 
