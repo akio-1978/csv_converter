@@ -3,3 +3,4 @@ __pycache__
 .vs
 .vscode
 .pytest_cache
+dist
