@@ -1,5 +1,4 @@
 import openpyxl
-from openpyxl.worksheet
 from . base_render import Render, RenderContext
 
 # transformerに渡すパラメータクラス
@@ -9,15 +8,12 @@ class ExcelRenderContext(RenderContext):
         self.encoding = 'utf8'
         self.sheet_no = 0
         self.header_prefix='col_'
-        self.header_area = None
-        self.headers = None         # Xn:Xn
-        self.start_line = None      # A-Z
-        self.start = '1'
-
+        self.headers = None         
+        self.header_area = None     # ex."A2:M2"
+        self.start_line = None      # ex."A3:M3"
+        self.read_limit = None 
 
 class ExcelRender(Render):
-
-    COLMUN_LABELS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
     # jinja2テンプレートの生成
     def __init__(self, *, context :ExcelRenderContext):
@@ -33,42 +29,37 @@ class ExcelRender(Render):
         return openpyxl.load_workbook(source)
 
     def read_source(self, *, reader):
-
-        # ヘッダの読込み
-        self.headers = self
+        # シート取り出し
+        sheet = reader.worksheets[0]
         lines = []
-        for line_no, columns in enumerate(reader):
-            
-            line = self.columns_to_dict(columns = columns)
-            lines.append(line)
+        # ヘッダの読込み
+        self.headers = self.read_headers(sheet=sheet)
+       # コンテンツ読込み
+        (left, right) = self.get_cells(sheet=sheet, cells=self.context.start_line)
+
+        for row in sheet.iter_rows(min_col=left.column, min_row=left.row , max_col=right.column, max_row=self.context.read_limit, ):
+            lines.append(self.columns_to_dict(columns = row))
 
         return lines
 
-    def read_headers(self, *, sheet:openpyxl.worksheet.workshet):
+    def read_headers(self, *, sheet:openpyxl.worksheet.worksheet):
         headers = []
         if self.context.headers is not None:
             self.headers = self.context.headers
         elif self.context.header_area is not None:
-            (start_col, start_row, end_col, end_row) = self.region_indice(sheet=sheet, cells=self.context.header_area)
-            row = sheet.iter_rows(min_col=start_col, min_row=start_row,
-                                        max_col=end_col, max_row=end_row)
 
-            for cell in row:
-                headers.append(cell.value)
+            (left, right) = self.get_cells(sheet=sheet, cells=self.context.header_area)
+            for row in sheet.iter_rows(min_col=left.column, min_row=left.row,
+                                        max_col=right.column, max_row=right.row):
+                for cell in row:
+                    headers.append(cell.value)
             return headers
         else: # ヘッダは指定されていない
             return []
 
-    def cell_index(self,*,  sheet, cell_name):
-        cell = sheet[cell_name]
-        return (cell.column, cell.row)
-
-    def region_indice(self, *, sheet, cells:str) :
-        (start_cell, end_cell) = cells.split(':')
-        
-        (start_col, start_row) = self.cell_index(sheet=sheet, cell_name=start_cell)
-        (end_col, end_row) = self.cell_index(sheet=sheet, cell_name=end_cell)
-        return (start_cell, start_row)
+    def get_cells(self, *, sheet, cells):
+        (left, right) = cells.split(':')
+        return (sheet[left], sheet[right])
 
     # カラムのlistをdictに変換する。dictのキーはself.headers
     def columns_to_dict(self, *, columns):
@@ -78,7 +69,6 @@ class ExcelRender(Render):
             # カラム単体の変換処理を行う
             line[header] = self.read_column(name = header, column = column)
 
-        print('dict: ', line)
         return line
 
     def columns_dict(self, *, columns_dict):
@@ -86,5 +76,6 @@ class ExcelRender(Render):
 
     # hook by every column
     def read_column(self, *, name, column):
-        return column.strip()
+        # データの取り出し
+        return column.value
 
