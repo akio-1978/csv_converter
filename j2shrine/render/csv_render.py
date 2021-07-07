@@ -46,7 +46,6 @@ class CsvRender(Render):
             # カラム単体の変換処理を行う
             line[header] = self.read_column(name = header, column = column)
 
-        print('dict: ', line)
         return line
 
     def columns_dict(self, *, columns_dict):
