@@ -1,19 +1,29 @@
 import openpyxl
 from . base_render import Render, RenderContext
 
-# transformerに渡すパラメータクラス
+# 取得するシート a-b
+# 取得するカラムのレンジ A-Z
+# 取得する行 n
+# option
+# ヘッダ行
+# ヘッダ直接指定
+# 追加取得セル...
 class ExcelRenderContext(RenderContext):
     def __init__(self, *, template=None, template_encoding='utf8', parameters={}):
         super().__init__(template=template, template_encoding=template_encoding, parameters=parameters)
         self.encoding = 'utf8'
-        self.sheet_no = 0
+        self.sheets = None
         self.header_prefix='col_'
         self.headers = None         
-        self.header_area = None     # ex."A2:M2"
-        self.start_line = None      # ex."A3:M3"
-        self.read_limit = None 
+        self.header_row = None     # ex."A2:M2"
+        self.start_row = None      # ex."A3:M3"
+        self.columns = None
+        self.limit = None
+        self.extra_cells =[]
 
 class ExcelRender(Render):
+
+    ALPHABET_TABLE = '0ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 
     # jinja2テンプレートの生成
     def __init__(self, *, context :ExcelRenderContext):
@@ -35,9 +45,9 @@ class ExcelRender(Render):
         # ヘッダの読込み
         self.headers = self.read_headers(sheet=sheet)
        # コンテンツ読込み
-        (left, right) = self.get_cells(sheet=sheet, cells=self.context.start_line)
+        (start, end) = self.column_range(self.context.columns)
 
-        for row in sheet.iter_rows(min_col=left.column, min_row=left.row , max_col=right.column, max_row=self.context.read_limit, ):
+        for row in sheet.iter_rows(min_col=start, min_row=self.context.start_row , max_col=end, max_row=self.context.limit, ):
             lines.append(self.columns_to_dict(columns = row))
 
         return lines
@@ -45,17 +55,21 @@ class ExcelRender(Render):
     def read_headers(self, *, sheet:openpyxl.worksheet.worksheet):
         headers = []
         if self.context.headers is not None:
-            self.headers = self.context.headers
+            headers = self.context.headers
         elif self.context.header_area is not None:
 
-            (left, right) = self.get_cells(sheet=sheet, cells=self.context.header_area)
-            for row in sheet.iter_rows(min_col=left.column, min_row=left.row,
-                                        max_col=right.column, max_row=right.row):
+            (start, end) = self.column_range(self.context.columns)
+            for row in sheet.iter_rows(min_col=start, min_row=self.context.header_row,
+                                        max_col=end, max_row=self.context.header_row):
                 for cell in row:
                     headers.append(cell.value)
-            return headers
-        else: # ヘッダは指定されていない
-            return []
+        else: 
+            (start, end) = self.column_range(self.context.columns)
+            for number in range(start. end):
+                headers.append(self.context.header_prefix + str(number).zfill(2))
+
+        return headers
+
 
     def get_cells(self, *, sheet, cells):
         (left, right) = cells.split(':')
@@ -79,3 +93,30 @@ class ExcelRender(Render):
         # データの取り出し
         return column.value
 
+    def result(self, *, result, output):
+
+        item = {
+            'headers' : self.headers,
+            'data' : result,
+            'parameters' : self.context.parameters,
+        }
+
+        return self.output(result=item, output = output)
+    
+    def column_number(self, *, column:str):
+        fulldigit = column.zfill(3)
+
+        number = 0
+        number = number + (int( self.ALPHABET_TABLE.find(fulldigit[0])) * 26 * 26)
+        number = number + (int(self.ALPHABET_TABLE.find(fulldigit[1])) * 26)
+        number = number + (int(self.ALPHABET_TABLE.find(fulldigit[2])))
+
+        return number
+    
+    def column_range(self, *, column_range:str):
+        (start, end) = column_range.split('-')
+        return (self.column_number(start), self.column_number(end))
+
+    def sheets_range(self, *, sheets):
+        (start, end) = sheets.split('-')
+        return (int(start), int(end))
