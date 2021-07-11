@@ -35,11 +35,15 @@ class Render:
 
     def read_source(self, *, reader):
         return reader
-
+    
     def result(self, *, result, output):
+        self.output(result={'data' : result, 
+            'parameters' : self.context.parameters, }, output=output)
+
+    def output(self, *, result, output):
         print(
             self.template.render(
-                {'data' : result, 'parameters' : self.context.parameters}
+                result
             ),
             file = output
         )
