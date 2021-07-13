@@ -15,9 +15,9 @@ class ExcelRenderContext(RenderContext):
         self.sheets = '0'
         self.header_prefix='col_'
         self.headers = None         
-        self.header_row = '0'     # ex."A2:M2"
-        self.start_row = None      # ex."A3:M3"
-        self.columns = 'A'
+        self.header_row = '0'     # ex. 1
+        self.rows = '1'      # 1 1-2 1-
+        self.columns = 'A'  # A A-B A-
         self.limit = None
         self.extra_cells =[]
 
@@ -29,6 +29,21 @@ class ExcelRender(Render):
     # jinja2テンプレートの生成
     def __init__(self, *, context :ExcelRenderContext):
         super().__init__(context = context)
+        # シートからの取得範囲は最初に特定する
+
+    def setup_range(self):
+        (left, right) = self.column_range(self.context.columns)
+        self.left = self.column_number(column=int(left)) if left is not None else 'A'
+        self.right = self.column_number(column=int(right)) if right is not None else None
+
+        (top, bottom) = self.column_range(self.context.rows)
+        self.top = int(top) if top is not None else 1
+        self.bottom = int(bottom) if bottom is not None else None
+
+        (sheet_left, sheet_right) = self.column_range(self.context.sheets)
+        self.sheet_left = int(sheet_left) if sheet_left is not None else 0
+        self.sheet_right = int(sheet_right) if sheet_right is not None else 0
+
 
     def build_reader(self, *, source :any) :
         # 既にブックで渡された場合、そのまま返す
@@ -39,24 +54,19 @@ class ExcelRender(Render):
 
     def read_source(self, *, reader):
         # シート取り出し
-        (start_sheet, end_sheet) = self.sheets_range(sheets=self.context.sheets)
-        end_sheet = end_sheet if end_sheet is not None else len(reader.worksheets)
+        sheet_right = self.sheet_right if self.sheet_right is not None else len(reader.worksheets)
 
         all_sheets = []
-        for sheet_idx in range(start_sheet, end_sheet+1):
-            print('----')
+        for sheet_idx in range(self.sheet_left, sheet_right+1):
             sheet = reader.worksheets[sheet_idx]
             # ヘッダの読込み
             self.headers = self.read_headers(sheet=sheet)
-            # コンテンツ読込み範囲決定
-            (start, end) = self.column_range(columns= self.context.columns)
+
             # コンテンツ読込み
             sheet_content = []
-            for row in sheet.iter_rows(min_col=start, min_row=self.context.start_row , max_col=end, max_row=self.context.limit, ):
+            for row in sheet.iter_rows(min_col=self.left, min_row=self.top , max_col=self.right, max_row=self.bottom, ):
                 sheet_content.append(self.columns_to_dict(columns = row))
             all_sheets.append(sheet_content)
-            if (sheet_idx == end_sheet):
-                break
         return all_sheets
 
     def read_headers(self, *, sheet:openpyxl.worksheet.worksheet):
@@ -64,15 +74,13 @@ class ExcelRender(Render):
         if self.context.headers is not None:
             headers = self.context.headers
         elif self.context.header_area is not None:
-            (start, end) = self.column_range(columns= self.context.columns)
-            for row in sheet.iter_rows(min_col=start, min_row=int(self.context.header_row),
-                                        max_col=end, max_row=int(self.context.header_row)):
+            for row in sheet.iter_rows(min_col=self.left, min_row=int(self.context.header_row),
+                                        max_col=self.right, max_row=int(self.context.header_row)):
                 for cell in row:
                     headers.append(cell.value)
         else: 
-            (start, end) = self.column_range(self.context.columns)
-            for row in sheet.iter_rows(min_col=start, min_row=self.context.start_row,
-                                        max_col=end, max_row=self.context.start_row):
+            for row in sheet.iter_rows(min_col=self.left, min_row=self.bottom,
+                                        max_col=self.right, max_row=self.top):
                 for cell in row:
                     headers.append(cell.column_letter)
 
@@ -100,7 +108,7 @@ class ExcelRender(Render):
 
         item = {
             'headers' : self.headers,
-            'data' : result,
+            'sheet' : result,
             'parameters' : self.context.parameters,
         }
 
@@ -116,23 +124,19 @@ class ExcelRender(Render):
 
         return number
     
-    def column_range(self, *, columns:str):
-        divided = columns.partition('-')
-        if divided[0] == columns:
-            return (self.column_number(column=divided[0]), self.column_number(column=divided[0]))
-        if divided[2] != '':
-            return (int(divided[0]), int(divided[2]))
-        else:
-            return (int(divided[0]), None)
+    def parse_range(self, *, arg_range:str):
 
-    def sheets_range(self, *, sheets):
-        divided = sheets.partition('-')
-        if divided[0] == sheets:
-            return (int(sheets), int(sheets))
+        if (arg_range is None):
+            return (None, None)
+
+        divided = arg_range.partition('-')
+        if divided[0] == arg_range:
+            return (divided[0], divided[0])
         if divided[2] != '':
-            return (int(divided[0]), int(divided[2]))
+            return (divided[0], divided[2])
         else:
-            return (int(divided[0]), None)
+            return (divided[0], None)
+
 
     def get_cell_value(self, *, sheet, cell):
         return sheet[cell].value
