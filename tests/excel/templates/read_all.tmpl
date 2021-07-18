@@ -1,0 +1,8 @@
+{% for header in headers -%}
+    A{{header}}{%if not loop.last %}/{%endif%}
+{% endfor %}
+{% for sh in sheets[0] -%}
+    {% for column in sh -%}
+    B{{ column }}{%if not loop.last %}/{% endif -%}
+    {% endfor -%}
+{% endfor %}

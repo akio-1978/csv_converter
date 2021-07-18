@@ -1,20 +1,29 @@
 import unittest
-import sys
+import openpyxl
 from io import StringIO
 from j2shrine.render.excel_render import ExcelRender, ExcelRenderContext
 
 
 class ExcelRenderTest(unittest.TestCase):
 
-    def test_by_name(self):
+    def test_read(self):
 
         context = ExcelRenderContext(template='tests/excel/templates/simple.tmpl')
-        context.header_area ='A1:G1'
-        context.start_line='A2:G2'
-        rendered = StringIO()        
-        render = ExcelRender(context=context)
-        render.render(source='tests/excel/render_source_file/simple.xlsx', output=rendered)
-        print(rendered.getvalue())
+        context.columns = 'A-G'
+        context.rows = '2-5'
+        context.header_row ='1'
+        self.file_rendering_test(context=context,
+                expect = 'tests/excel/rendered_file/simple.txt',
+                source = 'tests/excel/render_source_file/simple.xlsx')
+
+    def test_read_all(self):
+        context = ExcelRenderContext(template='tests/excel/templates/read_all.tmpl')
+        context.columns = 'A-'
+        context.rows = '2-'
+        context.header_row ='1'
+        self.file_rendering_test(context=context,
+                expect = 'tests/excel/rendered_file/read_all.txt',
+                source = 'tests/excel/render_source_file/simple.xlsx')
 
     def test_column_number(self):
         context = ExcelRenderContext(template='tests/excel/templates/simple.tmpl')
@@ -30,6 +39,19 @@ class ExcelRenderTest(unittest.TestCase):
     #     render = ExcelRender(context=context)
     #     render.render(source='tests/excel/render_source_file/simple.xlsx', output=sys.stdout)
     #     rendered = StringIO()
+
+    def file_rendering_test(self, *, context, expect, source):
+        converter = ExcelRender(context = context)
+        rendered = StringIO()
+
+        # with openpyxl.load_workbook(source) as source_reader:
+        #     converter.render(source=source_reader, output=rendered)
+        converter.render(source=source, output=rendered)
+        print(rendered.getvalue())
+        with open(expect) as expect_reader:
+            self.assertEqual(expect_reader.read(), rendered.getvalue())
+        
+        return rendered
 
 
 if __name__ == '__main__':

@@ -30,17 +30,18 @@ class ExcelRender(Render):
     def __init__(self, *, context :ExcelRenderContext):
         super().__init__(context = context)
         # シートからの取得範囲は最初に特定する
+        self.setup_range()
 
     def setup_range(self):
-        (left, right) = self.column_range(self.context.columns)
-        self.left = self.column_number(column=int(left)) if left is not None else 'A'
-        self.right = self.column_number(column=int(right)) if right is not None else None
+        (left, right) = self.parse_range(arg_range = self.context.columns)
+        self.left = self.column_number(column=left) if left is not None else 1
+        self.right = self.column_number(column=right) if right is not None else None
 
-        (top, bottom) = self.column_range(self.context.rows)
+        (top, bottom) = self.parse_range(arg_range = self.context.rows)
         self.top = int(top) if top is not None else 1
         self.bottom = int(bottom) if bottom is not None else None
 
-        (sheet_left, sheet_right) = self.column_range(self.context.sheets)
+        (sheet_left, sheet_right) = self.parse_range(arg_range = self.context.sheets)
         self.sheet_left = int(sheet_left) if sheet_left is not None else 0
         self.sheet_right = int(sheet_right) if sheet_right is not None else 0
 
@@ -69,11 +70,17 @@ class ExcelRender(Render):
             all_sheets.append(sheet_content)
         return all_sheets
 
+    # ここの形を考え直す
+    def result(self, *, result, output):
+        self.output(result={'sheets' : result, 'headers' : self.headers,
+            'parameters' : self.context.parameters, }, output=output)
+
+
     def read_headers(self, *, sheet:openpyxl.worksheet.worksheet):
         headers = []
         if self.context.headers is not None:
             headers = self.context.headers
-        elif self.context.header_area is not None:
+        elif self.context.header_row is not None:
             for row in sheet.iter_rows(min_col=self.left, min_row=int(self.context.header_row),
                                         max_col=self.right, max_row=int(self.context.header_row)):
                 for cell in row:
@@ -93,7 +100,6 @@ class ExcelRender(Render):
         for header, column in zip(self.headers, columns):
             # カラム単体の変換処理を行う
             line[header] = self.read_column(name = header, column = column)
-
         return line
 
     def columns_dict(self, *, columns_dict):
