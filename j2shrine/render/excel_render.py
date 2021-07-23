@@ -24,7 +24,7 @@ class ExcelRenderContext(RenderContext):
 class ExcelRender(Render):
 
     ALPHABET_TABLE = '0ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    # ALPHABET_TABLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    TO_END = -1
 
     # jinja2テンプレートの生成
     def __init__(self, *, context :ExcelRenderContext):
@@ -41,7 +41,7 @@ class ExcelRender(Render):
         self.top = int(top) if top is not None else 1
         self.bottom = int(bottom) if bottom is not None else None
 
-        (sheet_left, sheet_right) = self.parse_range(arg_range = self.context.sheets)
+        (sheet_left, sheet_right) = self.parse_range(arg_range = self.context.sheets, all=ExcelRender.TO_END)
         self.sheet_left = int(sheet_left) if sheet_left is not None else 0
         self.sheet_right = int(sheet_right) if sheet_right is not None else 0
 
@@ -55,10 +55,12 @@ class ExcelRender(Render):
 
     def read_source(self, *, reader):
         # シート取り出し
-        sheet_right = self.sheet_right if self.sheet_right is not None else len(reader.worksheets)
+        sheet_right = self.sheet_right if self.sheet_right != ExcelRender.TO_END else len(reader.worksheets) - 1
 
         all_sheets = []
-        for sheet_idx in range(self.sheet_left, sheet_right+1):
+        sheet_idx = self.sheet_left
+        print('idx:', sheet_idx, 'right:', sheet_right)
+        while sheet_idx <= sheet_right:
             sheet = reader.worksheets[sheet_idx]
             # ヘッダの読込み
             self.headers = self.read_headers(sheet=sheet)
@@ -70,6 +72,8 @@ class ExcelRender(Render):
                 sheet_content.append(self.columns_to_dict(columns = row))
                 # print('read:', len(sheet_content))
             all_sheets.append(sheet_content)
+            print('total sheets:', len(all_sheets))
+            sheet_idx = 1 + sheet_idx
         return all_sheets
 
     def read_finish(self, *, source_data):
@@ -92,6 +96,7 @@ class ExcelRender(Render):
                 for cell in row:
                     headers.append(cell.column_letter)
 
+        print('headers', headers)
         return headers
 
     # カラムのlistをdictに変換する。dictのキーはself.headers
@@ -122,18 +127,21 @@ class ExcelRender(Render):
 
         return number
     
-    def parse_range(self, *, arg_range:str):
+    def parse_range(self, *, arg_range:str, all=None):
 
         if (arg_range is None):
             return (None, None)
 
         divided = arg_range.partition('-')
         if divided[0] == arg_range:
+            # only one
             return (divided[0], divided[0])
         if divided[2] != '':
+            # start to end
             return (divided[0], divided[2])
         else:
-            return (divided[0], None)
+            # start to all
+            return (divided[0], all)
 
 
     def get_cell_value(self, *, sheet, cell):
