@@ -41,7 +41,6 @@ class Render:
         self.output(result=result, output=output)
 
     def output(self, *, result, output):
-        print(type(result).__name__)
         print(
             self.template.render(
                 {'data' : result, 'parameters' : self.context.parameters}

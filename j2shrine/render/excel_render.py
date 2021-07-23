@@ -74,12 +74,6 @@ class ExcelRender(Render):
 
     def read_finish(self, *, source_data):
 
-        for sheet in source_data:
-            for rows in sheet:
-                print('sheet====', rows)
-                # for (k ,v) in rows.items():
-                #     print('row====', rows)
-
         return {'sheets' : source_data, 'headers' : self.headers,}
 
 
