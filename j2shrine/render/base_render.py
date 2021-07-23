@@ -38,16 +38,13 @@ class Render:
     
     def result(self, *, result, output):
 
-        if (isinstance(result, dict)) and (not 'parameters' in result):
-            result['parameters'] = self.context.parameters
-
         self.output(result=result, output=output)
 
     def output(self, *, result, output):
-        print(result)
+        print(type(result).__name__)
         print(
             self.template.render(
-                result
+                {'data' : result, 'parameters' : self.context.parameters}
             ),
             file = output
         )
