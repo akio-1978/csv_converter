@@ -1,8 +1,6 @@
 {% for header in headers -%}
-    A{{header}}{%if not loop.last %}/{%endif%}
+    {{header}}{%if not loop.last %}/{%endif -%}
 {% endfor %}
-{% for sh in sheets[0] -%}
-    {% for column in sh -%}
-    B{{ column }}{%if not loop.last %}/{% endif -%}
-    {% endfor -%}
-{% endfor %}
+{%- for sheet in sheets %}{%- for rows in sheet %}
+{{rows.Name}}/{{rows['Head-B']}}/{{rows['Head-C']}}/{{rows['Head-D']}}/{{rows['Head-E']}}/{{rows['Head-F']}}/{{rows['Head-End']}}
+{%- endfor %}{% endfor %}

@@ -1,0 +1,10 @@
+<table>
+    <thead>
+        {% for header in headers %}<th>{{header}}</th>{% endfor %}
+    </thead>
+    <tbody>
+        {% for rows in data%}<tr>
+            {% for column in rows%}<td>{{column}}</td>{% endfor %}
+        </tr>{% endfor %}
+    </tbody>
+</table>

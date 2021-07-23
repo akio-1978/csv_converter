@@ -65,15 +65,22 @@ class ExcelRender(Render):
 
             # コンテンツ読込み
             sheet_content = []
+            print('min-col', self.left, 'min-row', self.top, 'max-col', self.right, 'max-row', self.bottom,)
             for row in sheet.iter_rows(min_col=self.left, min_row=self.top , max_col=self.right, max_row=self.bottom, ):
                 sheet_content.append(self.columns_to_dict(columns = row))
+                # print('read:', len(sheet_content))
             all_sheets.append(sheet_content)
         return all_sheets
 
-    # ここの形を考え直す
-    def result(self, *, result, output):
-        self.output(result={'sheets' : result, 'headers' : self.headers,
-            'parameters' : self.context.parameters, }, output=output)
+    def read_finish(self, *, source_data):
+
+        for sheet in source_data:
+            for rows in sheet:
+                print('sheet====', rows)
+                # for (k ,v) in rows.items():
+                #     print('row====', rows)
+
+        return {'sheets' : source_data, 'headers' : self.headers,}
 
 
     def read_headers(self, *, sheet:openpyxl.worksheet.worksheet):
@@ -100,6 +107,7 @@ class ExcelRender(Render):
         for header, column in zip(self.headers, columns):
             # カラム単体の変換処理を行う
             line[header] = self.read_column(name = header, column = column)
+            # print('read:', header, 'value:', line[header])
         return line
 
     def columns_dict(self, *, columns_dict):
@@ -109,16 +117,6 @@ class ExcelRender(Render):
     def read_column(self, *, name, column):
         # データの取り出し
         return column.value
-
-    def result(self, *, result, output):
-
-        item = {
-            'headers' : self.headers,
-            'sheet' : result,
-            'parameters' : self.context.parameters,
-        }
-
-        return self.output(result=item, output = output)
     
     def column_number(self, *, column:str):
         fulldigit = column.zfill(3)
