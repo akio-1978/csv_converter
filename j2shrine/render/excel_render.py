@@ -66,12 +66,15 @@ class ExcelRender(Render):
             self.headers = self.read_headers(sheet=sheet)
 
             # コンテンツ読込み
-            sheet_content = []
+            sheet_data = {
+                'name' : reader.sheetnames[sheet_idx],
+                'rows' : [],
+                'ext' : {}
+            }
             print('min-col', self.left, 'min-row', self.top, 'max-col', self.right, 'max-row', self.bottom,)
             for row in sheet.iter_rows(min_col=self.left, min_row=self.top , max_col=self.right, max_row=self.bottom, ):
-                sheet_content.append(self.columns_to_dict(columns = row))
-                # print('read:', len(sheet_content))
-            all_sheets.append(sheet_content)
+                sheet_data['rows'].append(self.columns_to_dict(columns = row))
+            all_sheets.append(sheet_data)
             print('total sheets:', len(all_sheets))
             sheet_idx = 1 + sheet_idx
         return all_sheets
