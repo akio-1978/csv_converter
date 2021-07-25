@@ -1,0 +1,4 @@
+{{data.headers[0]}}
+{% for line in data.sheets[0].rows -%}
+{{line.Date}}
+{% endfor -%}
