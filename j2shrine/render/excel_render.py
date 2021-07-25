@@ -19,7 +19,7 @@ class ExcelRenderContext(RenderContext):
         self.rows = '1'      # 1 1-2 1-
         self.columns = 'A'  # A A-B A-
         self.limit = None
-        self.extra_cells =[]
+        self.fixed_cells =[]
 
 class ExcelRender(Render):
 
@@ -69,7 +69,7 @@ class ExcelRender(Render):
             sheet_data = {
                 'name' : reader.sheetnames[sheet_idx],
                 'rows' : [],
-                'ext' : {}
+                'fixed' : self.read_fixed_cells(sheet= sheet)
             }
             print('min-col', self.left, 'min-row', self.top, 'max-col', self.right, 'max-row', self.bottom,)
             for row in sheet.iter_rows(min_col=self.left, min_row=self.top , max_col=self.right, max_row=self.bottom, ):
@@ -79,8 +79,13 @@ class ExcelRender(Render):
             sheet_idx = 1 + sheet_idx
         return all_sheets
 
-    def read_finish(self, *, source_data):
+    def read_fixed_cells(self, *, sheet):
+        cells = {}
+        for addr in self.context.fixed_cells:
+            cells[addr] = sheet[addr].value
+        return cells
 
+    def read_finish(self, *, source_data):
         return {'sheets' : source_data, 'headers' : self.headers,}
 
 
@@ -109,7 +114,7 @@ class ExcelRender(Render):
         for header, column in zip(self.headers, columns):
             # カラム単体の変換処理を行う
             line[header] = self.read_column(name = header, column = column)
-            # print('read:', header, 'value:', line[header])
+            print('read:', header, 'type', type(line[header]), 'value:', line[header])
         return line
 
     def columns_dict(self, *, columns_dict):
@@ -118,6 +123,7 @@ class ExcelRender(Render):
     # hook by every column
     def read_column(self, *, name, column):
         # データの取り出し
+        print('cell-type:', column.data_type, 'is-date:', column.is_date)
         return column.value
     
     def column_number(self, *, column:str):
