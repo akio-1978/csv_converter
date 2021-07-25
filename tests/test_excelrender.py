@@ -35,6 +35,17 @@ class ExcelRenderTest(unittest.TestCase):
                 expect = 'tests/excel/rendered_file/read_multi_sheet.txt',
                 source = 'tests/excel/render_source_file/multi.xlsx')
 
+    def test_fixed_cells(self):
+        context = ExcelRenderContext(template='tests/excel/templates/read_fixed_cells.tmpl')
+        context.columns = 'A-'
+        context.rows = '4-'
+        context.header_row ='3'
+        context.sheets = '2-'
+        context.fixed_cells = ['A1', 'D2']
+        self.file_rendering_test(context=context,
+                expect = 'tests/excel/rendered_file/read_fixed_cells.txt',
+                source = 'tests/excel/render_source_file/fixed_cells.xlsx')
+
     def test_sheet_range(self):
         context = ExcelRenderContext(template='tests/excel/templates/read_multi_sheet.tmpl')
         context.columns = 'A-'
@@ -66,6 +77,25 @@ class ExcelRenderTest(unittest.TestCase):
                 expect = 'tests/excel/rendered_file/read_sheet_name.txt',
                 source = 'tests/excel/render_source_file/multi.xlsx')
 
+    def test_read_datetime(self):
+
+        context = ExcelRenderContext(template='tests/excel/templates/read_datetime.tmpl')
+        context.columns = 'A'
+        context.rows = '2-5'
+        context.header_row ='1'
+        self.file_rendering_test(context=context,
+                expect = 'tests/excel/rendered_file/read_datetime.txt',
+                source = 'tests/excel/render_source_file/read_datetime.xlsx')
+
+    # def test_read_custom_datetime(self):
+
+    #     context = ExcelRenderContext(template='tests/excel/templates/read_datetime.tmpl')
+    #     context.columns = 'A'
+    #     context.rows = '2-5'
+    #     context.header_row ='1'
+    #     self.file_rendering_test(context=context,
+    #             expect = 'tests/excel/rendered_file/read_custom_datetime.txt',
+    #             source = 'tests/excel/render_source_file/read_custom_datetime.xlsx')
 
     def test_column_number(self):
         context = ExcelRenderContext(template='tests/excel/templates/simple.tmpl')
