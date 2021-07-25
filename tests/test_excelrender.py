@@ -52,18 +52,18 @@ class ExcelRenderTest(unittest.TestCase):
         context.header_row ='1'
         context.sheets = '2-3'
         self.file_rendering_test(context=context,
-                expect = 'tests/excel/rendered_file/read_sheet_name.txt',
+                expect = 'tests/excel/rendered_file/read_row_range.txt',
                 source = 'tests/excel/render_source_file/range.xlsx')
 
 
     def test_sheet_name(self):
-        context = ExcelRenderContext(template='tests/excel/templates/read_multi_sheet.tmpl')
+        context = ExcelRenderContext(template='tests/excel/templates/read_sheet_name.tmpl')
         context.columns = 'A-'
         context.rows = '2-'
         context.header_row ='1'
         context.sheets = '2-'
         self.file_rendering_test(context=context,
-                expect = 'tests/excel/rendered_file/read_multi_sheet.txt',
+                expect = 'tests/excel/rendered_file/read_sheet_name.txt',
                 source = 'tests/excel/render_source_file/multi.xlsx')
 
 
