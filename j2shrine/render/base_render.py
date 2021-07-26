@@ -21,8 +21,11 @@ class Render:
     def build_convert_engine(self, *, context):
         path = Path(context.template)
         environment = Environment(loader = FileSystemLoader(path.parent, encoding=context.template_encoding))
-        environment.filters['sequential_group_by'] = sequential_group_by
+        self.install_filters(environment=environment)
         self.template = environment.get_template(path.name)
+
+    def install_filters(self, *, environment):
+        environment.filters['sequential_group_by'] = sequential_group_by
 
     def build_reader(self, *, source):
         return source
