@@ -80,22 +80,22 @@ class ExcelRenderTest(unittest.TestCase):
     def test_read_datetime(self):
 
         context = ExcelRenderContext(template='tests/excel/templates/read_datetime.tmpl')
-        context.columns = 'A'
+        context.columns = 'A-C'
         context.rows = '2-5'
         context.header_row ='1'
         self.file_rendering_test(context=context,
                 expect = 'tests/excel/rendered_file/read_datetime.txt',
                 source = 'tests/excel/render_source_file/read_datetime.xlsx')
 
-    # def test_read_custom_datetime(self):
+    def test_read_custom_datetime(self):
 
-    #     context = ExcelRenderContext(template='tests/excel/templates/read_datetime.tmpl')
-    #     context.columns = 'A'
-    #     context.rows = '2-5'
-    #     context.header_row ='1'
-    #     self.file_rendering_test(context=context,
-    #             expect = 'tests/excel/rendered_file/read_custom_datetime.txt',
-    #             source = 'tests/excel/render_source_file/read_custom_datetime.xlsx')
+        context = ExcelRenderContext(template='tests/excel/templates/read_custom_datetime.tmpl')
+        context.columns = 'A-C'
+        context.rows = '2-5'
+        context.header_row ='1'
+        self.file_rendering_test(context=context,
+                expect = 'tests/excel/rendered_file/read_custom_datetime.txt',
+                source = 'tests/excel/render_source_file/read_custom_datetime.xlsx')
 
     def test_column_number(self):
         context = ExcelRenderContext(template='tests/excel/templates/simple.tmpl')

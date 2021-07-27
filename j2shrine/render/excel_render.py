@@ -1,5 +1,6 @@
 import openpyxl
 from . base_render import Render, RenderContext
+from . excel_custom_filter import excel_time
 
 # 取得するシート a a-b a-
 # 取得するカラムのレンジ A A-Z A-
@@ -32,6 +33,10 @@ class ExcelRender(Render):
         # シートからの取得範囲は最初に特定する
         self.setup_range()
 
+    def install_filters(self, *, environment):
+        super().install_filters(environment=environment)
+        environment.filters['excel_time'] = excel_time
+
     def setup_range(self):
         (left, right) = self.parse_range(arg_range = self.context.columns)
         self.left = self.column_number(column=left) if left is not None else 1
@@ -59,7 +64,6 @@ class ExcelRender(Render):
 
         all_sheets = []
         sheet_idx = self.sheet_left
-        print('idx:', sheet_idx, 'right:', sheet_right)
         while sheet_idx <= sheet_right:
             sheet = reader.worksheets[sheet_idx]
             # ヘッダの読込み
@@ -104,7 +108,6 @@ class ExcelRender(Render):
                 for cell in row:
                     headers.append(cell.column_letter)
 
-        print('headers', headers)
         return headers
 
     # カラムのlistをdictに変換する。dictのキーはself.headers
@@ -114,7 +117,6 @@ class ExcelRender(Render):
         for header, column in zip(self.headers, columns):
             # カラム単体の変換処理を行う
             line[header] = self.read_column(name = header, column = column)
-            print('read:', header, 'type', type(line[header]), 'value:', line[header])
         return line
 
     def columns_dict(self, *, columns_dict):
@@ -123,7 +125,7 @@ class ExcelRender(Render):
     # hook by every column
     def read_column(self, *, name, column):
         # データの取り出し
-        print('cell-type:', column.data_type, 'is-date:', column.is_date)
+        print('cell-type:', column.data_type, 'is-date:', column.is_date, 'type:', type(column.value))
         return column.value
     
     def column_number(self, *, column:str):
