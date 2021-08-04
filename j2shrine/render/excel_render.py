@@ -20,7 +20,7 @@ class ExcelRenderContext(RenderContext):
         self.rows = '1'      # 1 1-2 1-
         self.columns = 'A'  # A A-B A-
         self.limit = None
-        self.fixed_cells =[]
+        self.extra =[]
 
 class ExcelRender(Render):
 
@@ -56,7 +56,7 @@ class ExcelRender(Render):
         if ( isinstance(source, openpyxl.Workbook)):
             return source
         # ファイルの場合はロードする
-        return openpyxl.load_workbook(source)
+        return openpyxl.load_workbook(source, data_only=True)
 
     def read_source(self, *, reader):
         # シート取り出し
@@ -73,7 +73,7 @@ class ExcelRender(Render):
             sheet_data = {
                 'name' : reader.sheetnames[sheet_idx],
                 'rows' : [],
-                'fixed' : self.read_fixed_cells(sheet= sheet)
+                'extra' : self.read_extra_cells(sheet= sheet)
             }
             print('min-col', self.left, 'min-row', self.top, 'max-col', self.right, 'max-row', self.bottom,)
             for row in sheet.iter_rows(min_col=self.left, min_row=self.top , max_col=self.right, max_row=self.bottom, ):
@@ -83,9 +83,9 @@ class ExcelRender(Render):
             sheet_idx = 1 + sheet_idx
         return all_sheets
 
-    def read_fixed_cells(self, *, sheet):
+    def read_extra_cells(self, *, sheet):
         cells = {}
-        for addr in self.context.fixed_cells:
+        for addr in self.context.extra:
             cells[addr] = sheet[addr].value
         return cells
 
@@ -125,7 +125,6 @@ class ExcelRender(Render):
     # hook by every column
     def read_column(self, *, name, column):
         # データの取り出し
-        print('cell-type:', column.data_type, 'is-date:', column.is_date, 'type:', type(column.value))
         return column.value
     
     def column_number(self, *, column:str):

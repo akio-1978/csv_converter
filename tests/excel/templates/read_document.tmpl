@@ -1,0 +1,19 @@
+[
+{%- for sheet in data.sheets %}
+    {
+        "name" : "{{sheet.extra.C3}}",
+        "description" : "{{sheet.extra.C4}}",
+        "lines" : [
+    {%- for row in sheet.rows if row.日付 -%}
+            {% if row.日付 %}
+            {
+                "date" : "{{row.日付 | excel_time('%Y/%m/%d')}}",
+                "event" : "{{row.費目}}",
+                "price" : "{{row.金額}}"
+            }{% if not loop.last %},{%endif -%}
+            {%- endif %}
+    {%- endfor %}
+        ]
+    }{% if not loop.last %},{%endif -%}
+{%- endfor %}
+]

@@ -35,13 +35,13 @@ class ExcelRenderTest(unittest.TestCase):
                 expect = 'tests/excel/rendered_file/read_multi_sheet.txt',
                 source = 'tests/excel/render_source_file/multi.xlsx')
 
-    def test_fixed_cells(self):
+    def test_extra_cells(self):
         context = ExcelRenderContext(template='tests/excel/templates/read_fixed_cells.tmpl')
         context.columns = 'A-'
         context.rows = '4-'
         context.header_row ='3'
         context.sheets = '2-'
-        context.fixed_cells = ['A1', 'D2']
+        context.extra = ['A1', 'D2']
         self.file_rendering_test(context=context,
                 expect = 'tests/excel/rendered_file/read_fixed_cells.txt',
                 source = 'tests/excel/render_source_file/fixed_cells.xlsx')
@@ -97,6 +97,29 @@ class ExcelRenderTest(unittest.TestCase):
                 expect = 'tests/excel/rendered_file/read_custom_datetime.txt',
                 source = 'tests/excel/render_source_file/read_custom_datetime.xlsx')
 
+    def test_read_data_only(self):
+
+        context = ExcelRenderContext(template='tests/excel/templates/read_data_only.tmpl')
+        context.columns = 'A-D'
+        context.rows = '2-'
+        context.header_row ='1'
+        self.file_rendering_test(context=context,
+                expect = 'tests/excel/rendered_file/read_data_only.txt',
+                source = 'tests/excel/render_source_file/data_only.xlsx')
+
+    def test_read_document(self):
+        # それらしいドキュメントを読み込むテスト
+        context = ExcelRenderContext(template='tests/excel/templates/read_document.tmpl')
+        context.columns = 'C-H'
+        context.rows = '7-10'
+        context.header_row ='6'
+        context.extra = ['C3', 'C4']
+        context.sheets = '0-'
+        self.file_rendering_test(context=context,
+                expect = 'tests/excel/rendered_file/read_document.txt',
+                source = 'tests/excel/render_source_file/read_document.xlsx')
+
+
     def test_column_number(self):
         context = ExcelRenderContext(template='tests/excel/templates/simple.tmpl')
         render = ExcelRender(context=context)
@@ -112,15 +135,13 @@ class ExcelRenderTest(unittest.TestCase):
     #     render.render(source='tests/excel/render_source_file/simple.xlsx', output=sys.stdout)
     #     rendered = StringIO()
 
-    def file_rendering_test(self, *, context, expect, source):
+    def file_rendering_test(self, *, context, expect, source, encoding='utf8'):
         converter = ExcelRender(context = context)
         rendered = StringIO()
 
-        # with openpyxl.load_workbook(source) as source_reader:
-        #     converter.render(source=source_reader, output=rendered)
         converter.render(source=source, output=rendered)
         print(rendered.getvalue())
-        with open(expect) as expect_reader:
+        with open(expect, encoding=encoding) as expect_reader:
             self.assertEqual(expect_reader.read(), rendered.getvalue())
         
         return rendered
