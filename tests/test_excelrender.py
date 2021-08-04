@@ -140,7 +140,7 @@ class ExcelRenderTest(unittest.TestCase):
         rendered = StringIO()
 
         converter.render(source=source, output=rendered)
-        print(rendered.getvalue())
+        # print(rendered.getvalue())
         with open(expect, encoding=encoding) as expect_reader:
             self.assertEqual(expect_reader.read(), rendered.getvalue())
         

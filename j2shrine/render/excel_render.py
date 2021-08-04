@@ -75,11 +75,9 @@ class ExcelRender(Render):
                 'rows' : [],
                 'extra' : self.read_extra_cells(sheet= sheet)
             }
-            print('min-col', self.left, 'min-row', self.top, 'max-col', self.right, 'max-row', self.bottom,)
             for row in sheet.iter_rows(min_col=self.left, min_row=self.top , max_col=self.right, max_row=self.bottom, ):
                 sheet_data['rows'].append(self.columns_to_dict(columns = row))
             all_sheets.append(sheet_data)
-            print('total sheets:', len(all_sheets))
             sheet_idx = 1 + sheet_idx
         return all_sheets
 
