@@ -1,0 +1,11 @@
+{
+    "persons" : [
+{%- for person in data %}
+        {
+            "group" : "{{person.col_00}}",
+            "number" : "{{person.col_01}}",
+            "name" : "{{person.col_02}}"
+        }{% if not loop.last %},{% endif %}
+{%- endfor%}
+    ]
+}

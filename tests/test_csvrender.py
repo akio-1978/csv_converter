@@ -51,6 +51,17 @@ class CsvRenderTest(unittest.TestCase):
         self.file_convert_test(template = 'tests/csv/templates/simple_json.tmpl',
                                 expect = 'tests/csv/rendered_file/simple_json.txt',
                                 source = 'tests/csv/render_source_file/simple_json.csv')
+    def test_skip_with_header(self):
+        self.file_convert_test(template = 'tests/csv/templates/simple_json.tmpl',
+                                expect = 'tests/csv/rendered_file/simple_json.txt',
+                                source = 'tests/csv/render_source_file/skip_with_header.csv',
+                                skip_lines=3)
+
+    def test_skip_with_headerless(self):
+        self.file_convert_test(template = 'tests/csv/templates/skip_with_headerless.tmpl',
+                                expect = 'tests/csv/rendered_file/simple_json.txt',
+                                source = 'tests/csv/render_source_file/skip_with_headerless.csv',
+                                skip_lines=3)
 
     def test_group_by(self):
         self.file_convert_test(template = 'tests/csv/templates/group_by.tmpl',
@@ -64,10 +75,17 @@ class CsvRenderTest(unittest.TestCase):
                                 parameters = {'list_name' : 'Yurakucho-line-stations-in-ward'})
 
 
-    def file_convert_test(self, *, template, expect, source, parameters={}):
+    def file_convert_test(self, *, template, expect, source, 
+            parameters={}, skip_lines=0, headers=None):
         context = CsvRenderContext(template=template, parameters=parameters)
-        context.use_header = True
+        # headerの使用有無
+        context.use_header = True if headers is not None else False
+        context.headers = headers if headers is not None else None
+        # 追加パラメータ
         context.parameters = parameters
+        # 行の読み飛ばし
+        context.skip_lines = skip_lines
+
         converter = CsvRender(context = context)
         rendered = StringIO()
 

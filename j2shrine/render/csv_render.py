@@ -25,6 +25,12 @@ class CsvRender(Render):
 
     def read_source(self, *, reader):
         lines = []
+
+        # スキップ指定があれば行を読み飛ばす
+        # ヘッダ行の処理は読み飛ばし後から始める
+        for n in range(self.context.skip_lines):
+            next(reader)
+
         for line_no, columns in enumerate(reader):
             # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
             if line_no == 0:
