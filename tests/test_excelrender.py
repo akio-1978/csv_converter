@@ -36,15 +36,15 @@ class ExcelRenderTest(unittest.TestCase):
                 source = 'tests/excel/render_source_file/multi.xlsx')
 
     def test_extra_cells(self):
-        context = ExcelRenderContext(template='tests/excel/templates/read_fixed_cells.tmpl')
+        context = ExcelRenderContext(template='tests/excel/templates/read_extra_cells.tmpl')
         context.columns = 'A-'
         context.rows = '4-'
         context.header_row ='3'
         context.sheets = '2-'
         context.extra = ['A1', 'D2']
         self.file_rendering_test(context=context,
-                expect = 'tests/excel/rendered_file/read_fixed_cells.txt',
-                source = 'tests/excel/render_source_file/fixed_cells.xlsx')
+                expect = 'tests/excel/rendered_file/read_extra_cells.txt',
+                source = 'tests/excel/render_source_file/read_extra_cells.xlsx')
 
     def test_sheet_range(self):
         context = ExcelRenderContext(template='tests/excel/templates/read_multi_sheet.tmpl')

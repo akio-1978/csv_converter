@@ -87,8 +87,15 @@ class ExcelRender(Render):
             cells[addr] = sheet[addr].value
         return cells
 
-    def read_finish(self, *, source_data):
-        return {'sheets' : source_data, 'headers' : self.headers,}
+    def finish(self, *, result):
+
+        final_result = {
+            'sheets' : result,
+            'headers' : self.headers,
+            'params' : self.context.parameters
+        }
+
+        return final_result
 
 
     def read_headers(self, *, sheet:openpyxl.worksheet.worksheet):

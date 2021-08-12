@@ -1,7 +1,7 @@
-{% for header in data.headers -%}
+{% for header in headers -%}
     {{header}}{%if not loop.last %}/{%endif -%}
 {% endfor %}
-{%- for sheet in data.sheets %}
+{%- for sheet in sheets %}
 Sheet {{loop.index}}.
 Fixed Cells: {{sheet.extra.A1}} {{sheet.extra.D2}}
 {%- for rows in sheet.rows %}
