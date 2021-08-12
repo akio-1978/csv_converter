@@ -33,26 +33,21 @@ class Render:
     def render(self, *, source, output):
         reader = self.build_reader(source = source)
         result = self.read_source(reader = reader)
-        result = self.read_finish(source_data = result)
-        self.result(result = result, output = output)
+        final_result = self.finish(result = result)
+        self.output(final_result=final_result, output=output)
 
     def read_source(self, *, reader):
         return reader
     
-    def result(self, *, result, output):
+    def finish(self, *, result):
+        final_result = {
+            'params' : self.context.parameters
+        }
+        return final_result
 
-        self.output(result=result, output=output)
-
-    def output(self, *, result, output):
+    def output(self, *, final_result, output):
         print(
-            self.template.render(
-                {'data' : result, 'parameters' : self.context.parameters}
-            ),
+            self.template.render(final_result),
             file = output
         )
-
-    # 全て読み込みが終わった後に変換が必要な場合の処理
-    def read_finish(self, *, source_data):
-        # 何もしない
-        return source_data
 
