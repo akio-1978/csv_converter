@@ -44,6 +44,14 @@ class CsvRender(Render):
 
         return lines
 
+    def finish(self, *, result):
+        final_result = {
+            'data' : result,
+            'headers' : self.headers,
+            'params' : self.context.parameters
+        }
+        return final_result
+
     # カラムのlistをdictに変換する。dictのキーはself.headers
     def columns_to_dict(self, *, columns):
         line = {}
@@ -69,7 +77,6 @@ class CsvRender(Render):
                 header = context.header_prefix + str(idx).zfill(2)
 
             headers.append(header)
-        print('header: ', headers)
         return headers
 
     # hook by every column

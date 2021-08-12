@@ -61,7 +61,7 @@ class CsvRenderTest(unittest.TestCase):
         self.file_convert_test(template = 'tests/csv/templates/skip_with_headerless.tmpl',
                                 expect = 'tests/csv/rendered_file/simple_json.txt',
                                 source = 'tests/csv/render_source_file/skip_with_headerless.csv',
-                                skip_lines=3)
+                                skip_lines=3, use_header=False)
 
     def test_group_by(self):
         self.file_convert_test(template = 'tests/csv/templates/group_by.tmpl',
@@ -69,18 +69,22 @@ class CsvRenderTest(unittest.TestCase):
                                 source ='tests/csv/render_source_file/group_by.csv')
 
     def test_parameters(self):
-        self.file_convert_test(template = 'tests/csv/templates/options.tmpl',
-                                expect = 'tests/csv/rendered_file/options.yml',
-                                source = 'tests/csv/render_source_file/options.csv',
+        self.file_convert_test(template = 'tests/csv/templates/parameters.tmpl',
+                                expect = 'tests/csv/rendered_file/parameters.yml',
+                                source = 'tests/csv/render_source_file/parameters.csv',
                                 parameters = {'list_name' : 'Yurakucho-line-stations-in-ward'})
 
+    def test_headers(self):
+        self.file_convert_test(template = 'tests/csv/templates/headers.tmpl',
+                                expect = 'tests/csv/rendered_file/headers.txt',
+                                source ='tests/csv/render_source_file/simple_json.csv')
 
     def file_convert_test(self, *, template, expect, source, 
-            parameters={}, skip_lines=0, headers=None):
+            parameters={}, skip_lines=0, use_header=True, headers=None):
         context = CsvRenderContext(template=template, parameters=parameters)
         # headerの使用有無
-        context.use_header = True if headers is not None else False
-        context.headers = headers if headers is not None else None
+        context.use_header = use_header
+        context.headers = headers
         # 追加パラメータ
         context.parameters = parameters
         # 行の読み飛ばし
