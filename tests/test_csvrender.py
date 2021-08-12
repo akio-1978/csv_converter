@@ -78,6 +78,11 @@ class CsvRenderTest(unittest.TestCase):
         self.file_convert_test(template = 'tests/csv/templates/headers.tmpl',
                                 expect = 'tests/csv/rendered_file/headers.txt',
                                 source ='tests/csv/render_source_file/simple_json.csv')
+    def test_headers_auto(self):
+        self.file_convert_test(template = 'tests/csv/templates/headers.tmpl',
+                                expect = 'tests/csv/rendered_file/headers_auto.txt',
+                                source ='tests/csv/render_source_file/simple_json.csv',
+                                use_header=False)
 
     def file_convert_test(self, *, template, expect, source, 
             parameters={}, skip_lines=0, use_header=True, headers=None):
