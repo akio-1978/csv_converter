@@ -7,9 +7,15 @@ from ..render.base_render import Render, RenderContext
 class Command():
 
     def add_arguments(self, subparser):
+        subparser = self.add_positional_arguments(subparser)
+        return self.add_optional_arguments(subparser)
+
+    def add_positional_arguments(self, subparser):
         subparser.add_argument('template', help='jinja2 template to use.')
         subparser.add_argument('source', help='rendering text.', nargs='?', default=sys.stdin)
-        # output file (default stdout)
+        return subparser
+
+    def add_optional_arguments(self, subparser):
         subparser.add_argument('-o', '--out', metavar='file', help='output file.', default=sys.stdout)
         # source encoding
         subparser.add_argument('--input-encoding', metavar='enc', help='source encoding.', default='utf-8')
@@ -23,6 +29,22 @@ class Command():
 
     def render(self, *, context):
         return Render(context=context)
+
+    def render_io(self, *, render, context):
+        in_stream = sys.stdin
+        out_stream = sys.stdout
+        try:
+            if context.source is not sys.stdin:
+                in_stream = open(context.source, encoding=context.input_encoding)
+            if context.out is not sys.stdout:
+                out_stream = open(context.out, encoding=context.output_encoding)
+
+            render.render(source = in_stream, output = out_stream)
+        finally:
+            if context.source is not sys.stdin:
+                in_stream.close()
+            if context.out is not sys.stdout:
+                out_stream.close()
 
 
 class KeyValuesParseAction(argparse.Action):
