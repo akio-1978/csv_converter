@@ -46,9 +46,9 @@ class ExcelRender(Render):
         self.top = int(top) if top is not None else 1
         self.bottom = int(bottom) if bottom is not None else None
 
-        (sheet_left, sheet_right) = self.parse_range(arg_range = self.context.sheets, all=ExcelRender.TO_END)
-        self.sheet_left = int(sheet_left) if sheet_left is not None else 0
-        self.sheet_right = int(sheet_right) if sheet_right is not None else 0
+        (sheet_left, sheet_right) = self.parse_range(arg_range = self.context.sheets)
+        self.sheet_left = int(sheet_left) - 1
+        self.sheet_right = int(sheet_right) - 1 if sheet_right is not None else None
 
 
     def build_reader(self, *, source :any) :
@@ -60,8 +60,8 @@ class ExcelRender(Render):
 
     def read_source(self, *, reader):
         # シート取り出し
-        sheet_right = self.sheet_right if self.sheet_right != ExcelRender.TO_END else len(reader.worksheets) - 1
-
+        sheet_right = self.sheet_right if self.sheet_right is not None else len(reader.worksheets) -1
+#        print('left:', self.sheet_left, 'to right:', sheet_right)
         all_sheets = []
         sheet_idx = self.sheet_left
         while sheet_idx <= sheet_right:

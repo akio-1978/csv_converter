@@ -30,7 +30,7 @@ class ExcelRenderTest(unittest.TestCase):
         context.columns = 'A-'
         context.rows = '2-'
         context.header_row ='1'
-        context.sheets = '2-'
+        context.sheets = '3-'
         self.file_rendering_test(context=context,
                 expect = 'tests/excel/rendered_file/read_multi_sheet.txt',
                 source = 'tests/excel/render_source_file/multi.xlsx')
@@ -40,7 +40,7 @@ class ExcelRenderTest(unittest.TestCase):
         context.columns = 'A-'
         context.rows = '4-'
         context.header_row ='3'
-        context.sheets = '2-'
+        context.sheets = '3-'
         context.extra = ['A1', 'D2']
         self.file_rendering_test(context=context,
                 expect = 'tests/excel/rendered_file/read_extra_cells.txt',
@@ -51,7 +51,7 @@ class ExcelRenderTest(unittest.TestCase):
         context.columns = 'A-'
         context.rows = '2-'
         context.header_row ='1'
-        context.sheets = '2-3'
+        context.sheets = '3-4'
         self.file_rendering_test(context=context,
                 expect = 'tests/excel/rendered_file/read_multi_sheet.txt',
                 source = 'tests/excel/render_source_file/range.xlsx')
@@ -61,7 +61,7 @@ class ExcelRenderTest(unittest.TestCase):
         context.columns = 'A-'
         context.rows = '3-4'
         context.header_row ='1'
-        context.sheets = '2-3'
+        context.sheets = '3-4'
         self.file_rendering_test(context=context,
                 expect = 'tests/excel/rendered_file/read_row_range.txt',
                 source = 'tests/excel/render_source_file/range.xlsx')
@@ -72,7 +72,7 @@ class ExcelRenderTest(unittest.TestCase):
         context.columns = 'A-'
         context.rows = '2-'
         context.header_row ='1'
-        context.sheets = '2-'
+        context.sheets = '3-'
         self.file_rendering_test(context=context,
                 expect = 'tests/excel/rendered_file/read_sheet_name.txt',
                 source = 'tests/excel/render_source_file/multi.xlsx')
@@ -114,7 +114,7 @@ class ExcelRenderTest(unittest.TestCase):
         context.rows = '7-10'
         context.header_row ='6'
         context.extra = ['C3', 'C4']
-        context.sheets = '0-'
+        context.sheets = '1-'
         self.file_rendering_test(context=context,
                 expect = 'tests/excel/rendered_file/read_document.txt',
                 source = 'tests/excel/render_source_file/read_document.xlsx')
