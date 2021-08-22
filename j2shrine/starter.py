@@ -12,20 +12,20 @@ class Starter():
         self.args = args
 
     def set_subparsers(self, *, parser_creator):
-        csv_command = CsvCommand()
-        csv_parser = parser_creator.add_parser('csv', help = 'rendaring csv format')
-        csv_command.add_arguments(subparser=csv_parser)
-        csv_parser.set_defaults(command_instance = csv_command)
+        csv_command = CsvCommand(parser_creator = parser_creator)
+        # csv_parser = parser_creator.add_parser('csv', help = 'rendaring csv format')
+        # csv_command.add_arguments(subparser=csv_parser)
+        # csv_parser.set_defaults(command_instance = csv_command)
 
-        excel_command = ExcelCommand()
-        excel_parser = parser_creator.add_parser('excel', help = 'rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
-        excel_command.add_arguments(subparser=excel_parser)
-        excel_parser.set_defaults(command_instance = excel_command)
+        excel_command = ExcelCommand(parser_creator = parser_creator)
+        # excel_parser = parser_creator.add_parser('excel', help = 'rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
+        # excel_command.add_arguments(subparser=excel_parser)
+        # excel_parser.set_defaults(command_instance = excel_command)
 
-        nop_command = Command()
-        nop_parser = parser_creator.add_parser('nop', help = 'NOP for test')
-        nop_command.add_arguments(subparser=nop_parser)
-        nop_parser.set_defaults(command_instance = nop_command)
+        nop_command = Command(parser_creator = parser_creator)
+        # nop_parser = parser_creator.add_parser('nop', help = 'NOP for test')
+        # nop_command.add_arguments(subparser=nop_parser)
+        # nop_parser.set_defaults(command_instance = nop_command)
 
     def create_mainparser(self):
         base_parser = argparse.ArgumentParser(prog='j2render', 

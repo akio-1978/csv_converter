@@ -6,23 +6,36 @@ from ..render.base_render import Render, RenderContext
 # CommandRunnerのデフォルト実装
 class Command():
 
-    def add_arguments(self, subparser):
-        subparser = self.add_positional_arguments(subparser)
-        return self.add_optional_arguments(subparser)
+    def __init__(self,*, parser_creator) -> None:
+        parser = self.create_parser(parser_creator=parser_creator)
+        self.add_arguments(parser=parser)
 
-    def add_positional_arguments(self, subparser):
-        subparser.add_argument('template', help='jinja2 template to use.')
-        subparser.add_argument('source', help='rendering text.', nargs='?', default=sys.stdin)
-        return subparser
+    def create_parser(self,*, parser_creator):
+        return parser_creator.add_parser('nop', help = 'NOP for test')
 
-    def add_optional_arguments(self, subparser):
-        subparser.add_argument('-o', '--out', metavar='file', help='output file.', default=sys.stdout)
+    def add_arguments(self,*,parser):
+        parser.set_defaults(command_instance = self)
+
+        self.add_defaiult_options(parser=parser)
+        self.add_positional_arguments(parser=parser)
+        self.add_optional_arguments(parser=parser)
+
+        return parser
+
+    def add_defaiult_options(self, *, parser):
+        parser.add_argument('-o', '--out', metavar='file', help='output file(default stdout).', default=sys.stdout)
         # source encoding
-        subparser.add_argument('--input-encoding', metavar='enc', help='source encoding.', default='utf-8')
+        parser.add_argument('--input-encoding', metavar='enc', help='source encoding.', default='utf-8')
         # dest encoding
-        subparser.add_argument('--output-encoding', metavar='enc', help='output encoding.', default='utf-8')
-        subparser.add_argument('-p', '--parameters', nargs='*', help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
-        return subparser
+        parser.add_argument('--output-encoding', metavar='enc', help='output encoding.', default='utf-8')
+        parser.add_argument('-p', '--parameters', nargs='*', help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
+
+    def add_positional_arguments(self, *, parser):
+        parser.add_argument('template', help='jinja2 template to use.')
+        parser.add_argument('source', help='rendering text.', nargs='?', default=sys.stdin)
+
+    def add_optional_arguments(self, *, parser):
+        pass
 
     def context(self):
         return RenderContext()
