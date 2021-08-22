@@ -4,32 +4,39 @@ from . command.base_command import Command
 from . command.csv_command import CsvCommand
 from . render.base_render import RenderContext
 from . render.csv_render import CsvRenderContext
-
+from . command.excel_command import ExcelCommand
 
 class Starter():
 
     def __init__(self, *, args):
         self.args = args
 
-    def set_subparsers(self, *, subparser):
+    def set_subparsers(self, *, parser_creator):
         csv_command = CsvCommand()
-        csv_parser = subparser.add_parser('csv', help = 'rendaring csv format')
+        csv_parser = parser_creator.add_parser('csv', help = 'rendaring csv format')
         csv_command.add_arguments(subparser=csv_parser)
         csv_parser.set_defaults(command_instance = csv_command)
+
+        excel_command = ExcelCommand()
+        excel_parser = parser_creator.add_parser('excel', help = 'rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
+        excel_command.add_arguments(subparser=excel_parser)
+        excel_parser.set_defaults(command_instance = excel_command)
+
         nop_command = Command()
-        nop_parser = subparser.add_parser('nop', help = 'NOP for test')
+        nop_parser = parser_creator.add_parser('nop', help = 'NOP for test')
         nop_command.add_arguments(subparser=nop_parser)
         nop_parser.set_defaults(command_instance = nop_command)
 
     def create_mainparser(self):
-        base_parser = argparse.ArgumentParser(prog='j2render', add_help=True)
-
+        base_parser = argparse.ArgumentParser(prog='j2render', 
+                                                add_help=True,
+                                                )
         return base_parser
 
     def execute(self):
 
         self.parser = self.create_mainparser()
-        self.set_subparsers(subparser=self.parser.add_subparsers(required=True))
+        self.set_subparsers(parser_creator=self.parser.add_subparsers(required=True))
 
         namespace = self.parser.parse_args(self.args)
         command = namespace.command_instance
