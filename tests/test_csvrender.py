@@ -10,7 +10,7 @@ class CsvRenderTest(unittest.TestCase):
         context = CsvRenderContext()
         context.template = {'template' : "{% for line in data %}{{line.col_00}}\n{% endfor %}"}
         context.template_name = 'template'
-        converter = DictConverter(context = context)
+        converter = DictRender(context = context)
 
         source = StringIO('A0001,C0002 \n B0001,C0002  \n   C0001,C0002')
         result = StringIO()
@@ -24,7 +24,7 @@ class CsvRenderTest(unittest.TestCase):
         context = CsvRenderContext()
         context.template = {'template' : "{% for line in data %}{{line.col_00}}\n{% endfor %}"}
         context.template_name = 'template'
-        converter = DictConverter(context = context)
+        converter = DictRender(context = context)
 
         source = StringIO('"A00,01",C0002 \n B0001,C0002  \n   C0001,C0002')
         result = StringIO()
@@ -38,7 +38,7 @@ class CsvRenderTest(unittest.TestCase):
         context = CsvRenderContext(template={'template' : "{% for line in data %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
         context.template_name = 'template'
         context.use_header = True
-        converter = DictConverter(context = context)
+        converter = DictRender(context = context)
 
         source = StringIO('FIRST, SECOND\n C0001,C0002')
         result = StringIO()
@@ -55,7 +55,7 @@ class CsvRenderTest(unittest.TestCase):
         self.file_convert_test(template = 'tests/csv/templates/simple_json.tmpl',
                                 expect = 'tests/csv/rendered_file/simple_json.txt',
                                 source = 'tests/csv/render_source_file/skip_with_header.csv',
-                                skip_lines=3)
+                                skip_lines=3, use_header=True)
 
     def test_skip_with_headerless(self):
         self.file_convert_test(template = 'tests/csv/templates/skip_with_headerless.tmpl',
@@ -83,6 +83,11 @@ class CsvRenderTest(unittest.TestCase):
                                 expect = 'tests/csv/rendered_file/headers_auto.txt',
                                 source ='tests/csv/render_source_file/simple_json.csv',
                                 use_header=False)
+    def test_header_names(self):
+        self.file_convert_test(template = 'tests/csv/templates/header_names.tmpl',
+                                expect = 'tests/csv/rendered_file/header_names.txt',
+                                source ='tests/csv/render_source_file/header_names.csv',
+                                use_header=True)
 
     def file_convert_test(self, *, template, expect, source, 
             parameters={}, skip_lines=0, use_header=True, headers=None):
@@ -102,14 +107,16 @@ class CsvRenderTest(unittest.TestCase):
             converter.render(source=source_reader, output=rendered)
 
         with open(expect) as expect_reader:
+            print(rendered.getvalue())
             self.assertEqual(expect_reader.read(), rendered.getvalue())
         
         return rendered
 
-# テスト用にDictLoaderを使うTransformer
-class DictConverter (CsvRender):
+# テスト用にDictLoaderを使うRender
+class DictRender (CsvRender):
 
     def build_convert_engine(self, *, context):
+        self.headers = None
         environment = Environment(loader = DictLoader(context.template))
         self.template = environment.get_template(context.template_name)
 

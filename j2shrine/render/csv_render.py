@@ -18,6 +18,7 @@ class CsvRender(Render):
     # jinja2テンプレートの生成
     def __init__(self, *, context):
         super().__init__(context = context)
+        self.headers = None
 
     def build_reader(self, *, source):
         # use csv.reader
@@ -31,14 +32,15 @@ class CsvRender(Render):
         for n in range(self.context.skip_lines):
             next(reader)
 
+        if self.context.use_header:
+            self.headers = self.strip_headers(columns= next(reader))
+
         for line_no, columns in enumerate(reader):
             # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
-            if line_no == 0:
-                self.headers = self.read_headers(context = self.context, columns = columns)
-                # ヘッダとして先頭行を読み込んだ場合
-                if self.context.use_header:
-                    continue
-            
+            if self.headers is None:
+                self.headers = self.create_headers(context = self.context, columns = columns)
+
+            print('read_records.')
             line = self.columns_to_dict(columns = columns)
             lines.append(line)
 
@@ -65,18 +67,18 @@ class CsvRender(Render):
     def columns_dict(self, *, columns_dict):
         return columns_dict
 
-    def read_headers(self, *, context, columns):
+    def strip_headers(self, *, columns):
+        headers = []
+        for column in columns:
+            headers.append(column.strip())
+        return headers
+
+
+    def create_headers(self, *, context, columns):
         headers = []
         for idx, column in enumerate(columns):
-            header = None
-            if context.use_header:
-                # column value equal header
-                header = column.strip()
-            else:
-                # make header from formatted column position
-                header = context.header_prefix + str(idx).zfill(2)
-
-            headers.append(header)
+            # make header from line length
+            headers.append(context.header_prefix + str(idx).zfill(2))
         return headers
 
     # hook by every column

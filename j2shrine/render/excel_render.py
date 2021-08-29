@@ -30,6 +30,7 @@ class ExcelRender(Render):
     # jinja2テンプレートの生成
     def __init__(self, *, context :ExcelRenderContext):
         super().__init__(context = context)
+        self.headers = None
         # シートからの取得範囲は最初に特定する
         self.setup_range()
 
