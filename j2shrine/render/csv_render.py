@@ -39,7 +39,6 @@ class CsvRender(Render):
             if self.headers is None:
                 self.headers = self.create_headers(context = self.context, columns = columns)
 
-            print('read_records.')
             line = self.columns_to_dict(columns = columns)
             lines.append(line)
 

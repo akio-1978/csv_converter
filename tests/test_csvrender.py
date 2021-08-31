@@ -107,7 +107,6 @@ class CsvRenderTest(unittest.TestCase):
             converter.render(source=source_reader, output=rendered)
 
         with open(expect) as expect_reader:
-            print(rendered.getvalue())
             self.assertEqual(expect_reader.read(), rendered.getvalue())
         
         return rendered
