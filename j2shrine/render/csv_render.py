@@ -9,7 +9,6 @@ class CsvRenderContext(RenderContext):
         self.encoding = 'utf8'
         self.delimiter = ','
         self.header_prefix='col_'
-        self.headers = []
         self.skip_lines = 0
 
 
@@ -33,7 +32,7 @@ class CsvRender(Render):
             next(reader)
 
         if self.context.use_header:
-            self.headers = self.strip_headers(columns= next(reader))
+            self.headers = self.read_headers(columns= next(reader))
 
         for line_no, columns in enumerate(reader):
             # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
@@ -67,7 +66,7 @@ class CsvRender(Render):
     def columns_dict(self, *, columns_dict):
         return columns_dict
 
-    def strip_headers(self, *, columns):
+    def read_headers(self, *, columns):
         headers = []
         for column in columns:
             headers.append(column.strip())
