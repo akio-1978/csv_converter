@@ -3,8 +3,8 @@ from . base_command import Command
 from ..render.csv_render import CsvRender, CsvRenderContext
 class CsvCommand(Command):
 
-    def create_parser(self,*, parser_creator):
-        return parser_creator.add_parser('csv', help = 'rendaring csv format')
+    def create_parser(self,*, main_parser):
+        return main_parser.add_parser('csv', help = 'rendaring csv format')
 
     def add_optional_arguments(self,*, parser):
         print('optional')

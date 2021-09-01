@@ -11,18 +11,18 @@ class Starter():
     def __init__(self, *, args):
         self.args = args
 
-    def set_subparsers(self, *, parser_creator):
-        csv_command = CsvCommand(parser_creator = parser_creator)
+    def set_subparsers(self, *, main_parser):
+        CsvCommand().register_self(main_parser=main_parser)
         # csv_parser = parser_creator.add_parser('csv', help = 'rendaring csv format')
         # csv_command.add_arguments(subparser=csv_parser)
         # csv_parser.set_defaults(command_instance = csv_command)
 
-        excel_command = ExcelCommand(parser_creator = parser_creator)
+        ExcelCommand().register_self(main_parser=main_parser)
         # excel_parser = parser_creator.add_parser('excel', help = 'rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
         # excel_command.add_arguments(subparser=excel_parser)
         # excel_parser.set_defaults(command_instance = excel_command)
 
-        nop_command = Command(parser_creator = parser_creator)
+        Command().register_self(main_parser=main_parser)
         # nop_parser = parser_creator.add_parser('nop', help = 'NOP for test')
         # nop_command.add_arguments(subparser=nop_parser)
         # nop_parser.set_defaults(command_instance = nop_command)
@@ -36,7 +36,7 @@ class Starter():
     def execute(self):
 
         self.parser = self.create_mainparser()
-        self.set_subparsers(parser_creator=self.parser.add_subparsers(required=True))
+        self.set_subparsers(main_parser=self.parser.add_subparsers(required=True))
 
         namespace = self.parser.parse_args(self.args)
         command = namespace.command_instance

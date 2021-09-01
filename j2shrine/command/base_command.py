@@ -6,12 +6,12 @@ from ..render.base_render import Render, RenderContext
 # CommandRunnerのデフォルト実装
 class Command():
 
-    def __init__(self,*, parser_creator) -> None:
-        parser = self.create_parser(parser_creator=parser_creator)
+    def register_self(self,*, main_parser) -> None:
+        parser = self.create_parser(main_parser=main_parser)
         self.add_arguments(parser=parser)
 
-    def create_parser(self,*, parser_creator):
-        return parser_creator.add_parser('nop', help = 'NOP for test')
+    def create_parser(self,*, main_parser):
+        return main_parser.add_parser('nop', help = 'NOP for test')
 
     def add_arguments(self,*,parser):
         parser.set_defaults(command_instance = self)

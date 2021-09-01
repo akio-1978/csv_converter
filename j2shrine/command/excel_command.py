@@ -14,8 +14,8 @@ class ExcelCommand(Command):
   for column, specify letter ex: A, A-C, B-
 """
 
-    def create_parser(self,*, parser_creator):
-        return parser_creator.add_parser('excel', epilog= ExcelCommand.HELP_EPILOG, help = 'rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
+    def create_parser(self,*, main_parser):
+        return main_parser.add_parser('excel', epilog= ExcelCommand.HELP_EPILOG, help = 'rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
 
     def add_positional_arguments(self, *, parser):
         parser.add_argument('template', help='jinja2 template to use.')
