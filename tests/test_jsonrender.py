@@ -2,7 +2,7 @@ import unittest
 from io import StringIO
 from j2shrine.render.json_render import JsonRender, JsonRenderContext
 
-class CsvRenderTest(unittest.TestCase):
+class JsonRenderTest(unittest.TestCase):
 
     def test_simple_json(self):
         self.file_convert_test(template = 'tests/json/templates/simple_json.tmpl',
