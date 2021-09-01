@@ -15,7 +15,6 @@ class ExcelRenderContext(RenderContext):
         self.encoding = 'utf8'
         self.sheets = '0'
         self.header_prefix='col_'
-        self.headers = None         
         self.header_row = '0'     # ex. 1
         self.rows = '1'      # 1 1-2 1-
         self.columns = 'A'  # A A-B A-
@@ -30,7 +29,6 @@ class ExcelRender(Render):
     # jinja2テンプレートの生成
     def __init__(self, *, context :ExcelRenderContext):
         super().__init__(context = context)
-        self.headers = None
         # シートからの取得範囲は最初に特定する
         self.setup_range()
 
@@ -101,9 +99,8 @@ class ExcelRender(Render):
 
     def read_headers(self, *, sheet:openpyxl.worksheet.worksheet):
         headers = []
-        if self.context.headers is not None:
-            headers = self.context.headers
-        elif self.context.header_row is not None:
+
+        if self.context.header_row is not None:
             for row in sheet.iter_rows(min_col=self.left, min_row=int(self.context.header_row),
                                         max_col=self.right, max_row=int(self.context.header_row)):
                 for cell in row:
