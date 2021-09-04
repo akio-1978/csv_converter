@@ -37,7 +37,7 @@ class CsvRenderTest(unittest.TestCase):
 
         context = CsvRenderContext(template={'template' : "{% for line in data %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
         context.template_name = 'template'
-        context.use_header = True
+        context.read_header = True
         converter = DictRender(context = context)
 
         source = StringIO('FIRST, SECOND\n C0001,C0002')
@@ -55,13 +55,13 @@ class CsvRenderTest(unittest.TestCase):
         self.file_convert_test(template = 'tests/csv/templates/simple_json.tmpl',
                                 expect = 'tests/csv/rendered_file/simple_json.txt',
                                 source = 'tests/csv/render_source_file/skip_with_header.csv',
-                                skip_lines=3, use_header=True)
+                                skip_lines=3, read_header=True)
 
     def test_skip_with_headerless(self):
         self.file_convert_test(template = 'tests/csv/templates/skip_with_headerless.tmpl',
                                 expect = 'tests/csv/rendered_file/simple_json.txt',
                                 source = 'tests/csv/render_source_file/skip_with_headerless.csv',
-                                skip_lines=3, use_header=False)
+                                skip_lines=3, read_header=False)
 
     def test_group_by(self):
         self.file_convert_test(template = 'tests/csv/templates/group_by.tmpl',
@@ -82,18 +82,18 @@ class CsvRenderTest(unittest.TestCase):
         self.file_convert_test(template = 'tests/csv/templates/headers.tmpl',
                                 expect = 'tests/csv/rendered_file/headers_auto.txt',
                                 source ='tests/csv/render_source_file/simple_json.csv',
-                                use_header=False)
+                                read_header=False)
     def test_header_names(self):
         self.file_convert_test(template = 'tests/csv/templates/header_names.tmpl',
                                 expect = 'tests/csv/rendered_file/header_names.txt',
                                 source ='tests/csv/render_source_file/header_names.csv',
-                                use_header=True)
+                                read_header=True)
 
     def file_convert_test(self, *, template, expect, source, 
-            parameters={}, skip_lines=0, use_header=True, headers=None):
+            parameters={}, skip_lines=0, read_header=True, headers=None):
         context = CsvRenderContext(template=template, parameters=parameters)
         # headerの使用有無
-        context.use_header = use_header
+        context.read_header = read_header
         context.headers = headers
         # 追加パラメータ
         context.parameters = parameters

@@ -25,7 +25,7 @@ class ExcelCommand(Command):
         parser.add_argument('columns', help=ExcelCommand.HELP_COLUMNS)
         parser.add_argument('rows', help=ExcelCommand.HELP_ROWS)
         # header from sheet rows
-        parser.add_argument('header-row', help='headers row number. default headers use column letter.', nargs='?')
+        parser.add_argument('header-row', help='headers row number. default use column position.', nargs='?')
 
     def add_optional_arguments(self, *, parser):
         super().add_optional_arguments(parser=parser)

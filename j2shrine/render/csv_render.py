@@ -5,7 +5,7 @@ from . base_render import Render, RenderContext
 class CsvRenderContext(RenderContext):
     def __init__(self, *, template=None, template_encoding='utf8', parameters={}):
         super().__init__(template=template, template_encoding=template_encoding, parameters=parameters)
-        self.use_header = False
+        self.read_header = False
         self.encoding = 'utf8'
         self.delimiter = ','
         self.header_prefix='col_'
@@ -31,7 +31,7 @@ class CsvRender(Render):
         for n in range(self.context.skip_lines):
             next(reader)
 
-        if self.context.use_header:
+        if self.context.read_header:
             self.headers = self.read_headers(columns= next(reader))
 
         for line_no, columns in enumerate(reader):

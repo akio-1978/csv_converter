@@ -9,7 +9,7 @@ class CsvCommand(Command):
     def add_optional_arguments(self,*, parser):
         print('optional')
         # flag first line is header
-        parser.add_argument('-H', '--header', help='with header.', dest='use_header', action='store_true')
+        parser.add_argument('-H', '--header', help='csv with header.', dest='read_header', action='store_true')
         # flag tab separate values
         parser.add_argument('-d', '--delimiter', metavar='', help='column delimiter.', default=',')
         # skip head lines
