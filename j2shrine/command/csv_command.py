@@ -7,7 +7,6 @@ class CsvCommand(Command):
         return main_parser.add_parser('csv', help = 'rendaring csv format')
 
     def add_optional_arguments(self,*, parser):
-        print('optional')
         # flag first line is header
         parser.add_argument('-H', '--header', help='csv with header.', dest='read_header', action='store_true')
         # flag tab separate values
