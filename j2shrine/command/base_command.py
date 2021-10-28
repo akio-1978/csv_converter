@@ -1,3 +1,4 @@
+import io
 import sys
 import argparse
 
@@ -51,6 +52,8 @@ class Command():
                 in_stream = open(context.source, encoding=context.input_encoding)
             if context.out is not sys.stdout:
                 out_stream = open(context.out, mode='w', encoding=context.output_encoding)
+            else:
+                out_stream = io.TextIOWrapper(sys.stdout.buffer, encoding=context.output_encoding)
 
             render.render(source = in_stream, output = out_stream)
         finally:
