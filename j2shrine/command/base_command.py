@@ -50,7 +50,7 @@ class Command():
             if context.source is not sys.stdin:
                 in_stream = open(context.source, encoding=context.input_encoding)
             if context.out is not sys.stdout:
-                out_stream = open(context.out, encoding=context.output_encoding)
+                out_stream = open(context.out, mode='w', encoding=context.output_encoding)
 
             render.render(source = in_stream, output = out_stream)
         finally:
