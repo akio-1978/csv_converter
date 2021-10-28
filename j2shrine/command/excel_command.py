@@ -29,7 +29,7 @@ class ExcelCommand(Command):
 
     def add_optional_arguments(self, *, parser):
         super().add_optional_arguments(parser=parser)
-        parser.add_argument('-E', '--extra', help='get fixed position cells. ex: A1 B2...', dest='extra', nargs='*')
+        parser.add_argument('-E', '--extra', help='get fixed position cells. ex: A1 B2...', dest='extra', nargs='*', default=[])
 
     def context(self):
         return ExcelRenderContext()
