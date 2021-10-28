@@ -13,7 +13,7 @@ class CsvCommand(Command):
         # flag tab separate values
         parser.add_argument('-d', '--delimiter', metavar='', help='column delimiter.', default=',')
         # skip head lines
-        parser.add_argument('-s', '--skip-lines', metavar='', help='skip n lines.', default=0)
+        parser.add_argument('-s', '--skip-lines', metavar='', type=int, help='skip n lines.', default=0)
         return parser
 
     def context(self):
