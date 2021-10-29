@@ -46,7 +46,7 @@ class CsvRender(Render):
 
     def finish(self, *, result):
         final_result = {
-            'data' : result,
+            'rows' : result,
             'headers' : self.headers,
             'params' : self.context.parameters
         }

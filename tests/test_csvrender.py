@@ -8,7 +8,7 @@ class CsvRenderTest(unittest.TestCase):
     def test_convert_headless(self):
 
         context = CsvRenderContext()
-        context.template = {'template' : "{% for line in data %}{{line.col_00}}\n{% endfor %}"}
+        context.template = {'template' : "{% for line in rows %}{{line.col_00}}\n{% endfor %}"}
         context.template_name = 'template'
         converter = DictRender(context = context)
 
@@ -22,7 +22,7 @@ class CsvRenderTest(unittest.TestCase):
     def test_convert_escaped(self):
 
         context = CsvRenderContext()
-        context.template = {'template' : "{% for line in data %}{{line.col_00}}\n{% endfor %}"}
+        context.template = {'template' : "{% for line in rows %}{{line.col_00}}\n{% endfor %}"}
         context.template_name = 'template'
         converter = DictRender(context = context)
 
@@ -35,7 +35,7 @@ class CsvRenderTest(unittest.TestCase):
 
     def test_convert_headered(self):
 
-        context = CsvRenderContext(template={'template' : "{% for line in data %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
+        context = CsvRenderContext(template={'template' : "{% for line in rows %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"})
         context.template_name = 'template'
         context.read_header = True
         converter = DictRender(context = context)
