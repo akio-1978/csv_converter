@@ -2,9 +2,8 @@ import sys
 import argparse
 from . command.base_command import Command
 from . command.csv_command import CsvCommand
-from . render.base_render import RenderContext
-from . render.csv_render import CsvRenderContext
 from . command.excel_command import ExcelCommand
+from . command.json_command import JsonCommand
 
 class Starter():
 
@@ -13,19 +12,10 @@ class Starter():
 
     def set_subparsers(self, *, main_parser):
         CsvCommand().register_self(main_parser=main_parser)
-        # csv_parser = parser_creator.add_parser('csv', help = 'rendaring csv format')
-        # csv_command.add_arguments(subparser=csv_parser)
-        # csv_parser.set_defaults(command_instance = csv_command)
 
         ExcelCommand().register_self(main_parser=main_parser)
-        # excel_parser = parser_creator.add_parser('excel', help = 'rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
-        # excel_command.add_arguments(subparser=excel_parser)
-        # excel_parser.set_defaults(command_instance = excel_command)
 
-        Command().register_self(main_parser=main_parser)
-        # nop_parser = parser_creator.add_parser('nop', help = 'NOP for test')
-        # nop_command.add_arguments(subparser=nop_parser)
-        # nop_parser.set_defaults(command_instance = nop_command)
+        JsonCommand().register_self(main_parser=main_parser)
 
     def create_mainparser(self):
         base_parser = argparse.ArgumentParser(prog='j2shrine', 
