@@ -1,4 +1,4 @@
-{% for header in headers -%}
+{% for header in sheets[0].headers -%}
     {{header}}{%if not loop.last %}/{%endif -%}
 {% endfor %}
 {%- for sheet in sheets %}
