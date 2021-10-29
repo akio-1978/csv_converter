@@ -15,7 +15,7 @@ class ExcelRenderContext(RenderContext):
         self.encoding = 'utf8'
         self.sheets = '0'
         self.header_prefix='col_'
-        self.header_row = '0'     # ex. 1
+        self.header_row = None     # ex. 1
         self.rows = '1'      # 1 1-2 1-
         self.columns = 'A'  # A A-B A-
         self.limit = None
@@ -66,16 +66,17 @@ class ExcelRender(Render):
         while sheet_idx <= sheet_right:
             sheet = reader.worksheets[sheet_idx]
             # ヘッダの読込み
-            self.headers = self.read_headers(sheet=sheet)
+            headers = self.read_headers(sheet=sheet)
 
             # コンテンツ読込み
             sheet_data = {
                 'name' : reader.sheetnames[sheet_idx],
                 'rows' : [],
+                'headers' : headers,
                 'extra' : self.read_extra_cells(sheet= sheet)
             }
             for row in sheet.iter_rows(min_col=self.left, min_row=self.top , max_col=self.right, max_row=self.bottom, ):
-                sheet_data['rows'].append(self.columns_to_dict(columns = row))
+                sheet_data['rows'].append(self.columns_to_dict(columns = row, headers = headers))
             all_sheets.append(sheet_data)
             sheet_idx = 1 + sheet_idx
         return all_sheets
@@ -90,7 +91,6 @@ class ExcelRender(Render):
 
         final_result = {
             'sheets' : result,
-            'headers' : self.headers,
             'params' : self.context.parameters
         }
 
@@ -100,24 +100,27 @@ class ExcelRender(Render):
     def read_headers(self, *, sheet:openpyxl.worksheet.worksheet):
         headers = []
 
+        # どちらを通っているかはっきりしていない
+        # ヘッダはシートごとの独立させるか否かを検討する
+
         if self.context.header_row is not None:
             for row in sheet.iter_rows(min_col=self.left, min_row=int(self.context.header_row),
                                         max_col=self.right, max_row=int(self.context.header_row)):
                 for cell in row:
                     headers.append(cell.value)
         else: 
-            for row in sheet.iter_rows(min_col=self.left, min_row=self.bottom,
-                                        max_col=self.right, max_row=self.top):
+            for row in sheet.iter_rows(min_col=self.left, min_row=1,
+                                        max_col=self.right, max_row=1):
                 for cell in row:
                     headers.append(cell.column_letter)
 
         return headers
 
     # カラムのlistをdictに変換する。dictのキーはself.headers
-    def columns_to_dict(self, *, columns):
+    def columns_to_dict(self, *, columns, headers):
         line = {}
         # カラムとヘッダの長さは揃っていることが前提
-        for header, column in zip(self.headers, columns):
+        for header, column in zip(headers, columns):
             # カラム単体の変換処理を行う
             line[header] = self.read_column(name = header, column = column)
         return line
