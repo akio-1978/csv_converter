@@ -46,22 +46,6 @@ class Starter():
 
         command.render_io(render=render, context=context)
 
-    # def render_io(self, *, render, context):
-    #     in_stream = sys.stdin
-    #     out_stream = sys.stdout
-    #     try:
-    #         if context.source is not sys.stdin:
-    #             in_stream = open(context.source, encoding=context.input_encoding)
-    #         if context.out is not sys.stdout:
-    #             out_stream = open(context.out, encoding=context.output_encoding)
-
-    #         render.render(source = in_stream, output = out_stream)
-    #     finally:
-    #         if context.source is not sys.stdin:
-    #             in_stream.close()
-    #         if context.out is not sys.stdout:
-    #             out_stream.close()
-
     # コマンド引数からコンテキストを作る
     def assign_args(self, *, context, namespace):
         arguments = vars(namespace)
