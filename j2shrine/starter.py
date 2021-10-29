@@ -28,7 +28,7 @@ class Starter():
         # nop_parser.set_defaults(command_instance = nop_command)
 
     def create_mainparser(self):
-        base_parser = argparse.ArgumentParser(prog='j2render', 
+        base_parser = argparse.ArgumentParser(prog='j2shrine', 
                                                 add_help=True,
                                                 )
         return base_parser
