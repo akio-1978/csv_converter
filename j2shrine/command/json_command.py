@@ -11,5 +11,5 @@ class JsonCommand(Command):
     def context_class(self):
         return JsonRenderContext
 
-    def render_class(self, *, context):
+    def render(self, *, context):
         return JsonRender(context=context)
