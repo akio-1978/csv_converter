@@ -159,6 +159,15 @@ class ExcelRender(Render):
             # start to all
             return (divided[0], all)
 
+    def get_coordinate(self, *, coordinate:str):
+        if coordinate.isalpha():
+            # case in omit row number. read all rows.
+            column = openpyxl.utils.cell.column_index_from_string(coordinate)
+            return (None, column)
+        else:
+            # full specified coordinate.
+            return openpyxl.utils.cell.coordinate_to_tuple(coordinate)
+
 
     def get_cell_value(self, *, sheet, cell):
         return sheet[cell].value
