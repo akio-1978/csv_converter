@@ -3,7 +3,7 @@
 {% endfor %}
 {%- for sheet in sheets %}
 Sheet {{loop.index}}.
-Fixed Cells: {{sheet.extra.A1}} {{sheet.extra.D2}}
+Fixed Cells: {{sheet.fixed.A1}} {{sheet.fixed.D2}}
 {%- for rows in sheet.rows %}
 {{rows.Name}}/{{rows['Head-B']}}/{{rows['Head-C']}}/{{rows['Head-D']}}/{{rows['Head-E']}}/{{rows['Head-F']}}/{{rows['Head-End']}}
 {%- endfor -%}{% endfor -%}

@@ -16,7 +16,7 @@ class ExcelRenderContext(RenderContext):
         self.sheets = '1'
         self.header_row = None     # ex. 1
         self.read_range = None # A2:C4  (read cells from A2 to C4) or A2:C (read cells in all rows from 2)
-        self.extra =[]
+        self.fixed =[]
 
 class  ReadSetting:
     def __init__(self, *, sheet_left:int, sheet_right:int, left_row:str, left_column:str, right_row:str, right_column:str) -> None:
@@ -78,7 +78,7 @@ class ExcelRender(Render):
                 'name' : reader.sheetnames[sheet_idx],
                 'rows' : [],
                 'headers' : headers,
-                'extra' : self.read_extra_cells(sheet= sheet)
+                'fixed' : self.read_fixed_cells(sheet= sheet)
             }
             for row in sheet.iter_rows(min_col=setting.left_column, min_row=setting.left_row , 
                     max_col=setting.right_column, max_row=setting.right_row, ):
@@ -88,9 +88,9 @@ class ExcelRender(Render):
             sheet_idx = 1 + sheet_idx
         return all_sheets
 
-    def read_extra_cells(self, *, sheet):
+    def read_fixed_cells(self, *, sheet):
         cells = {}
-        for addr in self.context.extra:
+        for addr in self.context.fixed:
             cells[addr] = sheet[addr].value
         return cells
 

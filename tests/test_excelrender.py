@@ -32,15 +32,15 @@ class ExcelRenderTest(unittest.TestCase):
                 expect = 'tests/excel/rendered_file/read_multi_sheet.txt',
                 source = 'tests/excel/render_source_file/multi.xlsx')
 
-    def test_extra_cells(self):
-        context = ExcelRenderContext(template='tests/excel/templates/read_extra_cells.tmpl')
+    def test_fixed_cells(self):
+        context = ExcelRenderContext(template='tests/excel/templates/read_fixed_cells.tmpl')
         context.read_range = 'A4:G'
         context.header_row ='3'
         context.sheets = '3:'
-        context.extra = ['A1', 'D2']
+        context.fixed = ['A1', 'D2']
         self.file_rendering_test(context=context,
-                expect = 'tests/excel/rendered_file/read_extra_cells.txt',
-                source = 'tests/excel/render_source_file/read_extra_cells.xlsx')
+                expect = 'tests/excel/rendered_file/read_fixed_cells.txt',
+                source = 'tests/excel/render_source_file/read_fixed_cells.xlsx')
 
     def test_sheet_range(self):
         context = ExcelRenderContext(template='tests/excel/templates/read_multi_sheet.tmpl')
@@ -102,7 +102,7 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(template='tests/excel/templates/read_document.tmpl')
         context.read_range = 'C7:H10'
         context.header_row ='6'
-        context.extra = ['C3', 'C4']
+        context.fixed = ['C3', 'C4']
         context.sheets = '1:'
         self.file_rendering_test(context=context,
                 expect = 'tests/excel/rendered_file/read_document.txt',
