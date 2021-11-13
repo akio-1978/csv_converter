@@ -4,33 +4,25 @@ from . base_command import Command
 from ..render.excel_render import ExcelRender, ExcelRenderContext
 class ExcelCommand(Command):
 
-    HELP_COLUMNS = """read columns range (A A-C A-)"""
-    HELP_ROWS = """read row numbers range (1 2-4 1-)"""
-    HELP_SHEETS = """read sheets range (1 1-4 1-)"""
-    HELP_EPILOG = """range arguments format
-  1   read 1 only
-  1-4 read 1 2 3 4
-  1-  read from 1 to last
-  for column, specify letter ex: A, A-C, B-
-"""
+    HELP_SHEETS = """read sheets range (1 or 1:4 read 1 to 4 or 1: read 1 to all)"""
+    HELP_READ_RANGE = """read columns range (A1:D4 or A1:D read all rows.)"""
 
     def create_parser(self,*, main_parser):
-        return main_parser.add_parser('excel', epilog= ExcelCommand.HELP_EPILOG, help = 'rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
+        return main_parser.add_parser('excel', help = 'rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
 
     def add_positional_arguments(self, *, parser):
         parser.add_argument('template', help='jinja2 template to use.')
         # source book can't read from stdin
         parser.add_argument('source', help='rendering Excel book.')
         parser.add_argument('sheets', help=ExcelCommand.HELP_SHEETS)
-        parser.add_argument('columns', help=ExcelCommand.HELP_COLUMNS)
-        parser.add_argument('rows', help=ExcelCommand.HELP_ROWS)
+        parser.add_argument('read_range', help=ExcelCommand.HELP_READ_RANGE)
         # header from sheet rows
         parser.add_argument('header_row', help='row of column names. (default names A B C...)', nargs='?', type=int)
         return parser
 
     def add_optional_arguments(self, *, parser):
         super().add_optional_arguments(parser=parser)
-        parser.add_argument('-E', '--extra', help='get fixed position cells. ex: A1 B2...', dest='extra', nargs='*', default=[])
+        parser.add_argument('-F', '--fixed', help='get fixed position cells. ex: A1 B2...', dest='fixed', nargs='*', default=[])
         return parser
 
     def context(self):
@@ -46,7 +38,7 @@ class ExcelCommand(Command):
         out_stream = sys.stdout
         try:
             if context.out is not sys.stdout:
-                out_stream = open(context.out, encoding=context.output_encoding)
+                out_stream = open(context.out, encoding=context.output_encoding, mode='w')
 
             render.render(source = context.source, output = out_stream)
         finally:

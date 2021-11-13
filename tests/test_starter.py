@@ -16,6 +16,10 @@ class StarterTest(unittest.TestCase):
         Starter(args=['csv', 'tests/csv/templates/simple_json.tmpl', 'tests/csv/render_source_file/simple_json.csv',
             '-o', 'tests/output/test_start.tmp',  '--input-encoding','euc-jp', '-p' ,'A=B']).execute()
 
+    def test_start_excel(self):
+        Starter(args=['excel', 'tests/excel/templates/read_document.tmpl', 'tests/excel/render_source_file/read_document.xlsx',
+            '1:', 'C7:H10', '6', '-o', 'tests/output/test_start.tmp', '--fixed', 'C3', 'C4']).execute()
+
     def test_excel_help(self):
         starter = Starter(args=['excel', '-h'])
         self.assertRaises(BaseException, starter.execute)
