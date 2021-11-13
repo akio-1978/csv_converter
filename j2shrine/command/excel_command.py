@@ -5,7 +5,7 @@ from ..render.excel_render import ExcelRender, ExcelRenderContext
 class ExcelCommand(Command):
 
     HELP_SHEETS = """read sheets range ('1' sheet1 only. '1:4' read 1 to 4. '1:' read 1 to all)"""
-    HELP_READ_RANGE = """read columns range ('A1:D4' read A1 to D4 'A1:D' read A1 to D all rows.)"""
+    HELP_READ_RANGE = """read cells range ('A1:D4' read A1 to D4 'A1:D' read A1 to D all rows.)"""
 
     def create_parser(self,*, main_parser):
         return main_parser.add_parser('excel', help = 'rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
