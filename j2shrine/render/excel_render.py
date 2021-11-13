@@ -29,11 +29,11 @@ class  ReadSetting:
         self.right_row = right_row
         self.right_column = right_column
 
-    def get_sheet_right(self, sheets):
+    def get_sheet_right(self, sheets:openpyxl.worksheet.worksheet):
         if self.sheet_right is not None:
             return self.sheet_right
         else:
-            return len(sheets.worksheets) -1
+            return len(sheets) -1
 
 class ExcelRender(Render):
 
@@ -43,8 +43,6 @@ class ExcelRender(Render):
     # jinja2テンプレートの生成
     def __init__(self, *, context :ExcelRenderContext):
         super().__init__(context = context)
-        # シートからの取得範囲は最初に特定する
-        self.setup_range()
 
     def install_filters(self, *, environment):
         super().install_filters(environment=environment)
@@ -52,8 +50,8 @@ class ExcelRender(Render):
 
     def setup_range(self):
 
-        (left_row, left_column, right_row, right_column) = self.get_read_range(self.context.read_range)
-        (sheet_left, sheet_right) = self.get_sheet_range(self.context.sheets)
+        (left_row, left_column, right_row, right_column) = self.get_read_range(arg_range=self.context.read_range)
+        (sheet_left, sheet_right) = self.get_sheet_range(sheets_range=self.context.sheets)
 
         return ReadSetting(sheet_left=sheet_left, sheet_right=sheet_right,
             left_row=left_row, left_column=left_column, right_row=right_row, right_column=right_column)
@@ -166,15 +164,15 @@ class ExcelRender(Render):
 
         return (int(left) -1, int(left) -1)
 
-    def get_read_range(self, *, arg_range:str, all=None):
+    def get_read_range(self, *, arg_range:str):
 
         (left, delim, right) = arg_range.partition(':')
 
         if left == arg_range:
             raise ValueError('invalid range: ' + arg_range)
 
-        (left_row, left_column) = self.get_coordinate(left)
-        (right_row, right_column) = self.get_coordinate(right)
+        (left_row, left_column) = self.get_coordinate(coordinate=left)
+        (right_row, right_column) = self.get_coordinate(coordinate=right)
 
         return (left_row, left_column, right_row, right_column)
 
