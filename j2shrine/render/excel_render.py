@@ -14,10 +14,8 @@ class ExcelRenderContext(RenderContext):
         super().__init__(template=template, template_encoding=template_encoding, parameters=parameters)
         self.encoding = 'utf8'
         self.sheets = '1'
-        self.header_prefix='col_'
         self.header_row = None     # ex. 1
         self.read_range = None # A2:C4  (read cells from A2 to C4) or A2:C (read cells in all rows from 2)
-        self.limit = None
         self.extra =[]
 
 class  ReadSetting:
