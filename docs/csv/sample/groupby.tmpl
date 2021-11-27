@@ -1,0 +1,8 @@
+{{params.line}}:
+  自治体別分類:
+{%- for area, stations in rows | groupby('area') %}
+    - {{area}}: 
+{%- for station in stations %}
+      - {{station.number}}: {{station.name}}
+{%- endfor %}
+{%- endfor %}

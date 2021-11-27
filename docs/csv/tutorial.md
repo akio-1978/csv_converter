@@ -3,27 +3,27 @@
 csvサブコマンドを使ったcsvファイルの変換処理の例です。
 
 ## 変換の内容
-東京メトロ有楽町線の駅を自治体毎に分類したyamlのファイルにしてみます。
+東京メトロ有楽町線の駅を列挙したcsvファイルを、各駅を自治体毎に分類したyamlのファイルにしてみましょう。
 ### 変換前データ
 
-``` csv
-pref,name,age
-群馬県,浅利 靖,6
-福岡県,千田 沙和,48
-京都府,宮尾 唯衣,32
-茨城県,野尻 友治,53
-新潟県,水本 智之,51
-新潟県,千野 克哉,41
-愛媛県,磯田 碧依,21
-神奈川県,徳丸 晶,68
-神奈川県,桜木 富美子,46
-茨城県,新田 芳太郎,33
+``` 
+    number,name,area
+    Y-1,和光市,和光市
+    Y-2,地下鉄成増,板橋区
+    Y-3,地下鉄赤塚,練馬区
+    Y-4,平和台,練馬区
+    Y-5,氷川台,練馬区
+    Y-6,小竹向原,練馬区
+    Y-7,千川,豊島区
+    Y-8,要町,豊島区
+    Y-9,池袋,豊島区
 ```
 
 ``` jinja2
-人名リスト:
-{%- for pref, persons in lines | sequential_group_by('pref') %}
-    - {{ward}}: 
+{{params.line}}:
+  自治体別分類:
+{%- for area, stations in rows | sequential_group_by('area') %}
+    - {{area}}: 
 {%- for station in stations %}
       - {{station.line}}-{{station.number}}: {{station.name}}
 {%- endfor %}
