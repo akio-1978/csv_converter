@@ -1,6 +1,6 @@
 import itertools
 
-def sequential_group_by(iterable, key):
+def sequential_groupby(iterable, key):
     
     groups = []
     for group_key, group in itertools.groupby(iterable, lambda item: item.get(key, 'None')) :
