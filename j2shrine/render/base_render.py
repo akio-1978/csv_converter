@@ -1,6 +1,6 @@
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
-from . jinja2_custom_filter import sequential_groupby
+from . jinja2_custom_filter import sequential_group_by
 
 # renderの動作を決定するコンテキスト
 class RenderContext:
@@ -25,7 +25,7 @@ class Render:
         self.template = environment.get_template(path.name)
 
     def install_filters(self, *, environment):
-        environment.filters['sequential_groupby'] = sequential_groupby
+        environment.filters['sequential_group_by'] = sequential_group_by
 
     def build_reader(self, *, source):
         return source

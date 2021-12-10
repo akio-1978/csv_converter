@@ -1,6 +1,6 @@
 stations:
   ward:
-{%- for ward, stations in rows | sequential_groupby('ward') %}
+{%- for ward, stations in rows | sequential_group_by('ward') %}
     - {{ward}}: 
 {%- for station in stations %}
       - {{station.line}}-{{station.number}}: {{station.name}}
