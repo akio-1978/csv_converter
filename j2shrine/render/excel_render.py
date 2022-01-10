@@ -110,16 +110,28 @@ class ExcelRender(Render):
         # どちらを通っているかはっきりしていない
         # ヘッダはシートごとの独立させるか否かを検討する
 
+        print('header row is:', self.context.header_row)
+
         if self.context.header_row is not None:
             for row in sheet.iter_rows(min_col=setting.left_column, min_row=int(self.context.header_row),
                                         max_col=setting.right_column, max_row=int(self.context.header_row)):
-                for cell in row:
-                    headers.append(cell.value)
+                for idx, cell in enumerate(row, start=1):
+                    if (hasattr(cell, 'value')):
+                        headers.append(cell.value)
+                    else:
+                        print('no value cell')
+                        headers.append(openpyxl.util.cell.get_column_letter(idx))
         else: 
-            for row in sheet.iter_rows(min_col=setting.left_column, min_row=1,
-                                        max_col=setting.right_column, max_row=1):
-                for cell in row:
-                    headers.append(cell.column_letter)
+            if setting.right_column - setting.left_column == 0:
+                print('1 column')
+                headers.append(openpyxl.utils.cell.get_column_letter(1))
+                return headers
+
+            print('right', setting.right_column)
+            print('left', setting.left_column)
+
+            for idx in range(setting.left_column, setting.right_column + 1):
+                headers.append(openpyxl.utils.cell.get_column_letter(idx))
 
         return headers
 
@@ -137,8 +149,11 @@ class ExcelRender(Render):
 
     # hook by every column
     def read_column(self, *, name, column):
-        # データの取り出し
-        return column.value
+        # valueを持っていないタイプのセルが存在する
+        if (hasattr(column, 'value')):
+            return column.value
+        else:
+            return None
     
     def column_number(self, *, column:str):
         fulldigit = column.zfill(3)
