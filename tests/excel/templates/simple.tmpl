@@ -1,4 +1,4 @@
-{{sheets[0].headers[0]}}
-{% for line in sheets[0].rows -%}
-{{line.Name}}
+Name
+{% for row in sheets[0].rows -%}
+{{row.A}}
 {% endfor -%}

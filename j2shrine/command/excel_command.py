@@ -16,8 +16,6 @@ class ExcelCommand(Command):
         parser.add_argument('source', help='rendering Excel book.')
         parser.add_argument('sheets', help=ExcelCommand.HELP_SHEETS)
         parser.add_argument('read_range', help=ExcelCommand.HELP_READ_RANGE)
-        # header from sheet rows
-        parser.add_argument('header_row', help='row of column names. (default names A B C...)', nargs='?', type=int)
         return parser
 
     def add_optional_arguments(self, *, parser):

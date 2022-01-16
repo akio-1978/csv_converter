@@ -1,6 +1,4 @@
-{% for header in sheets[0].headers -%}
-    {{header}}{%if not loop.last %}/{%endif -%}
-{% endfor %}
-{%- for sheet in sheets %}{%- for rows in sheet.rows %}
-{{rows.Name}}/{{rows['Head-B']}}/{{rows['Head-C']}}/{{rows['Head-D']}}/{{rows['Head-E']}}/{{rows['Head-F']}}/{{rows['Head-End']}}
+Name/Head-B/Head-C/Head-D/Head-E/Head-F/Head-End
+{%- for sheet in sheets %}{%- for row in sheet.rows %}
+{{row.A}}/{{row.B}}/{{row.C}}/{{row.D}}/{{row.E}}/{{row.F}}/{{row.G}}
 {%- endfor %}{% endfor %}

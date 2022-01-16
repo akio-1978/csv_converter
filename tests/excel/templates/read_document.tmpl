@@ -4,12 +4,12 @@
         "name" : "{{sheet.fixed.C3}}",
         "description" : "{{sheet.fixed.C4}}",
         "lines" : [
-    {%- for row in sheet.rows if row.日付 -%}
-            {% if row.日付 %}
+    {%- for row in sheet.rows if row.C -%}
+            {% if row.C %}
             {
-                "date" : "{{row.日付 | excel_time('%Y/%m/%d')}}",
-                "event" : "{{row.費目}}",
-                "price" : "{{row.金額}}"
+                "date" : "{{row.C | excel_time('%Y/%m/%d')}}",
+                "event" : "{{row.D}}",
+                "price" : "{{row.H}}"
             }{% if not loop.last %},{%endif -%}
             {%- endif %}
     {%- endfor %}

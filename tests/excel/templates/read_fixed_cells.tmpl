@@ -1,9 +1,7 @@
-{% for header in sheets[0].headers -%}
-    {{header}}{%if not loop.last %}/{%endif -%}
-{% endfor %}
+Name/Head-B/Head-C/Head-D/Head-E/Head-F/Head-End
 {%- for sheet in sheets %}
 Sheet {{loop.index}}.
 Fixed Cells: {{sheet.fixed.A1}} {{sheet.fixed.D2}}
-{%- for rows in sheet.rows %}
-{{rows.Name}}/{{rows['Head-B']}}/{{rows['Head-C']}}/{{rows['Head-D']}}/{{rows['Head-E']}}/{{rows['Head-F']}}/{{rows['Head-End']}}
+{%- for row in sheet.rows %}
+{{row.A}}/{{row.B}}/{{row.C}}/{{row.D}}/{{row.E}}/{{row.F}}/{{row.G}}
 {%- endfor -%}{% endfor -%}
