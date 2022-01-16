@@ -10,7 +10,7 @@ python3.8 以上
 
 ## インストール
 ``` sh
-pip install j2shrine-0.1.0-py3-none-any.whl
+pip install git+https://github.com/akio-1978/j2shrine
 ```
 
 ## コマンド使用方法
@@ -144,6 +144,7 @@ Excelフォーマットで使用する位置引数です。
 
 ##### Excelからjinja2へ渡されるパラメータ
 Excelブックを読み込んだ結果、j2shrineは以下のパラメータを渡してjinja2を起動します。
+結合セルを読み込んだ場合、セルの左上の値のみがrowsに格納されます。
 ``` python
 {
     'sheets' : {
