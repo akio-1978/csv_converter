@@ -90,8 +90,8 @@ class ExcelRender(Render):
 
     def read_fixed_cells(self, *, sheet):
         cells = {}
-        for addr in self.context.fixed:
-            cells[addr] = sheet[addr].value
+        for cell_at in self.context.fixed:
+            cells[cell_at] = self.read_fixed_cell(sheet = sheet, cell_at = cell_at)
         return cells
 
     def finish(self, *, result):
@@ -129,16 +129,19 @@ class ExcelRender(Render):
         # カラムとヘッダの長さは揃っていることが前提
         for header, column in zip(headers, columns):
             # カラム単体の変換処理を行う
-            line[header] = self.read_column(name = header, column = column)
+            line[header] = self.read_cell(name = header, column = column)
         return line
 
     def columns_dict(self, *, columns_dict):
         return columns_dict
 
     # hook by every column
-    def read_column(self, *, name, column):
+    def read_cell(self, *, name, column):
         # データの取り出し
-        return column.value
+        if not hasattr(column, 'value'):
+            return ''
+        val = column.value
+        return val if val != None else ''
     
     def column_number(self, *, column:str):
         fulldigit = column.zfill(3)
@@ -184,6 +187,5 @@ class ExcelRender(Render):
             return openpyxl.utils.cell.coordinate_to_tuple(coordinate)
 
 
-    def get_cell_value(self, *, sheet, cell):
-        return sheet[cell].value
-
+    def read_fixed_cell(self, *, sheet, cell_at):
+        return self.read_cell(name = cell_at, column = sheet[cell_at])

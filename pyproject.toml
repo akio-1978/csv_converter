@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "j2shrine"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["akio-1978 <akio.ogawa01@gmail.com>"]
 

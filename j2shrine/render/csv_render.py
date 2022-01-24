@@ -81,5 +81,6 @@ class CsvRender(Render):
 
     # hook by every column
     def read_column(self, *, name, column):
-        return column.strip()
+        val = column.strip()
+        return  val if val != None else ''
 
