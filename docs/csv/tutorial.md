@@ -140,3 +140,5 @@ j2shrine csv -H area_group.tmpl yurakucho.csv -o area_group.yml -p line=東京�
       - Y-12: 護国寺
 ```
 このように、j2shrineではcsvファイルのような**行の出現順を維持する変換を行うための機能を今後も提供していく予定です。**
+
+注意点として`sequential_groupby`フィルタはuniqコマンドに似たグループ分けを行うため、csvファイル中で自治体名が飛び飛びに出現する場合、それらは別の自治体としてグループ分けされます。
