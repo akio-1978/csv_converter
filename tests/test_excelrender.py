@@ -108,6 +108,21 @@ class ExcelRenderTest(unittest.TestCase):
                 expect = 'tests/excel/rendered_file/read_document.txt',
                 source = 'tests/excel/render_source_file/read_document.xlsx')
 
+    def test_read_by_column_letter(self):
+
+        context = ExcelRenderContext(template='tests/excel/templates/read_data_by_column_letter.tmpl')
+        context.read_range = 'A2:D'
+        self.file_rendering_test(context=context,
+                expect = 'tests/excel/rendered_file/read_data_only.txt',
+                source = 'tests/excel/render_source_file/data_only.xlsx')
+
+    def test_read_by_column_letter_single(self):
+
+        context = ExcelRenderContext(template='tests/excel/templates/read_data_by_column_letter_single.tmpl')
+        context.read_range = 'A2:A'
+        self.file_rendering_test(context=context,
+                expect = 'tests/excel/rendered_file/read_data_only_single.txt',
+                source = 'tests/excel/render_source_file/data_only.xlsx')
 
     def test_column_number(self):
         context = ExcelRenderContext(template='tests/excel/templates/simple.tmpl')
