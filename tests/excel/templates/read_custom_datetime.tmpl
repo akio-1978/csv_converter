@@ -1,3 +1,3 @@
-{% for line in sheets[0].rows -%}
-{{line.Date|excel_time('%Y/%m/%d')}} {{line.Time|excel_time('%H:%M:%S')}} {{line.DateTime|excel_time('%Y/%m/%d %H:%M:%S')}}
+{% for row in sheets[0].rows -%}
+{{row.A|excel_time('%Y/%m/%d')}} {{row.B|excel_time('%H:%M:%S')}} {{row.C|excel_time('%Y/%m/%d %H:%M:%S')}}
 {% endfor -%}

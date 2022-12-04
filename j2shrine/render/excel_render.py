@@ -14,7 +14,6 @@ class ExcelRenderContext(RenderContext):
         super().__init__(template=template, template_encoding=template_encoding, parameters=parameters)
         self.encoding = 'utf8'
         self.sheets = '1'
-        self.header_row = None     # ex. 1
         self.read_range = None # A2:C4  (read cells from A2 to C4) or A2:C (read cells in all rows from 2)
         self.fixed =[]
 
@@ -70,19 +69,16 @@ class ExcelRender(Render):
         sheet_idx = setting.sheet_left
         while sheet_idx <= sheet_right:
             sheet = reader.worksheets[sheet_idx]
-            # ヘッダの読込み
-            headers = self.read_headers(sheet=sheet, setting=setting)
 
             # コンテンツ読込み
             sheet_data = {
                 'name' : reader.sheetnames[sheet_idx],
                 'rows' : [],
-                'headers' : headers,
                 'fixed' : self.read_fixed_cells(sheet= sheet)
             }
             for row in sheet.iter_rows(min_col=setting.left_column, min_row=setting.left_row , 
                     max_col=setting.right_column, max_row=setting.right_row, ):
-                sheet_data['rows'].append(self.columns_to_dict(columns = row, headers = headers))
+                sheet_data['rows'].append(self.columns_to_dict(columns = row))
 
             all_sheets.append(sheet_data)
             sheet_idx = 1 + sheet_idx
@@ -90,8 +86,8 @@ class ExcelRender(Render):
 
     def read_fixed_cells(self, *, sheet):
         cells = {}
-        for cell_at in self.context.fixed:
-            cells[cell_at] = self.read_fixed_cell(sheet = sheet, cell_at = cell_at)
+        for addr in self.context.fixed:
+            cells[addr] = sheet[addr].value
         return cells
 
     def finish(self, *, result):
@@ -103,45 +99,26 @@ class ExcelRender(Render):
 
         return final_result
 
-
-    def read_headers(self, *, sheet:openpyxl.worksheet.worksheet, setting:ReadSetting):
-        headers = []
-
-        # どちらを通っているかはっきりしていない
-        # ヘッダはシートごとの独立させるか否かを検討する
-
-        if self.context.header_row is not None:
-            for row in sheet.iter_rows(min_col=setting.left_column, min_row=int(self.context.header_row),
-                                        max_col=setting.right_column, max_row=int(self.context.header_row)):
-                for cell in row:
-                    headers.append(cell.value)
-        else: 
-            for row in sheet.iter_rows(min_col=setting.left_column, min_row=1,
-                                        max_col=setting.right_column, max_row=1):
-                for cell in row:
-                    headers.append(cell.column_letter)
-
-        return headers
-
     # カラムのlistをdictに変換する。dictのキーはself.headers
-    def columns_to_dict(self, *, columns, headers):
+    def columns_to_dict(self, *, columns):
         line = {}
-        # カラムとヘッダの長さは揃っていることが前提
-        for header, column in zip(headers, columns):
+
+        for column in columns:
+            letter = self.get_column_letter(column=column)
             # カラム単体の変換処理を行う
-            line[header] = self.read_cell(name = header, column = column)
+            line[letter] = self.read_column(name = letter, column = column)
         return line
 
     def columns_dict(self, *, columns_dict):
         return columns_dict
 
     # hook by every column
-    def read_cell(self, *, name, column):
+    def read_column(self, *, name, column):
         # データの取り出し
-        if not hasattr(column, 'value'):
-            return ''
-        val = column.value
-        return val if val != None else ''
+        if (hasattr(column, 'value')):
+            return column.value
+        else:
+            return None
     
     def column_number(self, *, column:str):
         fulldigit = column.zfill(3)
@@ -187,5 +164,12 @@ class ExcelRender(Render):
             return openpyxl.utils.cell.coordinate_to_tuple(coordinate)
 
 
-    def read_fixed_cell(self, *, sheet, cell_at):
-        return self.read_cell(name = cell_at, column = sheet[cell_at])
+    def get_cell_value(self, *, sheet, cell):
+
+        if hasattr(sheet[cell], 'value'):
+            return sheet[cell].value
+        else:
+            return None
+    
+    def get_column_letter(self, *, column):
+        return openpyxl.utils.cell.get_column_letter(column.column)

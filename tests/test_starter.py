@@ -1,5 +1,3 @@
-import sys
-import io
 import unittest
 from j2shrine.starter import Starter
 
