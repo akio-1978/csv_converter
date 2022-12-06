@@ -10,6 +10,11 @@ class RenderContext:
         self.parameters = parameters
         self.template_encoding = template_encoding
 
+    def set_arguments(self, *, arguments):
+        for (key, value) in arguments.items():
+            setattr(self, key, value)
+        return self
+
 class Render:
 
     # jinja2テンプレートの生成

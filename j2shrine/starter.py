@@ -30,7 +30,7 @@ class Starter():
 
         namespace = self.parser.parse_args(self.args)
         command = namespace.command_instance
-        context = command.context()
+        context = command.context(arguments = vars(namespace))
         self.assign_args(context=context, namespace=namespace)
         render = command.render(context=context)
 

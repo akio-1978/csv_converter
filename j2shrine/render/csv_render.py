@@ -3,7 +3,7 @@ from . base_render import Render, RenderContext
 
 # transformerに渡すパラメータクラス
 class CsvRenderContext(RenderContext):
-    def __init__(self, *, template=None, template_encoding='utf8', parameters={}):
+    def __init__(self, *, template=None, template_encoding='utf8', parameters=None):
         super().__init__(template=template, template_encoding=template_encoding, parameters=parameters)
         self.read_header = False
         self.encoding = 'utf8'

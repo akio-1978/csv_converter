@@ -38,7 +38,10 @@ class Command():
     def add_optional_arguments(self, *, parser):
         pass
 
-    def context(self):
+    def context(self, *, arguments):
+        return self.newContext().set_arguments(arguments=arguments)
+
+    def newContext(self):
         return RenderContext()
 
     def render(self, *, context):

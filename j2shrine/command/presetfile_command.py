@@ -2,7 +2,8 @@
 from . base_command import Command
 from ..render.csv_render import CsvRender, CsvRenderContext
 import sys
-class CsvCommand(Command):
+import json
+class PresetCommand(Command):
 
     def create_parser(self,*, main_parser):
         return main_parser.add_parser('csv', help = 'rendaring csv format')
@@ -26,3 +27,7 @@ class CsvCommand(Command):
 
     def render(self, *, context):
         return CsvRender(context=context)
+
+    def load_preset(self):
+
+        pass

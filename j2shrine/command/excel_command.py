@@ -23,7 +23,7 @@ class ExcelCommand(Command):
         parser.add_argument('-F', '--fixed', help='get fixed position cells. ex: A1 B2...', dest='fixed', nargs='*', default=[])
         return parser
 
-    def context(self):
+    def newContext(self):
         return ExcelRenderContext()
 
     def render(self, *, context):

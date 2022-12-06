@@ -8,8 +8,8 @@ class JsonCommand(Command):
     def create_parser(self,*, main_parser):
         return main_parser.add_parser('json', help = 'rendaring json format')
 
-    def context_class(self):
-        return JsonRenderContext
+    def newContext(self):
+        return JsonRenderContext()
 
     def render(self, *, context):
         return JsonRender(context=context)

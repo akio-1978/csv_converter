@@ -15,7 +15,7 @@ class CsvCommand(Command):
         parser.add_argument('-s', '--skip-lines', metavar='', type=int, help='skip n lines.', default=0)
         return parser
 
-    def context(self):
+    def newContext(self):
         return CsvRenderContext()
 
     def render(self, *, context):
