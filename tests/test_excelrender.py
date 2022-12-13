@@ -1,7 +1,8 @@
 import unittest
 import openpyxl
 from io import StringIO
-from j2shrine.render.excel_render import ExcelRender, ExcelRenderContext
+from j2shrine.render.excel_render import ExcelRender
+from j2shrine.context.excel_context import ExcelRenderContext
 
 
 class ExcelRenderTest(unittest.TestCase):

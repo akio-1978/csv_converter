@@ -1,10 +1,6 @@
-from .render import Render, RenderContext
+from .render import Render
 import json
 
-# renderの動作を決定するコンテキスト
-class JsonRenderContext(RenderContext):
-    def __init__(self, *, template=None, parameters={}):
-        super().__init__(template=template, parameters=parameters)
 
 class JsonRender(Render):
 

@@ -1,6 +1,7 @@
 import unittest
 from io import StringIO
-from j2shrine.render.json_render import JsonRender, JsonRenderContext
+from j2shrine.render.json_render import JsonRender
+from j2shrine.context.json_context import JsonRenderContext
 
 class JsonRenderTest(unittest.TestCase):
 

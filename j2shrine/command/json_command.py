@@ -1,6 +1,7 @@
 
 from j2shrine.command.command import Command
-from ..render.json_render import JsonRender, JsonRenderContext
+from ..render.json_render import JsonRender
+from ..context.json_context import JsonRenderContext
 
 # CommandRunnerのデフォルト実装
 class JsonCommand(Command):
