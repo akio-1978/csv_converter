@@ -1,5 +1,5 @@
 
-from . base_command import Command
+from .command import Command
 from ..render.csv_render import CsvRender, CsvRenderContext
 class CsvCommand(Command):
 

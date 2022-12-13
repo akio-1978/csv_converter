@@ -1,5 +1,5 @@
 
-from j2shrine.command.base_command import Command
+from j2shrine.command.command import Command
 from ..render.json_render import JsonRender, JsonRenderContext
 
 # CommandRunnerのデフォルト実装

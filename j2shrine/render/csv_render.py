@@ -1,5 +1,5 @@
 import csv
-from . base_render import Render, RenderContext
+from .render import Render, RenderContext
 
 # transformerに渡すパラメータクラス
 class CsvRenderContext(RenderContext):

@@ -1,4 +1,4 @@
-from . base_render import Render, RenderContext
+from .render import Render, RenderContext
 import json
 
 # renderの動作を決定するコンテキスト

@@ -1,6 +1,6 @@
 from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
-from . jinja2_custom_filter import sequential_group_by
+from .jinja2_custom_filter import sequential_group_by
 
 # renderの動作を決定するコンテキスト
 class RenderContext:

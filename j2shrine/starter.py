@@ -1,6 +1,6 @@
 import sys
 import argparse
-from . command.base_command import Command
+from .command.command import Command
 from . command.csv_command import CsvCommand
 from . command.excel_command import ExcelCommand
 from . command.json_command import JsonCommand

@@ -1,6 +1,6 @@
 import argparse
 import sys
-from . base_command import Command
+from .command import Command
 from ..render.excel_render import ExcelRender, ExcelRenderContext
 class ExcelCommand(Command):
 
