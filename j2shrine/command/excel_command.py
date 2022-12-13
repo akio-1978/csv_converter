@@ -26,10 +26,10 @@ class ExcelCommand(Command):
     def newContext(self):
         return ExcelRenderContext()
 
-    def render(self, *, context):
+    def get_render(self, *, context):
         return ExcelRender(context=context)
 
-    def render_io(self, *, render, context):
+    def rendering(self, *, render, context):
         """
         openpyxlがxlsxファイルのストリームを開けないので、in側はファイル名だけを扱う
         """

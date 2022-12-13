@@ -44,10 +44,10 @@ class Command():
     def newContext(self):
         return RenderContext()
 
-    def render(self, *, context):
+    def get_render(self, *, context):
         return Render(context=context)
 
-    def render_io(self, *, render, context):
+    def rendering(self, *, render, context):
         in_stream = sys.stdin
         out_stream = sys.stdout
         try:

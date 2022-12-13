@@ -18,5 +18,5 @@ class CsvCommand(Command):
     def newContext(self):
         return CsvRenderContext()
 
-    def render(self, *, context):
+    def get_render(self, *, context):
         return CsvRender(context=context)
