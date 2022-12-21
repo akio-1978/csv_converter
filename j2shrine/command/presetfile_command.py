@@ -1,5 +1,5 @@
 
-from . base_command import Command
+from .command import Command
 from ..render.csv_render import CsvRender, CsvRenderContext
 import sys
 import json
@@ -25,7 +25,7 @@ class PresetCommand(Command):
     def context(self):
         return CsvRenderContext()
 
-    def render(self, *, context):
+    def get_render(self, *, context):
         return CsvRender(context=context)
 
     def load_preset(self):
