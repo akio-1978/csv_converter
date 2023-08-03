@@ -1,17 +1,18 @@
 import csv
-from .render import Render
-from ..context.csv_context import CsvRenderContext
+from ..render import Render
+from .csv_context import CsvRenderContext
+
 
 class CsvRender(Render):
 
     # jinja2テンプレートの生成
     def __init__(self, *, context):
-        super().__init__(context = context)
+        super().__init__(context=context)
         self.headers = None
 
     def build_reader(self, *, source):
         # use csv.reader
-        return csv.reader(source, delimiter = self.context.delimiter)
+        return csv.reader(source, delimiter=self.context.delimiter)
 
     def read_source(self, *, reader):
         lines = []
@@ -22,23 +23,24 @@ class CsvRender(Render):
             next(reader)
 
         if self.context.read_header:
-            self.headers = self.read_headers(columns= next(reader))
+            self.headers = self.read_headers(columns=next(reader))
 
         for line_no, columns in enumerate(reader):
             # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
             if self.headers is None:
-                self.headers = self.create_headers(context = self.context, columns = columns)
+                self.headers = self.create_headers(
+                    context=self.context, columns=columns)
 
-            line = self.columns_to_dict(columns = columns)
+            line = self.columns_to_dict(columns=columns)
             lines.append(line)
 
         return lines
 
     def finish(self, *, result):
         final_result = {
-            'rows' : result,
-            'headers' : self.headers,
-            'params' : self.context.parameters
+            'rows': result,
+            'headers': self.headers,
+            'params': self.context.parameters
         }
         return final_result
 
@@ -48,7 +50,7 @@ class CsvRender(Render):
         # カラムとヘッダの長さは揃っていることが前提
         for header, column in zip(self.headers, columns):
             # カラム単体の変換処理を行う
-            line[header] = self.read_column(name = header, column = column)
+            line[header] = self.read_column(name=header, column=column)
 
         return line
 
@@ -61,7 +63,6 @@ class CsvRender(Render):
             headers.append(column.strip())
         return headers
 
-
     def create_headers(self, *, context, columns):
         headers = []
         for idx, column in enumerate(columns):
@@ -72,5 +73,4 @@ class CsvRender(Render):
     # hook by every column
     def read_column(self, *, name, column):
         val = column.strip()
-        return  val if val != None else ''
-
+        return val if val != None else ''

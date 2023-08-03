@@ -1,4 +1,4 @@
-from .context import RenderContext
+from ..context import RenderContext
 
 
 # 取得するシート a a-b a-
@@ -10,8 +10,10 @@ from .context import RenderContext
 # 追加取得セル...
 class ExcelRenderContext(RenderContext):
     def __init__(self, *, template=None, template_encoding='utf8', parameters={}):
-        super().__init__(template=template, template_encoding=template_encoding, parameters=parameters)
+        super().__init__(template=template,
+                         template_encoding=template_encoding, parameters=parameters)
         self.encoding = 'utf8'
         self.sheets = '1'
-        self.read_range = None # A2:C4  (read cells from A2 to C4) or A2:C (read cells in all rows from 2)
-        self.fixed =[]
+        # A2:C4  (read cells from A2 to C4) or A2:C (read cells in all rows from 2)
+        self.read_range = None
+        self.fixed = []

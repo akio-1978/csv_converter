@@ -1,9 +1,9 @@
 import sys
 import argparse
-from .command.command import Command
-from . command.csv_command import CsvCommand
-from . command.excel_command import ExcelCommand
-from . command.json_command import JsonCommand
+from .csv.csv_command import CsvCommand
+from .excel.excel_command import ExcelCommand
+from .json.json_command import JsonCommand
+
 
 class Starter():
 
@@ -18,19 +18,20 @@ class Starter():
         JsonCommand().register_self(main_parser=main_parser)
 
     def create_mainparser(self):
-        base_parser = argparse.ArgumentParser(prog='j2shrine', 
-                                                add_help=True,
-                                                )
+        base_parser = argparse.ArgumentParser(prog='j2shrine',
+                                              add_help=True,
+                                              )
         return base_parser
 
     def execute(self):
 
         self.parser = self.create_mainparser()
-        self.set_subparsers(main_parser=self.parser.add_subparsers(required=True))
+        self.set_subparsers(
+            main_parser=self.parser.add_subparsers(required=True))
 
         namespace = self.parser.parse_args(self.args)
         command = namespace.command_instance
-        context = command.context(arguments = vars(namespace))
+        context = command.context(arguments=vars(namespace))
         self.assign_args(context=context, namespace=namespace)
 
         render = command.get_render(context=context)
@@ -47,6 +48,7 @@ class Starter():
 def main():
     starter = Starter(args=sys.argv[1:] if len(sys.argv) > 1 else ['', ''])
     starter.execute()
+
 
 if __name__ == '__main__':
     main()

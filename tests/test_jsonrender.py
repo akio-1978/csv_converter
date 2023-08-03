@@ -1,14 +1,15 @@
 import unittest
 from io import StringIO
-from j2shrine.render.json_render import JsonRender
-from j2shrine.context.json_context import JsonRenderContext
+from j2shrine.json.json_render import JsonRender
+from j2shrine.json.json_context import JsonRenderContext
+
 
 class JsonRenderTest(unittest.TestCase):
 
     def test_simple_json(self):
-        self.file_convert_test(template = 'tests/json/templates/simple_json.tmpl',
-                                expect = 'tests/json/rendered_file/simple_json.sql',
-                                source = 'tests/json/render_source_file/simple_json.json')
+        self.file_convert_test(template='tests/json/templates/simple_json.tmpl',
+                               expect='tests/json/rendered_file/simple_json.sql',
+                               source='tests/json/render_source_file/simple_json.json')
 
     # def test_group_by(self):
     #     self.file_convert_test(template = 'tests/csv/templates/group_by.tmpl',
@@ -21,12 +22,11 @@ class JsonRenderTest(unittest.TestCase):
     #                             source = 'tests/csv/render_source_file/options.csv',
     #                             parameters = {'list_name' : 'Yurakucho-line-stations-in-ward'})
 
-
     def file_convert_test(self, *, template, expect, source, parameters={}):
         context = JsonRenderContext(template=template, parameters=parameters)
         context.use_header = True
         context.parameters = parameters
-        converter = JsonRender(context = context)
+        converter = JsonRender(context=context)
         rendered = StringIO()
 
         with open(source) as source_reader:
@@ -35,7 +35,7 @@ class JsonRenderTest(unittest.TestCase):
         with open(expect) as expect_reader:
             print(rendered.getvalue())
             self.assertEqual(expect_reader.read(), rendered.getvalue())
-        
+
         return rendered
 
 
