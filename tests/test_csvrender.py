@@ -55,47 +55,47 @@ class CsvRenderTest(unittest.TestCase):
 
     def test_simple_json(self):
         self.file_convert_test(template='tests/csv/templates/simple_json.tmpl',
-                               expect='tests/csv/rendered_file/simple_json.txt',
-                               source='tests/csv/render_source_file/simple_json.csv')
+                               expect='tests/csv/expect/simple_json.txt',
+                               source='tests/csv/src/simple_json.csv')
 
     def test_skip_with_header(self):
         self.file_convert_test(template='tests/csv/templates/simple_json.tmpl',
-                               expect='tests/csv/rendered_file/simple_json.txt',
-                               source='tests/csv/render_source_file/skip_with_header.csv',
+                               expect='tests/csv/expect/simple_json.txt',
+                               source='tests/csv/src/skip_with_header.csv',
                                skip_lines=3, read_header=True)
 
     def test_skip_with_headerless(self):
         self.file_convert_test(template='tests/csv/templates/skip_with_headerless.tmpl',
-                               expect='tests/csv/rendered_file/simple_json.txt',
-                               source='tests/csv/render_source_file/skip_with_headerless.csv',
+                               expect='tests/csv/expect/simple_json.txt',
+                               source='tests/csv/src/skip_with_headerless.csv',
                                skip_lines=3, read_header=False)
 
     def test_group_by(self):
         self.file_convert_test(template='tests/csv/templates/group_by.tmpl',
-                               expect='tests/csv/rendered_file/group_by.yml',
-                               source='tests/csv/render_source_file/group_by.csv')
+                               expect='tests/csv/expect/group_by.yml',
+                               source='tests/csv/src/group_by.csv')
 
     def test_parameters(self):
         self.file_convert_test(template='tests/csv/templates/parameters.tmpl',
-                               expect='tests/csv/rendered_file/parameters.yml',
-                               source='tests/csv/render_source_file/parameters.csv',
+                               expect='tests/csv/expect/parameters.yml',
+                               source='tests/csv/src/parameters.csv',
                                parameters={'list_name': 'Yurakucho-line-stations-in-ward'})
 
     def test_headers(self):
         self.file_convert_test(template='tests/csv/templates/headers.tmpl',
-                               expect='tests/csv/rendered_file/headers.txt',
-                               source='tests/csv/render_source_file/simple_json.csv')
+                               expect='tests/csv/expect/headers.txt',
+                               source='tests/csv/src/simple_json.csv')
 
     def test_headers_auto(self):
         self.file_convert_test(template='tests/csv/templates/headers.tmpl',
-                               expect='tests/csv/rendered_file/headers_auto.txt',
-                               source='tests/csv/render_source_file/simple_json.csv',
+                               expect='tests/csv/expect/headers_auto.txt',
+                               source='tests/csv/src/simple_json.csv',
                                read_header=False)
 
     def test_header_names(self):
         self.file_convert_test(template='tests/csv/templates/header_names.tmpl',
-                               expect='tests/csv/rendered_file/header_names.txt',
-                               source='tests/csv/render_source_file/header_names.csv',
+                               expect='tests/csv/expect/header_names.txt',
+                               source='tests/csv/src/header_names.csv',
                                read_header=True)
 
     def file_convert_test(self, *, template, expect, source,
