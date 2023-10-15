@@ -14,7 +14,6 @@ class JsonRenderTest(unittest.TestCase):
 
     def file_convert_test(self, *, template, expect, source, parameters={}):
         context = JsonRenderContext(template=template, parameters=parameters)
-        context.use_header = True
         context.parameters = parameters
         converter = JsonRender(context=context)
         rendered = StringIO()
