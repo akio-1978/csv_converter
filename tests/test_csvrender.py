@@ -4,7 +4,7 @@ from j2shrine.csv.csv_render import CsvRender
 from j2shrine.csv.csv_context import CsvRenderContext
 
 from jinja2 import Environment, DictLoader
-
+from tests.utils import rendering_test
 
 class CsvRenderTest(unittest.TestCase):
 
@@ -109,16 +109,7 @@ class CsvRenderTest(unittest.TestCase):
         # 行の読み飛ばし
         context.skip_lines = skip_lines
 
-        converter = CsvRender(context=context)
-        rendered = StringIO()
-
-        with open(source) as source_reader:
-            converter.render(source=source_reader, output=rendered)
-
-        with open(expect) as expect_reader:
-            self.assertEqual(expect_reader.read(), rendered.getvalue())
-
-        return rendered
+        return rendering_test(ut=self, render=CsvRender(context=context), expect_file=expect, source=source)
 
 # テスト用にDictLoaderを使うRender
 

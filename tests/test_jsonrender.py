@@ -2,6 +2,7 @@ import unittest
 from io import StringIO
 from j2shrine.json.json_render import JsonRender
 from j2shrine.json.json_context import JsonRenderContext
+from tests.utils import rendering_test
 
 
 class JsonRenderTest(unittest.TestCase):
@@ -16,15 +17,8 @@ class JsonRenderTest(unittest.TestCase):
         context = JsonRenderContext(template=template, parameters=parameters)
         context.parameters = parameters
         converter = JsonRender(context=context)
-        rendered = StringIO()
 
-        with open(source) as source_reader:
-            converter.render(source=source_reader, output=rendered)
-
-        with open(expect) as expect_reader:
-            self.assertEqual(expect_reader.read(), rendered.getvalue())
-
-        return rendered
+        return rendering_test(ut=self, render=converter, expect_file=expect, source=source)
 
 
 if __name__ == '__main__':

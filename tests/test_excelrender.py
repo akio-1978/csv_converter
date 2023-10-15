@@ -2,7 +2,7 @@ import unittest
 from io import StringIO
 from j2shrine.excel.excel_render import ExcelRender
 from j2shrine.excel.excel_context import ExcelRenderContext
-
+from tests.utils import file_test
 
 class ExcelRenderTest(unittest.TestCase):
 
@@ -154,14 +154,12 @@ class ExcelRenderTest(unittest.TestCase):
 
     def file_rendering_test(self, *, context, expect, source, encoding='utf8'):
         converter = ExcelRender(context=context)
-        rendered = StringIO()
+        result_file = 'tests/output/' + expect.rpartition('/')[2] + '.tmp'
 
-        converter.render(source=source, output=rendered)
-        # print(rendered.getvalue())
-        with open(expect, encoding=encoding) as expect_reader:
-            self.assertEqual(expect_reader.read(), rendered.getvalue())
-
-        return rendered
+        with open(result_file, 'w', encoding=encoding) as result_writer:
+            converter.render(source=source, output=result_writer)
+            
+        return file_test(ut=self, expect_file=expect, result_file=result_file)
 
 
 if __name__ == '__main__':
