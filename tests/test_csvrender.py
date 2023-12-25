@@ -16,7 +16,7 @@ class CsvRenderTest(unittest.TestCase):
         context.template_name = 'template'
         converter = DictRender(context=context)
 
-        source = StringIO('A0001,C0002 \n B0001,C0002  \n   C0001,C0002')
+        source = StringIO('A0001,C0002\nB0001,C0002\nC0001,C0002')
         result = StringIO()
 
         converter.render(source=source, output=result)
@@ -31,7 +31,7 @@ class CsvRenderTest(unittest.TestCase):
         context.template_name = 'template'
         converter = DictRender(context=context)
 
-        source = StringIO('"A00,01",C0002 \n B0001,C0002  \n   C0001,C0002')
+        source = StringIO('"A00,01",C0002\nB0001,C0002\nC0001,C0002')
         result = StringIO()
 
         converter.render(source=source, output=result)
@@ -46,7 +46,7 @@ class CsvRenderTest(unittest.TestCase):
         context.read_header = True
         converter = DictRender(context=context)
 
-        source = StringIO('FIRST, SECOND\n C0001,C0002')
+        source = StringIO('FIRST,SECOND\nC0001,C0002')
         result = StringIO()
 
         converter.render(source=source, output=result)
@@ -85,6 +85,11 @@ class CsvRenderTest(unittest.TestCase):
         self.file_convert_test(template='tests/csv/templates/headers.tmpl',
                                expect='tests/csv/expect/headers.txt',
                                source='tests/csv/src/simple_json.csv')
+
+    def test_headers_over(self):
+        self.file_convert_test(template='tests/csv/templates/headers.tmpl',
+                               expect='tests/csv/expect/headers_over.txt',
+                               source='tests/csv/src/header_over.csv')
 
     def test_headers_auto(self):
         self.file_convert_test(template='tests/csv/templates/headers.tmpl',

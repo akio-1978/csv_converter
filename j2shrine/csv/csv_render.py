@@ -8,10 +8,10 @@ class CsvRender(Render):
     # jinja2テンプレートの生成
     def __init__(self, *, context):
         super().__init__(context=context)
-        self.headers = None
+        self.headers = context.column_headers.copy()
 
     def build_reader(self, *, source):
-        # use csv.reader
+        # csvヘッダの有無が不定のため、DictReaderは使用しない
         return csv.reader(source, delimiter=self.context.delimiter)
 
     def read_source(self, *, reader):
@@ -22,16 +22,13 @@ class CsvRender(Render):
         for n in range(self.context.skip_lines):
             next(reader)
 
+        # 指定されていれば先頭行をヘッダにする
         if self.context.read_header:
-            self.headers = self.read_headers(columns=next(reader))
+            self.headers = next(reader)
 
-        for line_no, columns in enumerate(reader):
-            # ヘッダ読み込み、ヘッダがない場合は連番をヘッダにする
-            if self.headers is None:
-                self.headers = self.create_headers(
-                    context=self.context, columns=columns)
-
-            line = self.columns_to_dict(columns=columns)
+        # line単位ループ
+        for lineno, columns in enumerate(reader):
+            line = self.readline(lineno=lineno, columns=columns)
             lines.append(line)
 
         return lines
@@ -44,33 +41,19 @@ class CsvRender(Render):
         }
         return final_result
 
-    # カラムのlistをdictに変換する。dictのキーはself.headers
-    def columns_to_dict(self, *, columns):
+    # カラムのlistをdictに変換する。
+    def readline(self, *, lineno:int, columns: str):
         line = {}
-        # カラムとヘッダの長さは揃っていることが前提
-        for header, column in zip(self.headers, columns):
-            # カラム単体の変換処理を行う
-            line[header] = self.read_column(name=header, column=column)
-
+        for index, column in enumerate(columns):
+            header = self.next_header(index)
+            line[header] = column
         return line
 
-    def columns_dict(self, *, columns_dict):
-        return columns_dict
-
-    def read_headers(self, *, columns):
-        headers = []
-        for column in columns:
-            headers.append(column.strip())
-        return headers
-
-    def create_headers(self, *, context, columns):
-        headers = []
-        for idx, column in enumerate(columns):
-            # make header from line length
-            headers.append(context.header_prefix + str(idx).zfill(2))
-        return headers
-
-    # hook by every column
-    def read_column(self, *, name, column):
-        val = column.strip()
-        return val if val != None else ''
+    # カラム名取得
+    def next_header(self, index):
+        if len(self.headers) <= index:
+            # ヘッダが定義されていない場合
+            # または定義済みのヘッダよりも実際のカラムが多い場合はヘッダを追加で生成する
+            self.headers.append(self.context.header_prefix + str(index).zfill(2))
+        return self.headers[index]
+    

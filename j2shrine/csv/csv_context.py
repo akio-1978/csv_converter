@@ -12,3 +12,4 @@ class CsvRenderContext(RenderContext):
         self.delimiter = ','
         self.header_prefix = 'col_'
         self.skip_lines = 0
+        self.column_headers = []
