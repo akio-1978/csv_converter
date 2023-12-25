@@ -135,14 +135,6 @@ class ExcelRenderTest(unittest.TestCase):
                                  expect='tests/excel/expect/read_data_only_single.txt',
                                  source='tests/excel/src/data_only.xlsx')
 
-    def test_column_number(self):
-        context = ExcelRenderContext(
-            template='tests/excel/templates/simple.tmpl')
-        render = ExcelRender(context=context)
-        self.assertEqual(1, render.column_number(column='A'))
-        self.assertEqual(27, render.column_number(column='AA'))
-        self.assertEqual(703, render.column_number(column='AAA'))
-
     def file_rendering_test(self, *, context, expect, source, encoding='utf8'):
         converter = ExcelRender(context=context)
         result_file = 'tests/output/' + expect.rpartition('/')[2] + '.tmp'

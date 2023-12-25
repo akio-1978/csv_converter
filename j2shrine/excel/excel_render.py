@@ -22,9 +22,6 @@ class ReadSetting:
 
 class ExcelRender(Render):
 
-    ALPHABET_TABLE = '0ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    TO_END = -1
-
     # jinja2テンプレートの生成
     def __init__(self, *, context: ExcelRenderContext):
         super().__init__(context=context)
@@ -109,18 +106,6 @@ class ExcelRender(Render):
             return column.value
         else:
             return None
-
-    def column_number(self, *, column: str):
-        fulldigit = column.zfill(3)
-
-        number = 0
-        number = number + \
-            (int(ExcelRender.ALPHABET_TABLE.find(fulldigit[0])) * 26 * 26)
-        number = number + \
-            (int(ExcelRender.ALPHABET_TABLE.find(fulldigit[1])) * 26)
-        number = number + (int(ExcelRender.ALPHABET_TABLE.find(fulldigit[2])))
-
-        return number
 
     # 読み込むシートの範囲をタプルで取得
     def get_sheet_range(self, *, sheets_range: str):
