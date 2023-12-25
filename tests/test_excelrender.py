@@ -1,5 +1,4 @@
 import unittest
-from io import StringIO
 from j2shrine.excel.excel_render import ExcelRender
 from j2shrine.excel.excel_context import ExcelRenderContext
 from tests.utils import file_test
@@ -143,14 +142,6 @@ class ExcelRenderTest(unittest.TestCase):
         self.assertEqual(1, render.column_number(column='A'))
         self.assertEqual(27, render.column_number(column='AA'))
         self.assertEqual(703, render.column_number(column='AAA'))
-
-    # def test_read_limit(self):
-    #     context = ExcelRenderContext(template='tests/excel/templates/read_limit.tmpl')
-    #     context.header_area ='B2:F2'
-    #     context.start_line='B3:F3'
-    #     render = ExcelRender(context=context)
-    #     render.render(source='tests/excel/src/simple.xlsx', output=sys.stdout)
-    #     rendered = StringIO()
 
     def file_rendering_test(self, *, context, expect, source, encoding='utf8'):
         converter = ExcelRender(context=context)
