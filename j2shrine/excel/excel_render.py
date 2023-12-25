@@ -122,17 +122,22 @@ class ExcelRender(Render):
 
         return number
 
+    # 読み込むシートの範囲をタプルで取得
     def get_sheet_range(self, *, sheets_range: str):
+        # コロン区切りの数値を左右に分割
+        params = sheets_range.split(':')
 
-        (left, to, right) = sheets_range.partition(':')
-
-        if to == ':':
-            if right == '':
-                return (int(left) - 1, None)
-            else:
-                return (int(left) - 1, int(right) - 1)
-
-        return (int(left) - 1, int(left) - 1)
+        # 戻り値は0オリジンにする
+        start = int(params[0]) - 1
+        
+        if len(params) < 2:
+            # 単一のシ－トが対象 ex "1"
+            return (start, start)
+        elif params[1].isnumeric():
+            # シート範囲を指定 ex "1:3"
+            return (start, int(params[1]) - 1)
+        # 指定のシ－トより右側の全てが対象 ex "1:"
+        return (start, None)
 
     def get_read_range(self, *, arg_range: str):
 
