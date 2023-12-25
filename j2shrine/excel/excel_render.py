@@ -1,8 +1,19 @@
+from typing import NamedTuple
 import openpyxl
 from ..render import Render
 from .excel_context import ExcelRenderContext
 from .excel_custom_filter import excel_time
 
+class ReadPosition(NamedTuple):
+    row:str
+    col:str
+
+class ReadArea(NamedTuple):
+    start:ReadPosition
+    end:ReadPosition
+class Sheets(NamedTuple):
+    start:int
+    end:int
 
 class ReadSetting:
     def __init__(self, *, sheet_left: int, sheet_right: int, left_row: str, left_column: str, right_row: str, right_column: str) -> None:
@@ -32,13 +43,13 @@ class ExcelRender(Render):
 
     def setup_range(self):
 
-        (left_row, left_column, right_row, right_column) = self.get_read_range(
+        read_area = self.get_read_range(
             arg_range=self.context.read_range)
-        (sheet_left, sheet_right) = self.get_sheet_range(
+        sheets = self.get_sheet_range(
             sheets_range=self.context.sheets)
 
-        return ReadSetting(sheet_left=sheet_left, sheet_right=sheet_right,
-                           left_row=left_row, left_column=left_column, right_row=right_row, right_column=right_column)
+        return ReadSetting(sheet_left=sheets.start, sheet_right=sheets.end,
+                           left_row=read_area.start.row, left_column=read_area.start.col, right_row=read_area.end.row, right_column=read_area.end.col)
 
     def build_reader(self, *, source: any):
         # 既にブックで渡された場合、そのまま返す
@@ -117,33 +128,34 @@ class ExcelRender(Render):
         
         if len(params) < 2:
             # 単一のシ－トが対象 ex "1"
-            return (start, start)
+            return Sheets(start, start)
         elif params[1].isnumeric():
             # シート範囲を指定 ex "1:3"
-            return (start, int(params[1]) - 1)
+            return Sheets(start, int(params[1]) - 1)
         # 指定のシ－トより右側の全てが対象 ex "1:"
-        return (start, None)
+        return Sheets(start, None)
 
     def get_read_range(self, *, arg_range: str):
 
-        (left, delim, right) = arg_range.partition(':')
+        (arg_left, delim, arg_right) = arg_range.partition(':')
 
-        if left == arg_range:
+        if arg_left == arg_range:
             raise ValueError('invalid range: ' + arg_range)
 
-        (left_row, left_column) = self.get_coordinate(coordinate=left)
-        (right_row, right_column) = self.get_coordinate(coordinate=right)
+        left = self.get_coordinate(coordinate=arg_left)
+        right = self.get_coordinate(coordinate=arg_right)
 
-        return (left_row, left_column, right_row, right_column)
+        return ReadArea(left, right)
 
     def get_coordinate(self, *, coordinate: str):
         if coordinate.isalpha() and coordinate.isascii():
             # args is column only. read all rows.
             column = openpyxl.utils.cell.column_index_from_string(coordinate)
-            return (None, column)
+            return ReadPosition(None, column)
         else:
             # full specified coordinate.
-            return openpyxl.utils.cell.coordinate_to_tuple(coordinate)
+            row, col = openpyxl.utils.cell.coordinate_to_tuple(coordinate)
+            return ReadPosition(row, col)
 
     def get_cell_value(self, *, sheet, cell):
 
