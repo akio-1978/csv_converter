@@ -10,7 +10,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/simple.tmpl')
         context.read_range = 'A2:G5'
-        context.header_row = '1'
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/simple.txt',
                                  source='tests/excel/src/simple.xlsx')
@@ -19,7 +18,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/read_all.tmpl')
         context.read_range = 'A2:G'
-        context.header_row = '1'
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/read_all.txt',
                                  source='tests/excel/src/simple.xlsx')
@@ -28,7 +26,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/read_multi_sheet.tmpl')
         context.read_range = 'A2:G'
-        context.header_row = '1'
         context.sheets = '3:'
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/read_multi_sheet.txt',
@@ -38,7 +35,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/read_fixed_cells.tmpl')
         context.read_range = 'A4:G'
-        context.header_row = '3'
         context.sheets = '3:'
         context.absolute = ['A1', 'D2']
         self.file_rendering_test(context=context,
@@ -49,7 +45,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/read_multi_sheet.tmpl')
         context.read_range = 'A2:G'
-        context.header_row = '1'
         context.sheets = '3:4'
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/read_multi_sheet.txt',
@@ -59,7 +54,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/read_multi_sheet.tmpl')
         context.read_range = 'A3:G4'
-        context.header_row = '1'
         context.sheets = '3:4'
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/read_row_range.txt',
@@ -69,7 +63,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/read_sheet_name.tmpl')
         context.read_range = 'A2:G'
-        context.header_row = '1'
         context.sheets = '3:'
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/read_sheet_name.txt',
@@ -80,7 +73,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/read_datetime.tmpl')
         context.read_range = 'A2:C5'
-        context.header_row = '1'
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/read_datetime.txt',
                                  source='tests/excel/src/read_datetime.xlsx')
@@ -90,7 +82,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/read_custom_datetime.tmpl')
         context.read_range = 'A2:C5'
-        context.header_row = '1'
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/read_custom_datetime.txt',
                                  source='tests/excel/src/read_custom_datetime.xlsx')
@@ -100,7 +91,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/read_data_only.tmpl')
         context.read_range = 'A2:D'
-        context.header_row = '1'
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/read_data_only.txt',
                                  source='tests/excel/src/data_only.xlsx')
@@ -110,7 +100,6 @@ class ExcelRenderTest(unittest.TestCase):
         context = ExcelRenderContext(
             template='tests/excel/templates/read_document.tmpl')
         context.read_range = 'C7:H10'
-        context.header_row = '6'
         context.absolute = ['C3', 'C4']
         context.sheets = '1:'
         self.file_rendering_test(context=context,
