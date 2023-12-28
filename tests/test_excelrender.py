@@ -40,7 +40,7 @@ class ExcelRenderTest(unittest.TestCase):
         context.read_range = 'A4:G'
         context.header_row = '3'
         context.sheets = '3:'
-        context.fixed = ['A1', 'D2']
+        context.absolute = ['A1', 'D2']
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/read_fixed_cells.txt',
                                  source='tests/excel/src/read_fixed_cells.xlsx')
@@ -111,7 +111,7 @@ class ExcelRenderTest(unittest.TestCase):
             template='tests/excel/templates/read_document.tmpl')
         context.read_range = 'C7:H10'
         context.header_row = '6'
-        context.fixed = ['C3', 'C4']
+        context.absolute = ['C3', 'C4']
         context.sheets = '1:'
         self.file_rendering_test(context=context,
                                  expect='tests/excel/expect/read_document.txt',

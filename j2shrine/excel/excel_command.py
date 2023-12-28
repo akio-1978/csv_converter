@@ -24,7 +24,7 @@ class ExcelCommand(Command):
     def add_optional_arguments(self, *, parser):
         super().add_optional_arguments(parser=parser)
         parser.add_argument(
-            '-F', '--fixed', help='get fixed position cells. ex: A1 B2...', dest='fixed', nargs='*', default=[])
+            '-A', '--absolute', help='get absolute position cells. ex: A1 B2...', dest='absolute', nargs='*', default=[])
         return parser
 
     def newContext(self):

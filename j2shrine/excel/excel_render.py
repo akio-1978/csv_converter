@@ -49,7 +49,7 @@ class ExcelRender(Render):
             sheet_data = {
                 'name': reader.sheetnames[sheet_idx],
                 'rows': [],
-                'fixed': self.read_fixed_cells(sheet=sheet)
+                'abs': self.read_absolute_cells(sheet=sheet)
             }
             for row in sheet.iter_rows(min_col=cells.start.col, min_row=cells.start.row,
                                        max_col=cells.end.col, max_row=cells.end.row, ):
@@ -59,9 +59,9 @@ class ExcelRender(Render):
             sheet_idx = 1 + sheet_idx
         return results
 
-    def read_fixed_cells(self, *, sheet):
+    def read_absolute_cells(self, *, sheet):
         cells = {}
-        for addr in self.context.fixed:
+        for addr in self.context.absolute:
             cells[addr] = sheet[addr].value
         return cells
 
@@ -87,7 +87,6 @@ class ExcelRender(Render):
     def columns_dict(self, *, columns_dict):
         return columns_dict
 
-    # hook by every column
     def read_column(self, *, name, column):
         # データの取り出し
         if (hasattr(column, 'value')):

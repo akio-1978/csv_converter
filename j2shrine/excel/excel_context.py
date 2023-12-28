@@ -16,4 +16,5 @@ class ExcelRenderContext(RenderContext):
         self.sheets = '1'
         # A2:C4  (read cells from A2 to C4) or A2:C (read cells in all rows from 2)
         self.read_range = None
-        self.fixed = []
+        self.absolute = []
+        
