@@ -4,32 +4,16 @@ from ..render import Render
 from .excel_context import ExcelRenderContext
 from .excel_custom_filter import excel_time
 
-class ReadPosition(NamedTuple):
+class CellPosition(NamedTuple):
     row:str
     col:str
 
-class ReadArea(NamedTuple):
-    start:ReadPosition
-    end:ReadPosition
+class CellRange(NamedTuple):
+    start:CellPosition
+    end:CellPosition
 class Sheets(NamedTuple):
     start:int
     end:int
-
-class ReadSetting:
-    def __init__(self, *, sheet_left: int, sheet_right: int, left_row: str, left_column: str, right_row: str, right_column: str) -> None:
-        self.sheet_left = sheet_left
-        self.sheet_right = sheet_right
-        self.left_row = left_row
-        self.left_column = left_column
-        self.right_row = right_row
-        self.right_column = right_column
-
-    def get_sheet_right(self, sheets: openpyxl.worksheet.worksheet):
-        if self.sheet_right is not None:
-            return self.sheet_right
-        else:
-            return len(sheets) - 1
-
 
 class ExcelRender(Render):
 
@@ -41,16 +25,6 @@ class ExcelRender(Render):
         super().install_filters(environment=environment)
         environment.filters['excel_time'] = excel_time
 
-    def setup_range(self):
-
-        read_area = self.get_read_range(
-            arg_range=self.context.read_range)
-        sheets = self.get_sheet_range(
-            sheets_range=self.context.sheets)
-
-        return ReadSetting(sheet_left=sheets.start, sheet_right=sheets.end,
-                           left_row=read_area.start.row, left_column=read_area.start.col, right_row=read_area.end.row, right_column=read_area.end.col)
-
     def build_reader(self, *, source: any):
         # 既にブックで渡された場合、そのまま返す
         if (isinstance(source, openpyxl.Workbook)):
@@ -60,12 +34,15 @@ class ExcelRender(Render):
 
     def read_source(self, *, reader):
 
-        setting = self.setup_range()
-        sheet_right = setting.get_sheet_right(sheets=reader.worksheets)
+        cells = self.parse_cell_args(
+            arg_range=self.context.read_range)
 
-        all_sheets = []
-        sheet_idx = setting.sheet_left
-        while sheet_idx <= sheet_right:
+        sheets = self.parse_sheet_args(
+            sheets_range=self.context.sheets, sheets=reader.worksheets)
+
+        results = []
+        sheet_idx = sheets.start
+        while sheet_idx <= sheets.end:
             sheet = reader.worksheets[sheet_idx]
 
             # コンテンツ読込み
@@ -74,13 +51,13 @@ class ExcelRender(Render):
                 'rows': [],
                 'fixed': self.read_fixed_cells(sheet=sheet)
             }
-            for row in sheet.iter_rows(min_col=setting.left_column, min_row=setting.left_row,
-                                       max_col=setting.right_column, max_row=setting.right_row, ):
+            for row in sheet.iter_rows(min_col=cells.start.col, min_row=cells.start.row,
+                                       max_col=cells.end.col, max_row=cells.end.row, ):
                 sheet_data['rows'].append(self.columns_to_dict(columns=row))
 
-            all_sheets.append(sheet_data)
+            results.append(sheet_data)
             sheet_idx = 1 + sheet_idx
-        return all_sheets
+        return results
 
     def read_fixed_cells(self, *, sheet):
         cells = {}
@@ -118,8 +95,8 @@ class ExcelRender(Render):
         else:
             return None
 
-    # 読み込むシートの範囲をタプルで取得
-    def get_sheet_range(self, *, sheets_range: str):
+    # 引数書式からシート範囲を特定する
+    def parse_sheet_args(self, *, sheets_range: str, sheets: openpyxl.worksheet.worksheet):
         # コロン区切りの数値を左右に分割
         params = sheets_range.split(':')
 
@@ -133,9 +110,11 @@ class ExcelRender(Render):
             # シート範囲を指定 ex "1:3"
             return Sheets(start, int(params[1]) - 1)
         # 指定のシ－トより右側の全てが対象 ex "1:"
-        return Sheets(start, None)
+        return Sheets(start, len(sheets) - 1)
 
-    def get_read_range(self, *, arg_range: str):
+    # 引数書式をからセル範囲を特定する
+    # "A4:D" など最終行を指定しないパターンがある
+    def parse_cell_args(self, *, arg_range: str):
 
         (arg_left, delim, arg_right) = arg_range.partition(':')
 
@@ -145,17 +124,17 @@ class ExcelRender(Render):
         left = self.get_coordinate(coordinate=arg_left)
         right = self.get_coordinate(coordinate=arg_right)
 
-        return ReadArea(left, right)
+        return CellRange(left, right)
 
     def get_coordinate(self, *, coordinate: str):
         if coordinate.isalpha() and coordinate.isascii():
             # args is column only. read all rows.
             column = openpyxl.utils.cell.column_index_from_string(coordinate)
-            return ReadPosition(None, column)
+            return CellPosition(None, column)
         else:
             # full specified coordinate.
             row, col = openpyxl.utils.cell.coordinate_to_tuple(coordinate)
-            return ReadPosition(row, col)
+            return CellPosition(row, col)
 
     def get_cell_value(self, *, sheet, cell):
 
