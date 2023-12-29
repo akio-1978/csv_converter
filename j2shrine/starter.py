@@ -32,17 +32,9 @@ class Starter():
         namespace = self.parser.parse_args(self.args)
         command = namespace.command_instance
         context = command.context(arguments=vars(namespace))
-        self.assign_args(context=context, namespace=namespace)
 
         render = command.get_render(context=context)
         command.rendering(render=render, context=context)
-
-    # コマンド引数からコンテキストを作る
-    def assign_args(self, *, context, namespace):
-        arguments = vars(namespace)
-        for (key, value) in arguments.items():
-            setattr(context, key, value)
-        return context
 
 
 def main():
