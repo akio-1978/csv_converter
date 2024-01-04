@@ -13,5 +13,5 @@ class CsvRenderContext(RenderContext):
         # assign args
         super().__init__(args=args)
 
-    def get_render(self):
+    def new_render(self):
         return CsvRender(context=self)

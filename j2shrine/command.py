@@ -50,8 +50,8 @@ class Command():
 
     def execute(self, *, args: argparse.Namespace):
         context = self.new_context(args=args)
-        render = context.get_render()
-        self.call_render(render=render)
+        render = context.new_render()
+        self.call_render(render=render, source=args.source, out=args.out)
 
     def new_context(self, *, args: argparse.Namespace):
         return RenderContext(args=args)
@@ -59,15 +59,15 @@ class Command():
     def new_render(self, *, context:RenderContext):
         return Render(context=context)
 
-    def call_render(self, *, render: Render):
+    def call_render(self, *, render: Render, source, out):
         context = render.context
         in_stream = sys.stdin
         out_stream = sys.stdout
         try:
-            if context.source is not sys.stdin:
+            if source is not sys.stdin:
                 in_stream = open(
-                    context.source, encoding=context.input_encoding)
-            if context.out is not sys.stdout:
+                    source, encoding=context.input_encoding)
+            if out is not sys.stdout:
                 out_stream = open(context.out, mode='w',
                                   encoding=context.output_encoding)
             else:
@@ -76,9 +76,9 @@ class Command():
 
             render.render(source=in_stream, output=out_stream)
         finally:
-            if context.source is not sys.stdin:
+            if source is not sys.stdin:
                 in_stream.close()
-            if context.out is not sys.stdout:
+            if out is not sys.stdout:
                 out_stream.close()
 
 

@@ -20,7 +20,7 @@ class JsonRenderTest(unittest.TestCase):
 
     def file_convert_test(self, *, args, expect):
         context = JsonRenderContext(args=args)
-        converter = context.get_render()
+        converter = context.new_render()
 
         return rendering_test(ut=self, render=converter, expect_file=expect, source=context.src)
 

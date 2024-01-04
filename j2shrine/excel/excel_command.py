@@ -30,17 +30,18 @@ class ExcelCommand(Command):
     def new_context(self, *, args):
         return ExcelRenderContext(args=args)
 
-    def rendering(self, *, render, context):
+    def call_render(self, *, render, source, out):
         """
         openpyxlがxlsxファイルのストリームを開けないので、in側はファイル名だけを扱う
         """
+        context = render.context
         out_stream = sys.stdout
         try:
-            if context.out is not sys.stdout:
+            if out is not sys.stdout:
                 out_stream = open(
-                    context.out, encoding=context.output_encoding, mode='w')
+                    out, encoding=context.output_encoding, mode='w')
 
-            render.render(source=context.source, output=out_stream)
+            render.render(source=source, output=out_stream)
         finally:
-            if context.out is not sys.stdout:
+            if out is not sys.stdout:
                 out_stream.close()
