@@ -1,7 +1,5 @@
 import csv
 from ..render import Render
-from .csv_context import CsvRenderContext
-
 
 class CsvRender(Render):
 

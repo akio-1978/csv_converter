@@ -1,15 +1,17 @@
 from ..context import RenderContext
-
-# transformerに渡すパラメータクラス
-
-
+from .csv_render import CsvRender
+# CsvRender Context
 class CsvRenderContext(RenderContext):
-    def __init__(self, *, template=None, template_encoding='utf8', parameters=None):
-        super().__init__(template=template,
-                         template_encoding=template_encoding, parameters=parameters)
+    def __init__(self, *, args):
+        # default
         self.read_header = False
         self.encoding = 'utf8'
         self.delimiter = ','
         self.header_prefix = 'col_'
         self.skip_lines = 0
         self.column_headers = []
+        # assign args
+        super().__init__(args=args)
+
+    def get_render(self):
+        return CsvRender(context=self)
