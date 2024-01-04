@@ -1,6 +1,4 @@
 import unittest
-from io import StringIO
-from argparse import Namespace
 from j2shrine.json.json_render import JsonRender
 from j2shrine.json.json_context import JsonRenderContext
 from tests.utils import rendering_test, RenderArgs
@@ -20,9 +18,9 @@ class JsonRenderTest(unittest.TestCase):
 
     def file_convert_test(self, *, args, expect):
         context = JsonRenderContext(args=args)
-        converter = context.new_render()
+        render = JsonRender(context=context)
 
-        return rendering_test(ut=self, render=converter, expect_file=expect, source=context.src)
+        return rendering_test(ut=self, render=render, expect_file=expect, source=context.src)
 
 
 if __name__ == '__main__':

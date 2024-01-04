@@ -1,11 +1,12 @@
 from ..render import Render
+from ..context import RenderContext
 import json
 
 
 class JsonRender(Render):
 
     # jinja2テンプレートの生成
-    def __init__(self, *, context):
+    def __init__(self, *, context: RenderContext):
         self.context = context
         self.build_convert_engine(context=context)
 

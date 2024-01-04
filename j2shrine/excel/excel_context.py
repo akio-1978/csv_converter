@@ -19,5 +19,3 @@ class ExcelRenderContext(RenderContext):
         # assign args
         super().__init__(args=args)
         
-    def new_render(self):
-        return ExcelRender(context=self)

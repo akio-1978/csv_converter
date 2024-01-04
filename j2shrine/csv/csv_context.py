@@ -12,6 +12,3 @@ class CsvRenderContext(RenderContext):
         self.column_headers = []
         # assign args
         super().__init__(args=args)
-
-    def new_render(self):
-        return CsvRender(context=self)

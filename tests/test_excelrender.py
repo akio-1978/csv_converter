@@ -137,11 +137,11 @@ class ExcelRenderTest(unittest.TestCase):
                                  source='tests/excel/src/data_only.xlsx')
 
     def file_rendering_test(self, *, context, expect, source, encoding='utf8'):
-        converter = context.new_render()
+        render = ExcelRender(context=context)
         result_file = 'tests/output/' + expect.rpartition('/')[2] + '.tmp'
 
         with open(result_file, 'w', encoding=encoding) as result_writer:
-            converter.render(source=source, output=result_writer)
+            render.render(source=source, output=result_writer)
             
         return file_test(ut=self, expect_file=expect, result_file=result_file)
 

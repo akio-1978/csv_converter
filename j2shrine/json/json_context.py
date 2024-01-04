@@ -8,5 +8,3 @@ class JsonRenderContext(RenderContext):
     def __init__(self, *, args):
         super().__init__(args=args)
 
-    def new_render(self):
-        return JsonRender(context=self)

@@ -120,7 +120,7 @@ class CsvRenderTest(unittest.TestCase):
         
         context = CsvRenderContext(args=args)
 
-        return rendering_test(ut=self, render=context.new_render(), expect_file=expect, source=source)
+        return rendering_test(ut=self, render=CsvRender(context=context), expect_file=expect, source=source)
 
 # テスト用にDictLoaderを使うRender
 

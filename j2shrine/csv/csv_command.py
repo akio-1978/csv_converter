@@ -1,4 +1,5 @@
 
+from j2shrine.context import RenderContext
 from ..command import Command
 from .csv_render import CsvRender
 from .csv_context import CsvRenderContext
@@ -24,3 +25,5 @@ class CsvCommand(Command):
     def new_context(self, *, args):
         return CsvRenderContext(args=args)
 
+    def new_render(self, *, context: RenderContext):
+        return CsvRender(context=context)

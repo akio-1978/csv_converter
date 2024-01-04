@@ -13,3 +13,6 @@ class JsonCommand(Command):
 
     def new_context(self, *, args):
         return JsonRenderContext(args=args)
+
+    def new_render(self, *, context: JsonRenderContext):
+        return JsonRender(context=context)

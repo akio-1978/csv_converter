@@ -1,5 +1,7 @@
 import argparse
 import sys
+
+from j2shrine.context import RenderContext
 from ..command import Command
 from .excel_render import ExcelRender
 from .excel_context import ExcelRenderContext
@@ -29,6 +31,9 @@ class ExcelCommand(Command):
 
     def new_context(self, *, args):
         return ExcelRenderContext(args=args)
+
+    def new_render(self, *, context: RenderContext):
+        return ExcelRender(context=context)
 
     def call_render(self, *, render, source, out):
         """

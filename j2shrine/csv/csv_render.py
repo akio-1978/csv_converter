@@ -1,10 +1,11 @@
 import csv
 from ..render import Render
+from ..context import RenderContext
 
 class CsvRender(Render):
 
     # jinja2テンプレートの生成
-    def __init__(self, *, context):
+    def __init__(self, *, context: RenderContext):
         super().__init__(context=context)
         self.headers = context.column_headers.copy()
 

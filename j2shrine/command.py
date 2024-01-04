@@ -50,7 +50,7 @@ class Command():
 
     def execute(self, *, args: argparse.Namespace):
         context = self.new_context(args=args)
-        render = context.new_render()
+        render = self.new_render(context=context)
         self.call_render(render=render, source=args.source, out=args.out)
 
     def new_context(self, *, args: argparse.Namespace):
