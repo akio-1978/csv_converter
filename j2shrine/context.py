@@ -8,5 +8,5 @@ class RenderContext:
         for (key, value) in args.items():
             setattr(self, key, value)
 
-    def get_render(self):
-        return Render(self)
+    def new_render(self):
+        return Render(context=self)

@@ -1,7 +1,6 @@
 from typing import NamedTuple
 import openpyxl
 from ..render import Render
-from .excel_context import ExcelRenderContext
 from .excel_custom_filter import excel_time
 
 class CellPosition(NamedTuple):
@@ -18,7 +17,7 @@ class Sheets(NamedTuple):
 class ExcelRender(Render):
 
     # jinja2テンプレートの生成
-    def __init__(self, *, context: ExcelRenderContext):
+    def __init__(self, *, context):
         super().__init__(context=context)
 
     def install_filters(self, *, environment):

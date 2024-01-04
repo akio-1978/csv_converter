@@ -27,11 +27,8 @@ class ExcelCommand(Command):
             '-A', '--absolute', help='get absolute position cells. ex: A1 B2...', dest='absolute', nargs='*', default=[])
         return parser
 
-    def newContext(self):
-        return ExcelRenderContext()
-
-    def new_render(self, *, context):
-        return ExcelRender(context=context)
+    def new_context(self, *, args):
+        return ExcelRenderContext(args=args)
 
     def rendering(self, *, render, context):
         """
