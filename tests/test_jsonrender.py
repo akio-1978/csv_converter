@@ -1,24 +1,28 @@
 import unittest
 from io import StringIO
+from argparse import Namespace
 from j2shrine.json.json_render import JsonRender
 from j2shrine.json.json_context import JsonRenderContext
-from tests.utils import rendering_test
+from tests.utils import rendering_test, RenderArgs
 
 
 class JsonRenderTest(unittest.TestCase):
 
     def test_simple_json(self):
-        self.file_convert_test(template='tests/json/templates/simple_json.tmpl',
-                               source='tests/json/src/simple_json.json',
+        args = RenderArgs()
+        args.template='tests/json/templates/simple_json.tmpl'
+        args.src = 'tests/json/src/simple_json.json'
+        
+        
+        self.file_convert_test(args=args,
                                expect='tests/json/expect/simple_json.sql',
                                )
 
-    def file_convert_test(self, *, template, expect, source, parameters={}):
-        context = JsonRenderContext(template=template, parameters=parameters)
-        context.parameters = parameters
-        converter = JsonRender(context=context)
+    def file_convert_test(self, *, args, expect):
+        context = JsonRenderContext(args=args)
+        converter = context.get_render()
 
-        return rendering_test(ut=self, render=converter, expect_file=expect, source=source)
+        return rendering_test(ut=self, render=converter, expect_file=expect, source=context.src)
 
 
 if __name__ == '__main__':

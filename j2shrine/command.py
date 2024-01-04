@@ -2,17 +2,17 @@ import io
 import sys
 import argparse
 
-from .render import Render, RenderContext
+from .render import Render
+from .context import RenderContext
 
 # CommandRunnerのデフォルト実装
 
 
 class Command():
 
-    def register_self(self, *, main_parser) -> None:
+    def register_self(self, *, main_parser: argparse.ArgumentParser) -> None:
         parser = self.create_parser(main_parser=main_parser)
         self.add_arguments(parser=parser)
-
     def create_parser(self, *, main_parser):
         return main_parser.add_parser('nop', help='NOP for test')
 
@@ -34,6 +34,9 @@ class Command():
         # dest encoding
         parser.add_argument('--output-encoding', metavar='enc',
                             help='output encoding.', default='utf-8')
+        # template encoding
+        parser.add_argument('--template-encoding', metavar='enc',
+                            help='jinja2 template encoding.', default='utf-8')
         parser.add_argument('-p', '--parameters', nargs='*',
                             help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
 
@@ -45,16 +48,19 @@ class Command():
     def add_optional_arguments(self, *, parser):
         pass
 
-    def context(self, *, arguments):
-        return self.newContext().set_arguments(arguments=arguments)
+    def execute(self, *, args: argparse.Namespace):
+        context = self.new_context(args=args)
+        render = context.get_render()
+        self.call_render(render=render)
 
-    def newContext(self):
-        return RenderContext()
+    def new_context(self, *, args: argparse.Namespace):
+        return RenderContext(args=args)
 
-    def get_render(self, *, context):
+    def new_render(self, *, context:RenderContext):
         return Render(context=context)
 
-    def rendering(self, *, render, context):
+    def call_render(self, *, render: Render):
+        context = render.context
         in_stream = sys.stdin
         out_stream = sys.stdout
         try:

@@ -30,7 +30,7 @@ class ExcelCommand(Command):
     def newContext(self):
         return ExcelRenderContext()
 
-    def get_render(self, *, context):
+    def new_render(self, *, context):
         return ExcelRender(context=context)
 
     def rendering(self, *, render, context):

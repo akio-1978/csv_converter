@@ -1,4 +1,5 @@
 import unittest
+import argparse
 
 def rendering_test(*, ut, render, expect_file, source):
     
@@ -16,4 +17,9 @@ def file_test(*, ut:unittest.TestCase, expect_file:str, result_file:str):
             result = result_reader.read()
             ut.assertEqual(expect_reader.read(), result)
             return result
+
+class RenderArgs(argparse.Namespace):
     
+    def __init__(self):
+        self.template_encoding = 'utf-8'
+        self.parameters = {}

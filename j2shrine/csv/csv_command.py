@@ -21,8 +21,8 @@ class CsvCommand(Command):
                             type=int, help='skip n lines.', default=0)
         return parser
 
-    def newContext(self):
-        return CsvRenderContext()
+    def new_context(self, *, args):
+        return CsvRenderContext(args=args)
 
-    def get_render(self, *, context):
+    def new_render(self, *, context):
         return CsvRender(context=context)
