@@ -34,8 +34,7 @@ class ExcelRender(Render):
 
     def read_source(self, *, reader):
 
-        cells = self.parse_cell_args(
-            arg_range=self.context.read_range)
+        cells = self.context.read_range
 
         sheets = self.parse_sheet_args(
             sheets_range=self.context.sheets, sheets=reader.worksheets)
@@ -110,30 +109,6 @@ class ExcelRender(Render):
             return Sheets(start, int(params[1]) - 1)
         # 指定のシ－トより右側の全てが対象 ex "1:"
         return Sheets(start, len(sheets) - 1)
-
-    # 引数書式をからセル範囲を特定する
-    # "A4:D" など最終行を指定しないパターンがある
-    def parse_cell_args(self, *, arg_range: str):
-
-        (arg_left, delim, arg_right) = arg_range.partition(':')
-
-        if arg_left == arg_range:
-            raise ValueError('invalid range: ' + arg_range)
-
-        left = self.get_coordinate(coordinate=arg_left)
-        right = self.get_coordinate(coordinate=arg_right)
-
-        return CellRange(left, right)
-
-    def get_coordinate(self, *, coordinate: str):
-        if coordinate.isalpha() and coordinate.isascii():
-            # args is column only. read all rows.
-            column = openpyxl.utils.cell.column_index_from_string(coordinate)
-            return CellPosition(None, column)
-        else:
-            # full specified coordinate.
-            row, col = openpyxl.utils.cell.coordinate_to_tuple(coordinate)
-            return CellPosition(row, col)
 
     def get_cell_value(self, *, sheet, cell):
 
