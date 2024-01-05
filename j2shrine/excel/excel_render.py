@@ -47,16 +47,7 @@ class ExcelRender(Render):
             sheet_idx = 1 + sheet_idx
         return results
 
-    def finish(self, *, result):
-
-        final_result = {
-            'sheets': result,
-            'params': self.context.parameters
-        }
-
-        return final_result
-
-    # カラムのlistをdictに変換する。dictのキーはself.headers
+    # カラムのlistをdictに変換する。dictのキーはセル位置
     def read_columns(self, *, row):
         line = {}
 
@@ -72,6 +63,7 @@ class ExcelRender(Render):
             cell_values[addr] = self.read_column(name=addr, column=sheet[addr])
         return cell_values
 
+    # openpyxlのCellオブジェクトからの値読み出し
     def read_column(self, *, name, column):
         # value属性が存在しない場合がある
         if (hasattr(column, 'value')):
@@ -81,3 +73,11 @@ class ExcelRender(Render):
 
     def get_column_letter(self, *, column):
         return openpyxl.utils.cell.get_column_letter(column.column)
+
+    # jinja2へ渡す読み取り結果
+    def finish(self, *, result):
+        final_result = {
+            'sheets': result,
+            'params': self.context.parameters
+        }
+        return final_result
