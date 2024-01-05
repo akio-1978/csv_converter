@@ -49,7 +49,7 @@ class ExcelRender(Render):
             sheet_data = {
                 'name': reader.sheetnames[sheet_idx],
                 'rows': [],
-                'abs': self.read_absolute_cells(sheet=sheet)
+                'abs': self.read_absolute_cells(sheet=sheet, cells=self.context.absolute)
             }
             for row in sheet.iter_rows(min_col=cells.start.col, min_row=cells.start.row,
                                        max_col=cells.end.col, max_row=cells.end.row, ):
@@ -58,12 +58,6 @@ class ExcelRender(Render):
             results.append(sheet_data)
             sheet_idx = 1 + sheet_idx
         return results
-
-    def read_absolute_cells(self, *, sheet):
-        cells = {}
-        for addr in self.context.absolute:
-            cells[addr] = sheet[addr].value
-        return cells
 
     def finish(self, *, result):
 
@@ -87,17 +81,16 @@ class ExcelRender(Render):
     def columns_dict(self, *, columns_dict):
         return columns_dict
 
+    def read_absolute_cells(self, *, sheet, cells):
+        cell_values = {}
+        for addr in cells:
+            cell_values[addr] = self.read_column(name=addr, column=sheet[addr])
+        return cell_values
+
     def read_column(self, *, name, column):
-        # データの取り出し
+        # value属性が存在しない場合がある
         if (hasattr(column, 'value')):
             return column.value
-        else:
-            return None
-
-    def get_cell_value(self, *, sheet, cell):
-
-        if hasattr(sheet[cell], 'value'):
-            return sheet[cell].value
         else:
             return None
 
