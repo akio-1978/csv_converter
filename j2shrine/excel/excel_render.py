@@ -41,7 +41,7 @@ class ExcelRender(Render):
             }
             for row in sheet.iter_rows(min_col=cells.start.col, min_row=cells.start.row,
                                        max_col=cells.end.col, max_row=cells.end.row, ):
-                sheet_data['rows'].append(self.columns_to_dict(columns=row))
+                sheet_data['rows'].append(self.read_columns(row=row))
 
             results.append(sheet_data)
             sheet_idx = 1 + sheet_idx
@@ -57,17 +57,14 @@ class ExcelRender(Render):
         return final_result
 
     # カラムのlistをdictに変換する。dictのキーはself.headers
-    def columns_to_dict(self, *, columns):
+    def read_columns(self, *, row):
         line = {}
 
-        for column in columns:
+        for column in row:
             letter = self.get_column_letter(column=column)
-            # カラム単体の変換処理を行う
+            # カラムから値を取り出す
             line[letter] = self.read_column(name=letter, column=column)
         return line
-
-    def columns_dict(self, *, columns_dict):
-        return columns_dict
 
     def read_absolute_cells(self, *, sheet, cells):
         cell_values = {}
