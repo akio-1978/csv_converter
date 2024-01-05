@@ -1,19 +1,7 @@
-from typing import NamedTuple
 import openpyxl
 from ..render import Render
 from ..context import RenderContext
 from .excel_custom_filter import excel_time
-
-class CellPosition(NamedTuple):
-    row:str
-    col:str
-
-class CellRange(NamedTuple):
-    start:CellPosition
-    end:CellPosition
-class Sheets(NamedTuple):
-    start:int
-    end:int
 
 class ExcelRender(Render):
 
