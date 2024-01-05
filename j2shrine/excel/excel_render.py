@@ -35,9 +35,10 @@ class ExcelRender(Render):
     def read_source(self, *, reader):
 
         cells = self.context.read_range
-
-        sheets = self.parse_sheet_args(
-            sheets_range=self.context.sheets, sheets=reader.worksheets)
+        sheets = self.context.sheets
+        # endがnullの場合最後のシートまで読む
+        if (sheets.end is None):
+            sheets.end = len(reader.worksheets)-1
 
         results = []
         sheet_idx = sheets.start
@@ -92,23 +93,6 @@ class ExcelRender(Render):
             return column.value
         else:
             return None
-
-    # 引数書式からシート範囲を特定する
-    def parse_sheet_args(self, *, sheets_range: str, sheets: openpyxl.worksheet.worksheet):
-        # コロン区切りの数値を左右に分割
-        params = sheets_range.split(':')
-
-        # 戻り値は0オリジンにする
-        start = int(params[0]) - 1
-        
-        if len(params) < 2:
-            # 単一のシ－トが対象 ex "1"
-            return Sheets(start, start)
-        elif params[1].isnumeric():
-            # シート範囲を指定 ex "1:3"
-            return Sheets(start, int(params[1]) - 1)
-        # 指定のシ－トより右側の全てが対象 ex "1:"
-        return Sheets(start, len(sheets) - 1)
 
     def get_cell_value(self, *, sheet, cell):
 

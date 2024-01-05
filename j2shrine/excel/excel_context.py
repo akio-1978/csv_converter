@@ -16,14 +16,15 @@ class ExcelRenderContext(RenderContext):
     def __init__(self, *, args):
         # defalut
         self.encoding = 'utf8'
-        self.sheets = '1'
         # A2:C4 read A2:C4 => 3row * 3column = 9 cells
         # A2:C read A2:C   => 3row * all_rows = 3(all_rows) cells
-        self._read_range = None
         self.absolute = []
+        self._read_range = None
+        self._sheets = Sheets(0, 0)
         # assign args
         super().__init__(args=args)
 
+    # 読み取り領域
     @property
     def read_range(self):
         return self._read_range
@@ -31,9 +32,12 @@ class ExcelRenderContext(RenderContext):
     def read_range(self, value):
         self._read_range = self.parse_read_range(range_str=value)
 
-    # @property
-    # def sheets(self):
-    #     return self._sheets
+    @property
+    def sheets(self):
+        return self._sheets
+    @sheets.setter
+    def sheets(self, value):
+        self._sheets = self.parse_sheet_args(sheets_range_str=value)
 
     # 引数書式をからセル範囲を特定する
     # "A4:D" など最終行を指定しないパターンがある
@@ -60,6 +64,23 @@ class ExcelRenderContext(RenderContext):
             row, col = openpyxl.utils.cell.coordinate_to_tuple(coordinate)
             return CellPosition(row, col)
         
+    # 引数書式からシート範囲を特定する
+    def parse_sheet_args(self, *, sheets_range_str: str):
+        # コロン区切りの数値を左右に分割
+        params = sheets_range_str.split(':')
+
+        # 戻り値は0オリジンにする
+        start = int(params[0]) - 1
+        
+        if len(params) < 2:
+            # 単一のシ－トが対象 ex "1"
+            return Sheets(start, start)
+        elif params[1].isnumeric():
+            # シート範囲を指定 ex "1:3"
+            return Sheets(start, int(params[1]) - 1)
+        # 指定のシ－トより右側の全てが対象 ex "1:"
+        # ワークシートのシート数が解らないのでNoneにする
+        return Sheets(start, None)
 
         
 @dataclass
