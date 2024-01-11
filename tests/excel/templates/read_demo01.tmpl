@@ -1,0 +1,18 @@
+{%- for sheet in sheets %}
+create table {{sheet.abs.C3}} (
+    {%- for row in sheet.rows %}
+    {{row.A}} {% if row.C == '数値' -%}
+        {{'integer'}}
+    {%- elif row.C == '文字列' -%}
+        {{'varchar'}}
+    {%- elif row.C == '日付' -%}
+        {{'date'}}
+    {%- elif row.C == '真偽' -%}
+        {{'char'}}
+    {%- endif -%}
+    {%- if row.C != '日付' -%}({{row.D}}){% endif -%}
+    {%- if row.E != '〇'%} NOT NULL{% endif -%}
+    {%- if not loop.last %},{% endif %}
+    {%- endfor %}
+)
+{%- endfor %}
