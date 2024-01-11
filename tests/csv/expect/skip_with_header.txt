@@ -1,0 +1,19 @@
+{
+    "persons" : [
+        {
+            "group" : "A",
+            "number" : "1001",
+            "name" : "suzuki"
+        },
+        {
+            "group" : "B",
+            "number" : "2001",
+            "name" : "John"
+        },
+        {
+            "group" : "B",
+            "number" : "2002",
+            "name" : "Paul"
+        }
+    ]
+}
