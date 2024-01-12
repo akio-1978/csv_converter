@@ -1,0 +1,16 @@
+
+create table employees (
+    id integer(11) NOT NULL,
+    employee_no varchar(5) NOT NULL,
+    dept varchar(200) NOT NULL,
+    post varchar(200),
+    employent_years date NOT NULL,
+    remarks varchar(500)
+)
+create table conference_room (
+    id integer(11) NOT NULL,
+    name varchar(100) NOT NULL,
+    capacity integer(2,0) NOT NULL,
+    guest char(1) NOT NULL,
+    remarks varchar(500)
+)

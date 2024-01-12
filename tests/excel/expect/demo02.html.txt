@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>render test</title>
+        <style>
+            .ltext{
+                width:40em;
+            }
+        </style>
+    </head>
+<body>
+<h1>データ登録イメージ</h1>
+<h2>社員</h2>
+<table>
+    <thead><tr><th>カラム名</th><th>入力</th></tr></thead>
+    
+    <tr><td><label for="employee_no">社員番号</label></td><td><input type="text" name="employee_no" maxlength="5"></td></tr>
+    <tr><td><label for="dept">所属部署</label></td><td><input type="text" name="dept" maxlength="200"></td></tr>
+    <tr><td><label for="post">役職</label></td><td><input type="text" name="post" maxlength="200"></td></tr>
+    <tr><td><label for="employent_years">入社日</label></td><td><input type="date" name="employent_years"></td></tr>
+    <tr><td><label for="remarks">備考</label></td><td><input type="text" name="remarks" maxlength="500"></td></tr>
+</table>
+<button>登録</button>
+<h2>会議室</h2>
+<table>
+    <thead><tr><th>カラム名</th><th>入力</th></tr></thead>
+    
+    <tr><td><label for="name">部屋番号</label></td><td><input type="text" name="name" maxlength="100"></td></tr>
+    <tr><td><label for="capacity">収容人数</label></td><td><input type="number" name="capacity"></td></tr>
+    <tr><td><label for="guest">来客可</label></td><td><input type="checkbox" name="guest"></td></tr>
+    <tr><td><label for="remarks">備考</label></td><td><input type="text" name="remarks" maxlength="500"></td></tr>
+</table>
+<button>登録</button>
+</body>
+</html>
