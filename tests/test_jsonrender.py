@@ -1,10 +1,10 @@
 import unittest
 from j2shrine.json.json_render import JsonRender
 from j2shrine.json.json_context import JsonRenderContext
-from tests.utils import rendering_test, RenderArgs
+from tests.utils import J2SRenderTest, RenderArgs
 
 
-class JsonRenderTest(unittest.TestCase):
+class JsonRenderTest(J2SRenderTest):
 
     def test_simple_json(self):
         args = RenderArgs()
@@ -20,7 +20,7 @@ class JsonRenderTest(unittest.TestCase):
         context = JsonRenderContext(args=args)
         render = JsonRender(context=context)
 
-        return rendering_test(ut=self, render=render, expect_file=expect, source=context.src)
+        return self.rendering_test(render=render, expect_file=expect, source=context.src)
 
 
 if __name__ == '__main__':

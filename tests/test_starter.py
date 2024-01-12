@@ -1,11 +1,15 @@
 import unittest
 from j2shrine.starter import Starter
+from utils import J2SRenderTest
 
-class StarterTest(unittest.TestCase):
+class StarterTest(J2SRenderTest):
 
     def test_start(self):
+        expect = 'tests/csv/expect/simple_json.txt'
+        result = 'tests/output/starter.test_start.tmp'
         Starter(args=['csv', 'tests/csv/templates/simple_json.tmpl', 'tests/csv/src/simple_json.csv', 
-            '-o', 'tests/output/starter.test_start.tmp', '-p' ,'A=B']).execute()
+            '-o', result, '-H', '-p' ,'A=B']).execute()
+        self.file_test(expect_file=expect, result_file=result)
 
     def test_start_args(self):
         Starter(args=['csv', 'tests/csv/templates/simple_json.tmpl', 'tests/csv/src/simple_json.csv',

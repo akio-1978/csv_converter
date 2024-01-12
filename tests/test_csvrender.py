@@ -4,9 +4,9 @@ from j2shrine.csv.csv_render import CsvRender
 from j2shrine.csv.csv_context import CsvRenderContext
 
 from jinja2 import Environment, DictLoader
-from tests.utils import rendering_test, RenderArgs
+from tests.utils import J2SRenderTest, RenderArgs
 
-class CsvRenderTest(unittest.TestCase):
+class CsvRenderTest(J2SRenderTest):
 
     def test_convert_headless(self):
         """ヘッダのない単純なCSV"""
@@ -129,7 +129,7 @@ class CsvRenderTest(unittest.TestCase):
         
         context = CsvRenderContext(args=args)
 
-        return rendering_test(ut=self, render=CsvRender(context=context), expect_file=expect, source=source)
+        return self.rendering_test(render=CsvRender(context=context), expect_file=expect, source=source)
 
 # テスト用にDictLoaderを使うRender
 
