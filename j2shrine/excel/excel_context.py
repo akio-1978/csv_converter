@@ -18,9 +18,9 @@ class ExcelRenderContext(RenderContext):
         self.encoding = 'utf8'
         # A2:C4 read A2:C4 => 3row * 3column = 9 cells
         # A2:C read A2:C   => 3row * all_rows = 3(all_rows) cells
-        self.absolute = []
         self._read_range = None
         self._sheets = Sheets(0, 0)
+        self._absolute = {}
         # assign args
         super().__init__(args=args)
 
@@ -39,6 +39,15 @@ class ExcelRenderContext(RenderContext):
     def sheets(self, value):
         self._sheets = self.parse_sheet_args(sheets_range_str=value)
 
+    @property
+    def absolute(self):
+        return self._absolute
+    @absolute.setter
+    def absolute(self, values):
+        for cell in values:
+            (name, addr) = cell.split('=')
+            self._absolute[name] = addr
+ 
     # 引数書式をからセル範囲を特定する
     # "A4:D" など最終行を指定しないパターンがある
     def parse_read_range(self, *, range_str: str):

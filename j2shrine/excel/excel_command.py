@@ -26,7 +26,7 @@ class ExcelCommand(Command):
     def add_optional_arguments(self, *, parser):
         super().add_optional_arguments(parser=parser)
         parser.add_argument(
-            '-A', '--absolute', help='get absolute position cells. ex: A1 B2...', dest='absolute', nargs='*', default=[])
+            '-a', '--absolute', help='get absolute position cells. ex: A1:[NAME] B2:[NAME]...', dest='absolute', nargs='*', default=[])
         return parser
 
     def new_context(self, *, args):

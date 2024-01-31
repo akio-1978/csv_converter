@@ -37,18 +37,18 @@ class ExcelRender(Render):
             sheet_data = {
                 'name': reader.sheetnames[sheet_idx],
                 'rows': [],
-                'abs': self.read_absolute_cells(sheet=sheet, cells=self.context.absolute)
+                'abs': self.absolute_cells(sheet=sheet, cells=self.context.absolute)
             }
             for row in sheet.iter_rows(min_col=cells.start.col, min_row=cells.start.row,
                                        max_col=cells.end.col, max_row=cells.end.row, ):
-                sheet_data['rows'].append(self.read_columns(row=row))
+                sheet_data['rows'].append(self.row(row=row))
 
             results.append(sheet_data)
             sheet_idx = 1 + sheet_idx
         return results
 
     # カラムのlistをdictに変換する。dictのキーはセル位置
-    def read_columns(self, *, row):
+    def row(self, *, row):
         line = {}
 
         for column in row:
@@ -57,10 +57,10 @@ class ExcelRender(Render):
             line[letter] = self.read_column(name=letter, column=column)
         return line
 
-    def read_absolute_cells(self, *, sheet, cells):
+    def absolute_cells(self, *, sheet, cells: dict):
         cell_values = {}
-        for addr in cells:
-            cell_values[addr] = self.read_column(name=addr, column=sheet[addr])
+        for name, addr in cells.items():
+            cell_values[name] = self.read_column(name=name, column=sheet[addr])
         return cell_values
 
     # openpyxlのCellオブジェクトからの値読み出し

@@ -26,7 +26,7 @@ class StarterTest(J2SRenderTest):
         expect = 'tests/excel/expect/read_document.txt'
         result = 'tests/output/starter.read_document.tmp'
         Starter(args=['excel', 'tests/excel/templates/read_document.tmpl', 'tests/excel/src/read_document.xlsx',
-            '1:', 'C7:H10', '-o', result, '--absolute', 'C3', 'C4']).execute()
+            '1:', 'C7:H10', '-o', result, '--absolute', 'NAME=C3', 'DESCRIPTION=C4']).execute()
         self.file_test(expect_file=expect, result_file=result)
 
     def test_excel_demo(self):
@@ -34,13 +34,13 @@ class StarterTest(J2SRenderTest):
         expect = 'tests/excel/expect/demo01.sql.txt'
         result = 'tests/output/starter.demo01.tmp'
         Starter(args=['excel', 'tests/excel/templates/read_demo01.tmpl', 'tests/excel/src/read_demo.xlsx',
-            '1:', 'A6:G', '-o', result, '--absolute', 'C3', 'C4']).execute()
+            '1:', 'A6:G', '-o', result, '--absolute', 'TABLE=C3', 'LABEL=C4']).execute()
         self.file_test(expect_file=expect, result_file=result)
 
         expect = 'tests/excel/expect/demo02.html.txt'
         result = 'tests/output/starter.demo02.tmp'
         Starter(args=['excel', 'tests/excel/templates/read_demo02.tmpl', 'tests/excel/src/read_demo.xlsx',
-            '1:', 'A6:G', '-o', result, '--absolute', 'C3', 'C4']).execute()
+            '1:', 'A6:G', '-o', result, '--absolute', 'TABLE=C3', 'LABEL=C4']).execute()
         self.file_test(expect_file=expect, result_file=result)
 
     def test_excel_help(self):

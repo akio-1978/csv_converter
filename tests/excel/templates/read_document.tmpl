@@ -1,8 +1,8 @@
 [
 {%- for sheet in sheets %}
     {
-        "name" : "{{sheet.abs.C3}}",
-        "description" : "{{sheet.abs.C4}}",
+        "name" : "{{sheet.abs.NAME}}",
+        "description" : "{{sheet.abs.DESCRIPTION}}",
         "lines" : [
     {%- for row in sheet.rows if row.C -%}
             {% if row.C %}

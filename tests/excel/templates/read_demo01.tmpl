@@ -1,5 +1,5 @@
 {%- for sheet in sheets %}
-create table {{sheet.abs.C3}} (
+create table {{sheet.abs.TABLE}} (
     {%- for row in sheet.rows %}
     {{row.A}} {% if row.C == '数値' -%}
         {{'integer'}}

@@ -39,7 +39,7 @@ class ExcelRenderTest(J2SRenderTest):
         args.template = 'tests/excel/templates/read_absolute_cells.tmpl'
         args.read_range = 'A4:G'
         args.sheets = '3:'
-        args.absolute = ['A1', 'D2']
+        args.absolute = ['CELL_A=A1', 'CELL_B=D2']
         self.excel_rendering_test(render=ExcelRender(context=ExcelRenderContext(args=args)),
                                  expect='tests/excel/expect/read_absolute_cells.txt',
                                  source='tests/excel/src/read_absolute_cells.xlsx')
@@ -107,7 +107,7 @@ class ExcelRenderTest(J2SRenderTest):
         args = RenderArgs()
         args.template = 'tests/excel/templates/read_document.tmpl'
         args.read_range = 'C7:H10'
-        args.absolute = ['C3', 'C4']
+        args.absolute = ['NAME=C3', 'DESCRIPTION=C4']
         args.sheets = '1:'
         self.excel_rendering_test(render=ExcelRender(context=ExcelRenderContext(args=args)),
                                  expect='tests/excel/expect/read_document.txt',
