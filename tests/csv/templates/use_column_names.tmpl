@@ -3,7 +3,7 @@
 {%- for person in rows %}
         {
 {%- for c in cols %}
-            "{{c}}" : "{{person[c]}}",
+            "{{c}}" : "{{person[c]}}"{% if not loop.last %},{% endif %}
 {%- endfor%}
         }{% if not loop.last %},{% endif %}
 {%- endfor%}

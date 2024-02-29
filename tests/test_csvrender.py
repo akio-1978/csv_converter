@@ -103,18 +103,19 @@ class CsvRenderTest(J2SRenderTest):
 
     def test_name_by_header(self):
         """テンプレート内でカラム名から値を読み取る"""
-        self.file_convert_test(template='tests/csv/templates/names_by_rows.tmpl',
+        self.file_convert_test(template='tests/csv/templates/use_column_names.tmpl',
                                expect='tests/csv/expect/over_columns.txt',
                                source='tests/csv/src/over_columns.csv',
                                read_header=True)
 
     def test_name_by_context(self):
         """カラム名をcontext.namesで指定する"""
-        self.file_convert_test(template='tests/csv/templates/names_by_context.tmpl',
-                               expect='tests/csv/expect/names_by_context.txt',
-                               source='tests/csv/src/names_by_context.csv',
+        self.file_convert_test(template='tests/csv/templates/use_column_names.tmpl',
+                               expect='tests/csv/expect/simple.txt',
+                               source='tests/csv/src/simple.csv',
                                read_header=False,
-                               names=['group_id', 'number', 'name'],
+                               skip_lines=1,
+                               names=['group', 'number', 'name'],
                                )
 
     def test_over_columns_use_header(self):
@@ -123,14 +124,14 @@ class CsvRenderTest(J2SRenderTest):
             headers: group_id, number, name
             columns: group_id, number, name, col03, col04
         """
-        self.file_convert_test(template='tests/csv/templates/names_by_rows.tmpl',
+        self.file_convert_test(template='tests/csv/templates/use_column_names.tmpl',
                                expect='tests/csv/expect/over_columns.txt',
                                source='tests/csv/src/over_columns.csv',
                                read_header=True)
 
     def test_over_columns_use_context(self):
         """context.namesのカラム数を超過する行には、カラム名を自動生成する"""
-        self.file_convert_test(template='tests/csv/templates/names_by_rows.tmpl',
+        self.file_convert_test(template='tests/csv/templates/use_column_names.tmpl',
                                expect='tests/csv/expect/over_columns.txt',
                                source='tests/csv/src/over_columns.csv',
                                read_header=False,
@@ -140,7 +141,7 @@ class CsvRenderTest(J2SRenderTest):
 
     def test_header_ignore_context(self):
         """ヘッダ行の使用とnamesが両方指定されている場合、ヘッダが優先される"""
-        self.file_convert_test(template='tests/csv/templates/names_by_rows.tmpl',
+        self.file_convert_test(template='tests/csv/templates/use_column_names.tmpl',
                                expect='tests/csv/expect/over_columns.txt',
                                source='tests/csv/src/over_columns.csv',
                                names=['invalid', 'names', 'specified'],
