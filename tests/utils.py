@@ -3,8 +3,7 @@ import argparse
 
 class J2SRenderTest(unittest.TestCase):
     def rendering_test(self, *, render, expect_file, source):
-        
-        result_file = 'tests/output/' + expect_file.rpartition('/')[2] + '.tmp'
+        result_file = 'tests/output/' + self._testMethodName + '.tmp'
         
         with open(source, encoding='utf-8') as source_reader:
             with open(result_file, 'w') as result_writer:
