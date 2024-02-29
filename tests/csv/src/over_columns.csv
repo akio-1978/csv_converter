@@ -1,4 +1,4 @@
-group_id,number,name
+group,number,name
 A,1001,suzuki
 B,2001,John
 X,9999,over,column,size

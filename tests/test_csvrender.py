@@ -104,8 +104,8 @@ class CsvRenderTest(J2SRenderTest):
     def test_name_by_header(self):
         """テンプレート内でカラム名から値を読み取る"""
         self.file_convert_test(template='tests/csv/templates/use_column_names.tmpl',
-                               expect='tests/csv/expect/over_columns.txt',
-                               source='tests/csv/src/over_columns.csv',
+                               expect='tests/csv/expect/simple.txt',
+                               source='tests/csv/src/simple.csv',
                                read_header=True)
 
     def test_name_by_context(self):
@@ -121,8 +121,8 @@ class CsvRenderTest(J2SRenderTest):
     def test_over_columns_use_header(self):
         """ヘッダ行のカラム数を超過する行には、カラム名を自動生成する
             ex:
-            headers: group_id, number, name
-            columns: group_id, number, name, col03, col04
+            headers: group, number, name
+            columns: group, number, name, col03, col04
         """
         self.file_convert_test(template='tests/csv/templates/use_column_names.tmpl',
                                expect='tests/csv/expect/over_columns.txt',
@@ -136,7 +136,7 @@ class CsvRenderTest(J2SRenderTest):
                                source='tests/csv/src/over_columns.csv',
                                read_header=False,
                                skip_lines=1,
-                               names=['group_id', 'number', 'name'],
+                               names=['group', 'number', 'name'],
                                 )
 
     def test_header_ignore_context(self):

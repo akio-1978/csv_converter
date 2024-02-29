@@ -1,1 +1,1 @@
-group_id/number/name
+group/number/name

@@ -2,7 +2,7 @@
     "persons" : [
 {%- for person in rows %}
         {
-            "group" : "{{person.group_id}}",
+            "group" : "{{person.group}}",
             "number" : "{{person.number}}",
             "name" : "{{person.name}}"
         }{% if not loop.last %},{% endif %}
