@@ -6,17 +6,17 @@ class StarterTest(J2SRenderTest):
 
     def test_start(self):
         """最低限の引数で起動"""
-        expect = 'tests/csv/expect/simple_json.txt'
+        expect = 'tests/csv/expect/simple.txt'
         result = 'tests/output/starter.start.tmp'
-        Starter(args=['csv', 'tests/csv/templates/simple_json.tmpl', 'tests/csv/src/simple_json.csv', 
+        Starter(args=['csv', 'tests/csv/templates/simple.tmpl', 'tests/csv/src/simple.csv', 
             '-o', result, '-H']).execute()
         self.file_test(expect_file=expect, result_file=result)
 
     def test_start_args(self):
         """オプション引数を指定して起動"""
-        expect = 'tests/csv/expect/simple_json.txt'
+        expect = 'tests/csv/expect/simple.txt'
         result = 'tests/output/starter.args.tmp'
-        Starter(args=['csv', 'tests/csv/templates/simple_json.tmpl', 'tests/csv/src/simple_json.csv',
+        Starter(args=['csv', 'tests/csv/templates/simple.tmpl', 'tests/csv/src/simple.csv',
             '-o', result, '-H', '--input-encoding', 'utf8', '--output-encoding', 'utf8',
             '-d',',', '-p' ,'A=B', 'C=D']).execute()
         self.file_test(expect_file=expect, result_file=result)

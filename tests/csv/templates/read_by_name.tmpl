@@ -1,5 +1,5 @@
 {%- for person in rows -%}
-    {% for item in headers -%}
+    {% for item in cols -%}
         {{person[item]}}{% if not loop.last %}/{% endif %}
     {%- endfor %}
 {% endfor -%}

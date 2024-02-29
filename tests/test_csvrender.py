@@ -55,15 +55,15 @@ class CsvRenderTest(J2SRenderTest):
 
         self.assertEqual('C0001<=>C0002\n', result.getvalue())
 
-    def test_simple_json(self):
+    def test_simple(self):
         """ヘッダ付きCSVからjsonファイル変換"""
-        self.file_convert_test(template='tests/csv/templates/simple_json.tmpl',
-                               expect='tests/csv/expect/simple_json.txt',
-                               source='tests/csv/src/simple_json.csv')
+        self.file_convert_test(template='tests/csv/templates/simple.tmpl',
+                               expect='tests/csv/expect/simple.txt',
+                               source='tests/csv/src/simple.csv')
 
     def test_skip_with_header(self):
         """先頭3行を読み飛ばした後にヘッダ付き"""
-        self.file_convert_test(template='tests/csv/templates/simple_json.tmpl',
+        self.file_convert_test(template='tests/csv/templates/simple.tmpl',
                                expect='tests/csv/expect/skip_with_header.txt',
                                source='tests/csv/src/skip_with_header.csv',
                                skip_lines=3, read_header=True)
@@ -90,32 +90,65 @@ class CsvRenderTest(J2SRenderTest):
 
     def test_headers_only(self):
         """ヘッダ行だけを読み取る"""
-        self.file_convert_test(template='tests/csv/templates/headers_only.tmpl',
+        self.file_convert_test(template='tests/csv/templates/write_headers_only.tmpl',
                                expect='tests/csv/expect/headers_only.txt',
-                               source='tests/csv/src/simple_json.csv')
-
-    def test_too_many_columns(self):
-        """ヘッダ行より長い行のカラム名を自動生成"""
-        self.file_convert_test(template='tests/csv/templates/headers_only.tmpl',
-                               expect='tests/csv/expect/too_many_columns.txt',
-                               source='tests/csv/src/too_many_columns.csv')
+                               source='tests/csv/src/simple.csv')
 
     def test_auto_naming(self):
-        """ヘッダ行を使わずにカラム名を自動生成"""
-        self.file_convert_test(template='tests/csv/templates/headers_only.tmpl',
+        """ヘッダ行とは関係なくカラム名を自動生成する"""
+        self.file_convert_test(template='tests/csv/templates/write_headers_only.tmpl',
                                expect='tests/csv/expect/auto_naming.txt',
-                               source='tests/csv/src/simple_json.csv',
+                               source='tests/csv/src/simple.csv',
                                read_header=False)
 
-    def test_read_by_name(self):
+    def test_name_by_header(self):
         """テンプレート内でカラム名から値を読み取る"""
-        self.file_convert_test(template='tests/csv/templates/read_by_name.tmpl',
-                               expect='tests/csv/expect/read_by_name.txt',
-                               source='tests/csv/src/read_by_name.csv',
+        self.file_convert_test(template='tests/csv/templates/names_by_rows.tmpl',
+                               expect='tests/csv/expect/over_columns.txt',
+                               source='tests/csv/src/over_columns.csv',
                                read_header=True)
 
+    def test_name_by_context(self):
+        """カラム名をcontext.namesで指定する"""
+        self.file_convert_test(template='tests/csv/templates/names_by_context.tmpl',
+                               expect='tests/csv/expect/names_by_context.txt',
+                               source='tests/csv/src/names_by_context.csv',
+                               read_header=False,
+                               names=['group_id', 'number', 'name'],
+                               )
+
+    def test_over_columns_use_header(self):
+        """ヘッダ行のカラム数を超過する行には、カラム名を自動生成する
+            ex:
+            headers: group_id, number, name
+            columns: group_id, number, name, col03, col04
+        """
+        self.file_convert_test(template='tests/csv/templates/names_by_rows.tmpl',
+                               expect='tests/csv/expect/over_columns.txt',
+                               source='tests/csv/src/over_columns.csv',
+                               read_header=True)
+
+    def test_over_columns_use_context(self):
+        """context.namesのカラム数を超過する行には、カラム名を自動生成する"""
+        self.file_convert_test(template='tests/csv/templates/names_by_rows.tmpl',
+                               expect='tests/csv/expect/over_columns.txt',
+                               source='tests/csv/src/over_columns.csv',
+                               read_header=False,
+                               skip_lines=1,
+                               names=['group_id', 'number', 'name'],
+                                )
+
+    def test_header_ignore_context(self):
+        """ヘッダ行の使用とnamesが両方指定されている場合、ヘッダが優先される"""
+        self.file_convert_test(template='tests/csv/templates/names_by_rows.tmpl',
+                               expect='tests/csv/expect/over_columns.txt',
+                               source='tests/csv/src/over_columns.csv',
+                               names=['invalid', 'names', 'specified'],
+                               read_header=True)
+
+
     def file_convert_test(self, *, template, expect, source,
-                          parameters={}, skip_lines=0, read_header=True, headers=None):
+                          parameters={}, skip_lines=0, read_header=True, headers=None, names=[]):
         
         args = RenderArgs()
         args.template = template
@@ -126,6 +159,8 @@ class CsvRenderTest(J2SRenderTest):
         args.parameters = parameters
         # 行の読み飛ばし
         args.skip_lines = skip_lines
+        # カラム名指定
+        args.names = names
         
         context = CsvRenderContext(args=args)
 

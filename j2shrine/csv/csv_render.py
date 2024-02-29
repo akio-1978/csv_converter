@@ -7,7 +7,7 @@ class CsvRender(Render):
     # jinja2テンプレートの生成
     def __init__(self, *, context: RenderContext):
         super().__init__(context=context)
-        self.headers = context.column_headers.copy()
+        self.cols = context.names.copy()
 
     def build_reader(self, *, source):
         # csvヘッダの有無が不定のため、DictReaderは使用しない
@@ -22,8 +22,9 @@ class CsvRender(Render):
             next(reader)
 
         # 指定されていれば先頭行をヘッダにする
+        # context.read_headerはcontext.namesより優先される
         if self.context.read_header:
-            self.headers = next(reader)
+            self.cols = next(reader)
 
         # line単位ループ
         for lineno, columns in enumerate(reader):
@@ -35,7 +36,7 @@ class CsvRender(Render):
     def finish(self, *, result):
         final_result = {
             'rows': result,
-            'headers': self.headers,
+            'cols': self.cols,
             'params': self.context.parameters
         }
         return final_result
@@ -50,9 +51,9 @@ class CsvRender(Render):
 
     # カラム名取得
     def next_header(self, index):
-        if len(self.headers) <= index:
+        if len(self.cols) <= index:
             # ヘッダが定義されていない場合
             # または定義済みのヘッダよりも実際のカラムが多い場合はヘッダを追加で生成する
-            self.headers.append(self.context.header_prefix + str(index).zfill(2))
-        return self.headers[index]
+            self.cols.append(self.context.header_prefix + str(index).zfill(2))
+        return self.cols[index]
     
