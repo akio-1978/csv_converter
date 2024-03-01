@@ -27,8 +27,8 @@ class CsvRender(Render):
             self.cols = next(reader)
 
         # line単位ループ
-        for lineno, columns in enumerate(reader):
-            line = self.read_row(lineno=lineno, columns=columns)
+        for line_no, columns in enumerate(reader):
+            line = self.read_row(line_no=line_no, columns=columns)
             lines.append(line)
 
         return lines
@@ -42,7 +42,7 @@ class CsvRender(Render):
         return final_result
 
     # カラムのlistをdictに変換する。
-    def read_row(self, *, lineno:int, columns: str):
+    def read_row(self, *, line_no:int, columns: str):
         line = {}
         for index, column in enumerate(columns):
             header = self.column_name(index)
