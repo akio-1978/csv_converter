@@ -31,9 +31,17 @@ class StarterTest(J2SRenderTest):
         self.file_test(expect_file=expect_file, result_file=result_file)
 
     def test_start_names(self):
-        """names指定で起動"""
+        """--names指定で起動"""
         expect_file = expect_path(CSV, 'simple.txt')
         result_file = result_path('starter', 'names.tmp')
+        Starter(args=['csv', 'tests/csv/templates/use_column_names.tmpl', 'tests/csv/src/simple.csv', 
+            '-o', result_file, '-s', '1', '--names', 'group', 'number', 'name']).execute()
+        self.file_test(expect_file=expect_file, result_file=result_file)
+
+    def test_start_names_short(self):
+        """-n 指定で起動"""
+        expect_file = expect_path(CSV, 'simple.txt')
+        result_file = result_path('starter', 'names_short.tmp')
         Starter(args=['csv', 'tests/csv/templates/use_column_names.tmpl', 'tests/csv/src/simple.csv', 
             '-o', result_file, '-s', '1', '-n', 'group', 'number', 'name']).execute()
         self.file_test(expect_file=expect_file, result_file=result_file)

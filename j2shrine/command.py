@@ -37,9 +37,9 @@ class Command():
         # template encoding
         parser.add_argument('--template-encoding', metavar='enc',
                             help='jinja2 template encoding.', default='utf-8')
-        parser.add_argument('-p', '--parameters', nargs='*',
+        parser.add_argument('-p', '--parameters', nargs='*', default={},
                             help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
-        parser.add_argument('-n', '--names', nargs='*',
+        parser.add_argument('-n', '--names', nargs='*', default=[],
                             help='column names at rendering. (default col_00...)')
 
     def add_positional_arguments(self, *, parser):
