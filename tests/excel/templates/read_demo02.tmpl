@@ -15,14 +15,14 @@
 <table>
     <thead><tr><th>カラム名</th><th>入力</th></tr></thead>
     {%- for row in sheet.rows %}
-    {% if row.C == '数値' and row.A != 'id' -%}
-    <tr><td><label for="{{row.A}}">{{row.B}}</label></td><td><input type="number" name="{{row.A}}"></td></tr>
-    {%- elif row.C == '文字列' -%}
-    <tr><td><label for="{{row.A}}">{{row.B}}</label></td><td><input type="text" name="{{row.A}}" maxlength="{{row.D}}"></td></tr>
-    {%- elif row.C == '日付' -%}
-    <tr><td><label for="{{row.A}}">{{row.B}}</label></td><td><input type="date" name="{{row.A}}"></td></tr>
-    {%- elif row.C == '真偽' -%}
-    <tr><td><label for="{{row.A}}">{{row.B}}</label></td><td><input type="checkbox" name="{{row.A}}"></td></tr>
+    {% if row.col_02 == '数値' and row.col_00 != 'id' -%}
+    <tr><td><label for="{{row.col_00}}">{{row.col_01}}</label></td><td><input type="number" name="{{row.col_00}}"></td></tr>
+    {%- elif row.col_02 == '文字列' -%}
+    <tr><td><label for="{{row.col_00}}">{{row.col_01}}</label></td><td><input type="text" name="{{row.col_00}}" maxlength="{{row.col_03}}"></td></tr>
+    {%- elif row.col_02 == '日付' -%}
+    <tr><td><label for="{{row.col_00}}">{{row.col_01}}</label></td><td><input type="date" name="{{row.col_00}}"></td></tr>
+    {%- elif row.col_02 == '真偽' -%}
+    <tr><td><label for="{{row.col_00}}">{{row.col_01}}</label></td><td><input type="checkbox" name="{{row.col_00}}"></td></tr>
     {%- endif -%}
     {%- endfor %}
 </table>
