@@ -48,22 +48,22 @@ class StarterTest(J2SRenderTest):
 
     def test_start_excel(self):
         """Excel変換起動（引数が複雑）"""
-        expect_file = 'tests/excel/expect/read_document.txt'
-        result = 'tests/output/starter.read_document.tmp'
+        expect_file = expect_path(EXCEL, 'read_document.txt')
+        result_file = result_path('starter', 'read_document.tmp')
         Starter(args=['excel', 'tests/excel/templates/read_document.tmpl', 'tests/excel/src/read_document.xlsx',
-            '1:', 'C7:H10', '-o', result, '--absolute', 'NAME=C3', 'DESCRIPTION=C4']).execute()
-        self.file_test(expect_file=expect_file, result_file=result)
+            '1:', 'C7:H10', '-o', result_file, '--absolute', 'NAME=C3', 'DESCRIPTION=C4']).execute()
+        self.file_test(expect_file=expect_file, result_file=result_file)
 
     def test_excel_demo(self):
         """同じソースを複数回レンダリングするデモ"""
-        expect_file = 'tests/excel/expect/demo01.sql.txt'
-        result_file = 'tests/output/starter.demo01.tmp'
+        expect_file = expect_path(EXCEL, 'demo01.sql.txt')
+        result_file = result_path('starter', 'starter.demo01.tmp')
         Starter(args=['excel', 'tests/excel/templates/read_demo01.tmpl', 'tests/excel/src/read_demo.xlsx',
             '1:', 'A6:G', '-o', result_file, '--absolute', 'TABLE=C3', 'LABEL=C4']).execute()
         self.file_test(expect_file=expect_file, result_file=result_file)
 
-        expect_file = 'tests/excel/expect/demo02.html.txt'
-        result_file = 'tests/output/starter.demo02.tmp'
+        expect_file = expect_path(EXCEL, 'demo02.html.txt')
+        result_file = result_path('starter', 'starter.demo02.tmp')
         Starter(args=['excel', 'tests/excel/templates/read_demo02.tmpl', 'tests/excel/src/read_demo.xlsx',
             '1:', 'A6:G', '-o', result_file, '--absolute', 'TABLE=C3', 'LABEL=C4']).execute()
         self.file_test(expect_file=expect_file, result_file=result_file)

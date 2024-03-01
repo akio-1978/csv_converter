@@ -20,7 +20,7 @@ class JsonRenderTest(J2SRenderTest):
         context = JsonRenderContext(args=args)
         render = JsonRender(context=context)
 
-        return self.rendering_test(render=render, expect_file=expect, source=context.src)
+        self.rendering_test(render=render, expect_file=expect, source=context.src)
 
 
 if __name__ == '__main__':

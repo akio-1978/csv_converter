@@ -125,7 +125,7 @@ class ExcelRenderTest(J2SRenderTest):
     def test_cell_by_name(self):
         """セルに名前を付けてテンプレートを適用する"""
         args = RenderArgs()
-        args.template = 'tests/excel/templates/read_cell_by_name.tmpl'
+        args.template = 'tests/excel/templates/cell_by_name.tmpl'
         # 読み取り開始列がcol_00になる、この場合C列がcol_00
         args.read_range = 'C7:H10'
         args.absolute = ['NAME=C3', 'DESCRIPTION=C4']
@@ -152,12 +152,11 @@ class ExcelRenderTest(J2SRenderTest):
 
 
     def excel_rendering_test(self, *, render, expect, source, encoding='utf8'):
-        result_file = 'tests/output/' + expect.rpartition('/')[2] + '.tmp'
+        result_file = 'tests/output/' + self._testMethodName + '.tmp'
 
         with open(result_file, 'w', encoding=encoding) as result_writer:
             render.render(source=source, output=result_writer)
-            
-        return self.file_test(expect_file=expect, result_file=result_file)
+        self.file_test(expect_file=expect, result_file=result_file)
 
 
 if __name__ == '__main__':
