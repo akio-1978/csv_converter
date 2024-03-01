@@ -1,5 +1,6 @@
 import unittest
 import argparse
+from pathlib import Path
 
 class J2SRenderTest(unittest.TestCase):
     def rendering_test(self, *, render, expect_file, source):
@@ -16,7 +17,9 @@ class J2SRenderTest(unittest.TestCase):
             with open(result_file, encoding='utf-8') as result_reader:
                 result = result_reader.read()
                 self.assertEqual(expect_reader.read(), result)
-                return result
+
+            # テストに成功したファイルは削除する            
+            Path(result_file).unlink()
 
 class RenderArgs(argparse.Namespace):
     
