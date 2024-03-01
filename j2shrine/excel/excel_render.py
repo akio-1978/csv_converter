@@ -8,6 +8,7 @@ class ExcelRender(Render):
     # jinja2テンプレートの生成
     def __init__(self, *, context: RenderContext):
         super().__init__(context=context)
+        self.cols = context.names.copy()
 
     def install_filters(self, *, environment):
         super().install_filters(environment=environment)
@@ -39,20 +40,19 @@ class ExcelRender(Render):
                 'rows': [],
                 'abs': self.absolute_cells(sheet=sheet, cells=self.context.absolute)
             }
-            for row in sheet.iter_rows(min_col=cells.start.col, min_row=cells.start.row,
-                                       max_col=cells.end.col, max_row=cells.end.row, ):
-                sheet_data['rows'].append(self.row(row=row))
+            for line_no, row in enumerate(sheet.iter_rows(min_col=cells.start.col, min_row=cells.start.row,
+                                       max_col=cells.end.col, max_row=cells.end.row, )):
+                sheet_data['rows'].append(self.read_row(line_no=line_no, columns=row))
 
             results.append(sheet_data)
             sheet_idx = 1 + sheet_idx
         return results
 
     # カラムのlistをdictに変換する。dictのキーはセル位置
-    def row(self, *, row):
+    def read_row(self, *, line_no, columns):
         line = {}
-
-        for column in row:
-            letter = self.get_column_letter(column=column)
+        for index, column in enumerate(columns):
+            letter = self.column_name(index)
             # カラムから値を取り出す
             line[letter] = self.read_column(name=letter, column=column)
         return line
@@ -73,6 +73,14 @@ class ExcelRender(Render):
 
     def get_column_letter(self, *, column):
         return openpyxl.utils.cell.get_column_letter(column.column)
+
+    # カラム名取得
+    def column_name(self, index):
+        if len(self.cols) <= index:
+            # カラム名が定義されていない場合
+            # または定義済みのカラム名よりも実際のカラムが多い場合はカラム名を追加で生成する
+            self.cols.append(self.context.prefix + str(index).zfill(2))
+        return self.cols[index]
 
     # jinja2へ渡す読み取り結果
     def finish(self, *, result):

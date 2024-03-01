@@ -122,6 +122,35 @@ class ExcelRenderTest(J2SRenderTest):
                                  expect='tests/excel/expect/read_by_row_index.txt',
                                  source='tests/excel/src/data_only.xlsx')
 
+    def test_cell_by_name(self):
+        """セルに名前を付けてテンプレートを適用する"""
+        args = RenderArgs()
+        args.template = 'tests/excel/templates/read_cell_by_name.tmpl'
+        # 読み取り開始列がcol_00になる、この場合C列がcol_00
+        args.read_range = 'C7:H10'
+        args.absolute = ['NAME=C3', 'DESCRIPTION=C4']
+        args.sheets = '1:'
+        # 使用しない列は空白にする
+        args.names = ['date', 'event', '', '', '', 'price']
+        self.excel_rendering_test(render=ExcelRender(context=ExcelRenderContext(args=args)),
+                                 expect='tests/excel/expect/read_document.txt',
+                                 source='tests/excel/src/read_document.xlsx')
+
+    def test_over_cell_by_name(self):
+        """指定した名前よりセルが多い場合"""
+        args = RenderArgs()
+        args.template = 'tests/excel/templates/over_cell_by_name.tmpl'
+        # 読み取り開始列がcol_00になる、この場合C列がcol_00
+        args.read_range = 'C7:H10'
+        args.absolute = ['NAME=C3', 'DESCRIPTION=C4']
+        args.sheets = '1:'
+        # 途中までしかカラム名を指定しない
+        args.names = ['date', 'event', '',]
+        self.excel_rendering_test(render=ExcelRender(context=ExcelRenderContext(args=args)),
+                                 expect='tests/excel/expect/read_document.txt',
+                                 source='tests/excel/src/read_document.xlsx')
+
+
     def excel_rendering_test(self, *, render, expect, source, encoding='utf8'):
         result_file = 'tests/output/' + expect.rpartition('/')[2] + '.tmp'
 

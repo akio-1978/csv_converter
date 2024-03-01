@@ -45,15 +45,15 @@ class CsvRender(Render):
     def read_row(self, *, line_no:int, columns: str):
         line = {}
         for index, column in enumerate(columns):
-            header = self.column_name(index)
-            line[header] = column
+            name = self.column_name(index)
+            line[name] = column
         return line
 
     # カラム名取得
     def column_name(self, index):
         if len(self.cols) <= index:
-            # ヘッダが定義されていない場合
-            # または定義済みのヘッダよりも実際のカラムが多い場合はヘッダを追加で生成する
+            # カラム名が定義されていない場合
+            # または定義済みのカラム名よりも実際のカラムが多い場合はカラム名を追加で生成する
             self.cols.append(self.context.prefix + str(index).zfill(2))
         return self.cols[index]
     

@@ -4,11 +4,11 @@
         "name" : "{{sheet.abs.NAME}}",
         "description" : "{{sheet.abs.DESCRIPTION}}",
         "lines" : [
-    {%- for row in sheet.rows if row.col_00 -%}
-            {% if row.col_00 %}
+    {%- for row in sheet.rows if row.date -%}
+            {% if row.date %}
             {
-                "date" : "{{row.col_00 | excel_time('%Y/%m/%d')}}",
-                "event" : "{{row.col_01}}",
+                "date" : "{{row.date | excel_time('%Y/%m/%d')}}",
+                "event" : "{{row.event}}",
                 "price" : "{{row.col_05}}"
             }{% if not loop.last %},{%endif -%}
             {%- endif %}

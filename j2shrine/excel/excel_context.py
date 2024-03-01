@@ -21,6 +21,8 @@ class ExcelRenderContext(RenderContext):
         self._read_range = None
         self._sheets = Sheets(0, 0)
         self._absolute = {}
+        self.prefix = 'col_'
+        self.names = []
         # assign args
         super().__init__(args=args)
 
