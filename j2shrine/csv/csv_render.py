@@ -28,7 +28,7 @@ class CsvRender(Render):
 
         # line単位ループ
         for lineno, columns in enumerate(reader):
-            line = self.readline(lineno=lineno, columns=columns)
+            line = self.read_row(lineno=lineno, columns=columns)
             lines.append(line)
 
         return lines
@@ -42,18 +42,18 @@ class CsvRender(Render):
         return final_result
 
     # カラムのlistをdictに変換する。
-    def readline(self, *, lineno:int, columns: str):
+    def read_row(self, *, lineno:int, columns: str):
         line = {}
         for index, column in enumerate(columns):
-            header = self.next_header(index)
+            header = self.column_name(index)
             line[header] = column
         return line
 
     # カラム名取得
-    def next_header(self, index):
+    def column_name(self, index):
         if len(self.cols) <= index:
             # ヘッダが定義されていない場合
             # または定義済みのヘッダよりも実際のカラムが多い場合はヘッダを追加で生成する
-            self.cols.append(self.context.header_prefix + str(index).zfill(2))
+            self.cols.append(self.context.prefix + str(index).zfill(2))
         return self.cols[index]
     

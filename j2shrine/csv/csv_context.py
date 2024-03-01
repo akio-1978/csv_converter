@@ -7,7 +7,7 @@ class CsvRenderContext(RenderContext):
         self.read_header = False
         self.encoding = 'utf8'
         self.delimiter = ','
-        self.header_prefix = 'col_'
+        self.prefix = 'col_'
         self.skip_lines = 0
         self.names = []
         # assign args
