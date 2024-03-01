@@ -148,6 +148,13 @@ class CsvRenderTest(J2SRenderTest):
                                read_header=True)
 
 
+    def test_include_template(self):
+        """テンプレート内でincludeが正常に行えるか"""
+        self.file_convert_test(template='tests/csv/templates/include_file.tmpl',
+                               expect='tests/csv/expect/simple.txt',
+                               source='tests/csv/src/simple.csv')
+
+
     def file_convert_test(self, *, template, expect, source,
                           parameters={}, skip_lines=0, read_header=True, headers=None, names=[]):
         

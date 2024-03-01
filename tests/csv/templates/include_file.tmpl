@@ -1,0 +1,9 @@
+{
+    "persons" : [
+{%- for person in rows %}
+        {
+{%- include './include/included.tmpl' %}
+        }{% if not loop.last %},{% endif %}
+{%- endfor%}
+    ]
+}
