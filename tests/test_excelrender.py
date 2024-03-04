@@ -39,7 +39,7 @@ class ExcelRenderTest(J2SRenderTest):
         args.template = 'tests/excel/templates/read_absolute_cells.tmpl'
         args.read_range = 'A4:G'
         args.sheets = '3:'
-        args.absolute = ['CELL_A=A1', 'CELL_B=D2']
+        args.absolute = {'CELL_A': 'A1', 'CELL_B' : 'D2'}
         self.excel_rendering_test(render=ExcelRender(context=ExcelRenderContext(args=args)),
                                  expect='tests/excel/expect/read_absolute_cells.txt',
                                  source='tests/excel/src/read_absolute_cells.xlsx')
@@ -107,7 +107,7 @@ class ExcelRenderTest(J2SRenderTest):
         args = RenderArgs()
         args.template = 'tests/excel/templates/read_document.tmpl'
         args.read_range = 'C7:H10'
-        args.absolute = ['NAME=C3', 'DESCRIPTION=C4']
+        args.absolute = {'NAME':'C3', 'DESCRIPTION':'C4'}
         args.sheets = '1:'
         self.excel_rendering_test(render=ExcelRender(context=ExcelRenderContext(args=args)),
                                  expect='tests/excel/expect/read_document.txt',
@@ -128,7 +128,7 @@ class ExcelRenderTest(J2SRenderTest):
         args.template = 'tests/excel/templates/cell_by_name.tmpl'
         # 読み取り開始列がcol_00になる、この場合C列がcol_00
         args.read_range = 'C7:H10'
-        args.absolute = ['NAME=C3', 'DESCRIPTION=C4']
+        args.absolute = {'NAME':'C3', 'DESCRIPTION':'C4'}
         args.sheets = '1:'
         # 使用しない列は空白にする
         args.names = ['date', 'event', '', '', '', 'price']
@@ -142,7 +142,7 @@ class ExcelRenderTest(J2SRenderTest):
         args.template = 'tests/excel/templates/over_cell_by_name.tmpl'
         # 読み取り開始列がcol_00になる、この場合C列がcol_00
         args.read_range = 'C7:H10'
-        args.absolute = ['NAME=C3', 'DESCRIPTION=C4']
+        args.absolute = {'NAME':'C3', 'DESCRIPTION':'C4'}
         args.sheets = '1:'
         # 途中までしかカラム名を指定しない
         args.names = ['date', 'event', '',]
