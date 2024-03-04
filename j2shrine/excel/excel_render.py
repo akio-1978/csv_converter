@@ -8,6 +8,7 @@ class ExcelRender(Render):
     # jinja2テンプレートの生成
     def __init__(self, *, context: RenderContext):
         super().__init__(context=context)
+        # 変更される可能性があるためcopyする
         self.cols = context.names.copy()
 
     def install_filters(self, *, environment):
@@ -70,17 +71,6 @@ class ExcelRender(Render):
             return column.value
         else:
             return None
-
-    def get_column_letter(self, *, column):
-        return openpyxl.utils.cell.get_column_letter(column.column)
-
-    # カラム名取得
-    def column_name(self, index):
-        if len(self.cols) <= index:
-            # カラム名が定義されていない場合
-            # または定義済みのカラム名よりも実際のカラムが多い場合はカラム名を追加で生成する
-            self.cols.append(self.context.prefix + str(index).zfill(2))
-        return self.cols[index]
 
     # jinja2へ渡す読み取り結果
     def finish(self, *, result):
