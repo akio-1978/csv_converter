@@ -9,7 +9,7 @@ from .json_context import JsonRenderContext
 class JsonCommand(Command):
 
     def create_parser(self, *, main_parser):
-        return main_parser.add_parser('json', help='rendaring json format')
+        return main_parser.add_parser('json', help='jsonのレンダリングを行う')
 
     def new_context(self, *, args):
         return JsonRenderContext(args=args)

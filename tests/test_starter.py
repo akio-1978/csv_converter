@@ -68,8 +68,20 @@ class StarterTest(J2SRenderTest):
             '1:', 'A6:G', '-o', result_file, '--absolute', 'TABLE=C3', 'LABEL=C4']).execute()
         self.file_test(expect_file=expect_file, result_file=result_file)
 
+    def test_csv_help(self):
+        starter = Starter(args=['csv', '-h'])
+        self.assertRaises(BaseException, starter.execute)
+
     def test_excel_help(self):
         starter = Starter(args=['excel', '-h'])
+        self.assertRaises(BaseException, starter.execute)
+
+    def test_json_help(self):
+        starter = Starter(args=['json', '-h'])
+        self.assertRaises(BaseException, starter.execute)
+
+    def test_csv_invalid(self):
+        starter = Starter(args=['csv'])
         self.assertRaises(BaseException, starter.execute)
 
     def result_dir(self):

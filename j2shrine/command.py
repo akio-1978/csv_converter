@@ -27,24 +27,25 @@ class Command():
 
     def add_defaiult_options(self, *, parser):
         parser.add_argument('-o', '--out', metavar='file',
-                            help='output file(default stdout).', default=sys.stdout)
+                            help='出力先ファイル 省略時はstdout.', default=sys.stdout)
         # source encoding
         parser.add_argument('--input-encoding', metavar='enc',
-                            help='source encoding.', default='utf-8')
+                            help='入力時の文字エンコーディング.', default='utf-8')
         # dest encoding
         parser.add_argument('--output-encoding', metavar='enc',
-                            help='output encoding.', default='utf-8')
+                            help='出力時の文字エンコーディング.', default='utf-8')
         # template encoding
         parser.add_argument('--template-encoding', metavar='enc',
-                            help='jinja2 template encoding.', default='utf-8')
+                            help='jinja2テンプレートファイルのエンコーディング.', default='utf-8')
         parser.add_argument('-p', '--parameters', nargs='*', default={},
-                            help='additional values [KEY=VALUE] format.', action=KeyValuesParseAction)
+                            help='テンプレート内で参照可能な追加のパラメータ [KEY=VALUE] 形式で列挙.', action=KeyValuesParseAction)
+
         parser.add_argument('-n', '--names', nargs='*', default=[],
-                            help='column names at rendering. (default col_00...)')
+                            help='テンプレート内で各行のカラムに付ける名前を左側から列挙 defaultは col_00 col02...')
 
     def add_positional_arguments(self, *, parser):
-        parser.add_argument('template', help='jinja2 template to use.')
-        parser.add_argument('source', help='rendering text.',
+        parser.add_argument('template', help='使用するjinja2テンプレート.')
+        parser.add_argument('source', help='レンダリング対象ファイル 省略時はstdin.',
                             nargs='?', default=sys.stdin)
 
     def add_optional_arguments(self, *, parser):

@@ -9,16 +9,16 @@ from .excel_context import ExcelRenderContext
 
 class ExcelCommand(Command):
 
-    HELP_SHEETS = """read sheets range ('1' sheet1 only. '1:4' read 1 to 4. '1:' read 1 to all)"""
-    HELP_READ_RANGE = """read cells range ('A1:D4' read A1 to D4 'A1:D' read A1 to D all rows.)"""
+    HELP_SHEETS = """読込対象シート ('1' シート1のみ. '1:4' シート1からシート4まで. '1:' シート1からすべてのシート)"""
+    HELP_READ_RANGE = """読込セル範囲 ('A1:D4' A1:D4の16セル 'A1:D' A1を起点として、AからDまでの全ての行.)"""
 
     def create_parser(self, *, main_parser):
-        return main_parser.add_parser('excel', help='rendaring excel file', formatter_class=argparse.RawTextHelpFormatter)
+        return main_parser.add_parser('excel', help='Excelのレンダリングを行う', formatter_class=argparse.RawTextHelpFormatter)
 
     def add_positional_arguments(self, *, parser):
-        parser.add_argument('template', help='jinja2 template to use.')
+        parser.add_argument('template', help='使用するjinja2テンプレート.')
         # source book can't read from stdin
-        parser.add_argument('source', help='rendering Excel book.')
+        parser.add_argument('source', help='レンダリング対象ブック xlsxファイルのみ対象.')
         parser.add_argument('sheets', help=ExcelCommand.HELP_SHEETS)
         parser.add_argument('read_range', help=ExcelCommand.HELP_READ_RANGE)
         return parser
@@ -26,7 +26,7 @@ class ExcelCommand(Command):
     def add_optional_arguments(self, *, parser):
         super().add_optional_arguments(parser=parser)
         parser.add_argument(
-            '-a', '--absolute', help='get absolute position cells. ex: A1:[NAME] B2:[NAME]...', dest='absolute', nargs='*', default=[])
+            '-a', '--absolute', help='絶対位置指定でセル値を固定で取得する [セル位置=名前]の形式で列挙する. ex: A1=NAME1 A2=NAME2...', dest='absolute', nargs='*', default=[])
         return parser
 
     def new_context(self, *, args):
