@@ -2,7 +2,7 @@ import argparse
 import sys
 
 from j2shrine.context import RenderContext
-from ..command import Command
+from ..command import Command, KeyValuesParseAction
 from .excel_render import ExcelRender
 from .excel_context import ExcelRenderContext
 
@@ -26,7 +26,7 @@ class ExcelCommand(Command):
     def add_optional_arguments(self, *, parser):
         super().add_optional_arguments(parser=parser)
         parser.add_argument(
-            '-a', '--absolute', help='絶対位置指定でセル値を固定で取得する [セル位置=名前]の形式で列挙する. ex: A1=NAME1 A2=NAME2...', dest='absolute', nargs='*', default=[])
+            '-a', '--absolute', help='絶対位置指定でセル値を固定で取得する [セル位置=名前]の形式で列挙する. ex: A1=NAME1 A2=NAME2...', dest='absolute', nargs='*', default={}, action=KeyValuesParseAction)
         return parser
 
     def new_context(self, *, args):
