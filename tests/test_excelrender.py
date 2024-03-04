@@ -152,12 +152,14 @@ class ExcelRenderTest(J2SRenderTest):
 
 
     def excel_rendering_test(self, *, render, expect, source, encoding='utf8'):
-        result_file = 'tests/output/' + self._testMethodName + '.tmp'
+        result_file = self.result_file()
 
         with open(result_file, 'w', encoding=encoding) as result_writer:
             render.render(source=source, output=result_writer)
         self.file_test(expect_file=expect, result_file=result_file)
 
+    def result_dir(self):
+        return 'excel'
 
 if __name__ == '__main__':
     unittest.main()

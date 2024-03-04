@@ -21,6 +21,9 @@ class JsonRenderTest(J2SRenderTest):
         render = JsonRender(context=context)
 
         self.rendering_test(render=render, expect_file=expect, source=context.src)
+        
+    def result_dir(self):
+        return 'json'
 
 
 if __name__ == '__main__':

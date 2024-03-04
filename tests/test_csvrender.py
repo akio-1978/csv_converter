@@ -174,6 +174,9 @@ class CsvRenderTest(J2SRenderTest):
 
         return self.rendering_test(render=CsvRender(context=context), expect_file=expect, source=source)
 
+    def result_dir(self):
+        return 'csv'
+
 # テスト用にDictLoaderを使うRender
 
 

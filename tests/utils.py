@@ -4,7 +4,7 @@ from pathlib import Path
 
 class J2SRenderTest(unittest.TestCase):
     def rendering_test(self, *, render, expect_file, source):
-        result_file = 'tests/output/' + self._testMethodName + '.tmp'
+        result_file = self.result_file()
         
         with open(source, encoding='utf-8') as source_reader:
             with open(result_file, 'w') as result_writer:
@@ -20,6 +20,14 @@ class J2SRenderTest(unittest.TestCase):
 
             # テストに成功したファイルは削除する            
             Path(result_file).unlink()
+
+    def result_file(self, name=None):
+        if name is None:
+            name = self._testMethodName
+        return 'tests/output/{}/{}.tmp'.format(self.result_dir(), name)
+
+    def result_dir(self):
+        return None
 
 class RenderArgs(argparse.Namespace):
     
