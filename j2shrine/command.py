@@ -122,10 +122,6 @@ class ArgsBuilder:
             self.setvalue(k, v)
         return self.args
 
-    def merge_dict(self, k, v):
-        v.update(getattr(self.args, k))
-        return v
-
     def setvalue(self, k, v):
         setattr(self.args, k, v)
 
