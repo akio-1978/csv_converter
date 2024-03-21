@@ -1,0 +1,9 @@
+{
+    "args" : {
+        "names" : ["first", "second", "third"],
+        "parameters" : {
+            "valueByJson" : "byjson",
+            "value" : "value"
+        }
+    }
+}

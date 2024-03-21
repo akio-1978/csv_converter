@@ -1,0 +1,17 @@
+Yurakucho-line-stations-in-ward:
+  ward:
+    - Wako-shi:
+      - Y-1: Wakoshi
+    - Itabashi-ku:
+      - Y-2: Chikatetsu-narimasu
+    - Nerima-ku:
+      - Y-3: Chikatetsu-akatsuka
+      - Y-4: Heiwadai
+      - Y-5: Hikawadai
+      - Y-6: Kotake-mukaihara
+    - Toshima-Ku:
+      - Y-7: Senkawa
+      - Y-8: Kanamecho
+      - Y-9: Ikebukuro
+    - value1:
+    - value2:
