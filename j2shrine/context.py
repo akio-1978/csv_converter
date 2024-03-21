@@ -1,3 +1,4 @@
+import json
 from .render import Render
 # renderの動作を決定するコンテキスト
 class RenderContext:
@@ -7,6 +8,3 @@ class RenderContext:
     def set_params(self, *, args):
         for (key, value) in args.items():
             setattr(self, key, value)
-
-    def new_render(self):
-        return Render(context=self)

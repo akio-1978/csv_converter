@@ -9,7 +9,7 @@ class ExcelRender(Render):
     def __init__(self, *, context: RenderContext):
         super().__init__(context=context)
         # 変更される可能性があるためcopyする
-        self.cols = context.names.copy()
+        self.cols = context.names.copy() if context.names is not None else []
 
     def install_filters(self, *, environment):
         super().install_filters(environment=environment)

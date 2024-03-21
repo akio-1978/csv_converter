@@ -1,6 +1,7 @@
 import io
 import sys
 import argparse
+import json
 
 from .render import Render
 from .context import RenderContext
@@ -10,57 +11,51 @@ from .context import RenderContext
 
 class Command():
 
-    def register_self(self, *, main_parser: argparse.ArgumentParser) -> None:
-        parser = self.create_parser(main_parser=main_parser)
-        self.add_arguments(parser=parser)
-    def create_parser(self, *, main_parser):
-        return main_parser.add_parser('nop', help='NOP for test')
+    def __init__(self,*, master: argparse.ArgumentParser):
+        self.parser = master.add_parser('nop', help='NOP for test')
+        master.set_defaults(command_instance=self)
 
-    def add_arguments(self, *, parser):
-        parser.set_defaults(command_instance=self)
+    _render = Render
+    _context = RenderContext
 
-        self.add_defaiult_options(parser=parser)
-        self.add_positional_arguments(parser=parser)
-        self.add_optional_arguments(parser=parser)
+    def setup(self):
+        self.add_defaiult_options()
+        self.add_positional_arguments()
+        self.add_optional_arguments()
 
-        return parser
-
-    def add_defaiult_options(self, *, parser):
-        parser.add_argument('-o', '--out', metavar='file',
+    def add_defaiult_options(self):
+        self.parser.add_argument('-o', '--out', metavar='file',
                             help='出力先ファイル 省略時はstdout.', default=sys.stdout)
         # source encoding
-        parser.add_argument('--input-encoding', metavar='enc',
+        self.parser.add_argument('--input-encoding', metavar='enc',
                             help='入力時の文字エンコーディング.', default='utf-8')
         # dest encoding
-        parser.add_argument('--output-encoding', metavar='enc',
+        self.parser.add_argument('--output-encoding', metavar='enc',
                             help='出力時の文字エンコーディング.', default='utf-8')
         # template encoding
-        parser.add_argument('--template-encoding', metavar='enc',
+        self.parser.add_argument('--template-encoding', metavar='enc',
                             help='jinja2テンプレートファイルのエンコーディング.', default='utf-8')
-        parser.add_argument('-p', '--parameters', nargs='*', default={},
+        self.parser.add_argument('-p', '--parameters', nargs='*', default={},
                             help='テンプレート内で参照可能な追加のパラメータ [KEY=VALUE] 形式で列挙.', action=KeyValuesParseAction)
 
-        parser.add_argument('-n', '--names', nargs='*', default=[],
+        self.parser.add_argument('-n', '--names', nargs='*',
                             help='テンプレート内で各行のカラムに付ける名前を左側から列挙 defaultは col_00 col02...')
 
-    def add_positional_arguments(self, *, parser):
-        parser.add_argument('template', help='使用するjinja2テンプレート.')
-        parser.add_argument('source', help='レンダリング対象ファイル 省略時はstdin.',
+        self.parser.add_argument('--config-file', metavar='file',
+                            help='names parameters absoluteの各設定をjsonに記述したファイル')
+
+    def add_positional_arguments(self):
+        self.parser.add_argument('template', help='使用するjinja2テンプレート.')
+        self.parser.add_argument('source', help='レンダリング対象ファイル 省略時はstdin.',
                             nargs='?', default=sys.stdin)
 
-    def add_optional_arguments(self, *, parser):
+    def add_optional_arguments(self):
         pass
 
     def execute(self, *, args: argparse.Namespace):
-        context = self.new_context(args=args)
-        render = self.new_render(context=context)
+        context = self._context(args=ArgsBuilder(args=args, merge_keys=self.merge_keyset()).build())
+        render = self._render(context=context)
         self.call_render(render=render, source=args.source, out=args.out)
-
-    def new_context(self, *, args: argparse.Namespace):
-        return RenderContext(args=args)
-
-    def new_render(self, *, context:RenderContext):
-        return Render(context=context)
 
     def call_render(self, *, render: Render, source, out):
         context = render.context
@@ -84,6 +79,9 @@ class Command():
             if out is not sys.stdout:
                 out_stream.close()
 
+    def merge_keyset(self):
+        """設定ファイルとコマンドラインをマージすべき項目名を返す"""
+        return set(('parameters',))
 
 class KeyValuesParseAction(argparse.Action):
 
@@ -96,3 +94,53 @@ class KeyValuesParseAction(argparse.Action):
             key_value = value.partition('=')
             key_values[key_value[0]] = key_value[2]
         return key_values
+
+class ArgsBuilder:
+    def __init__(self, args:argparse.Namespace, merge_keys:set) -> None:
+        self.args = args
+        self.merge_keys = merge_keys
+        
+    def build(self):
+        """ jsonで記述された設定ファイルを読み込む
+            設定ファイルとコマンドラインから同じ値が指定されている場合、コマンドラインの値を優先する
+            引数parametersのみ、設定ファイルとコマンドラインをマージする
+        """
+        config = self.default_params()
+        if self.has_args('config_file'):
+            with open(self.args.config_file) as src:
+                config.update(json.load(src))
+        for k,v in config['args'].items():
+            # 設定ファイルとコマンドラインをマージする
+            if k in self.merge_keys:
+                v.update(getattr(self.args, k))
+                self.setvalue(k, v)
+                continue
+            # コマンドラインに値が指定されている場合、設定ファイルの値は使わない
+            if (self.has_args(k)):
+                continue
+            # 設定ファイル値を採用
+            self.setvalue(k, v)
+        return self.args
+
+    def merge_dict(self, k, v):
+        v.update(getattr(self.args, k))
+        return v
+
+    def setvalue(self, k, v):
+        setattr(self.args, k, v)
+
+    def has_args(self, k):
+        """argparseが値を受け取ったかどうかのチェック"""
+        return hasattr(self.args, k) and getattr(self.args, k) is not None
+
+    def default_params(self):
+        """設定ファイルにもコマンドラインにも設定されなかった値を補完する"""
+        return {
+            'args': {
+                'input_encoding': 'utf8',
+                'output_encoding': 'utf8',
+                'template_encoding': 'utf8',
+            }
+        }
+        
+        

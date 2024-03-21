@@ -8,7 +8,7 @@ class CsvRender(Render):
     def __init__(self, *, context: RenderContext):
         super().__init__(context=context)
         # 変更される可能性があるためcopyする
-        self.cols = context.names.copy()
+        self.cols = context.names.copy() if context.names is not None else []
 
     def build_reader(self, *, source):
         # csvヘッダの有無が不定のため、DictReaderは使用しない

@@ -11,11 +11,9 @@ class Starter():
         self.args = args
 
     def set_subparsers(self, *, main_parser):
-        CsvCommand().register_self(main_parser=main_parser)
-
-        ExcelCommand().register_self(main_parser=main_parser)
-
-        JsonCommand().register_self(main_parser=main_parser)
+        CsvCommand(master=main_parser).setup()
+        ExcelCommand(master=main_parser).setup()
+        JsonCommand(master=main_parser).setup()
 
     def create_mainparser(self):
         base_parser = argparse.ArgumentParser(prog='j2shrine',

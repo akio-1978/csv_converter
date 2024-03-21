@@ -1,4 +1,4 @@
-
+import argparse
 from ..command import Command
 from .json_render import JsonRender
 from .json_context import JsonRenderContext
@@ -7,12 +7,9 @@ from .json_context import JsonRenderContext
 
 
 class JsonCommand(Command):
+    def __init__(self,*, master: argparse.ArgumentParser):
+        self.parser = master.add_parser('json', help='jsonのレンダリングを行う')
+        self.parser.set_defaults(command_instance=self)
 
-    def create_parser(self, *, main_parser):
-        return main_parser.add_parser('json', help='jsonのレンダリングを行う')
-
-    def new_context(self, *, args):
-        return JsonRenderContext(args=args)
-
-    def new_render(self, *, context: JsonRenderContext):
-        return JsonRender(context=context)
+    _render = JsonRender
+    _context = JsonRenderContext
