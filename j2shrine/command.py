@@ -84,8 +84,12 @@ class Command():
         return set(('parameters',))
 
 class KeyValuesParseAction(argparse.Action):
-
     def __call__(self, parser, namespace, values, option_string=None):
+        """=区切りで複数与えられた値をdictで格納する
+            ex.
+            args:A=1 B=2 C=3
+            dict:{'A' : '1', 'B' : '2', 'C' : '3'}
+        """
         setattr(namespace, self.dest, self.parse_key_values(values))
 
     def parse_key_values(self, values):
@@ -96,6 +100,12 @@ class KeyValuesParseAction(argparse.Action):
         return key_values
 
 class ArgsBuilder:
+    """ コマンドライン引数argsと設定ファイルの中身をマージする
+        設定ファイルは引数--config-fileで指定されたjsonファイルであり、引数--config-fileが指定されていればロードする
+        ロードしたjsonの項目を順次argsにsetattrする形でマージを行う 
+        argsはjsonより優先する。jsonとargsに同じ項目が指定された場合はsetattrしない
+        一部dictについて引数と設定ファイルをマージする、この場合も同一の項目は引数側を優先する
+    """
     def __init__(self, args:argparse.Namespace, merge_keys:set) -> None:
         self.args = args
         self.merge_keys = merge_keys
@@ -106,31 +116,26 @@ class ArgsBuilder:
             引数parametersのみ、設定ファイルとコマンドラインをマージする
         """
         config = self.default_params()
-        if self.has_args('config_file'):
+        if self.given('config_file'):
             with open(self.args.config_file) as src:
                 config.update(json.load(src))
-        for k,v in config.items():
-            # 設定ファイルとコマンドラインをマージする
-            if k in self.merge_keys:
-                v.update(getattr(self.args, k))
-                self.setvalue(k, v)
-                continue
-            # コマンドラインに値が指定されている場合、設定ファイルの値は使わない
-            if (self.has_args(k)):
-                continue
-            # 設定ファイル値を採用
-            self.setvalue(k, v)
+
+        for key, value in config.items():
+            if key in self.merge_keys:
+                # dictをマージして設定し直す
+                value.update(getattr(self.args, key))
+                setattr(self.args, key, value)
+            elif (not self.given(key)):
+                # 設定ファイルの値を引数に追加する
+                setattr(self.args, key, value)
         return self.args
 
-    def setvalue(self, k, v):
-        setattr(self.args, k, v)
-
-    def has_args(self, k):
-        """argparseが値を受け取ったかどうかのチェック"""
+    def given(self, k):
+        """ hasattr と not None が長いのでまとめる """
         return hasattr(self.args, k) and getattr(self.args, k) is not None
 
     def default_params(self):
-        """必ず設定される必要がある値"""
+        """argsとjsonの両方で指定されなかった場合のデフォルト値"""
         return {
             'input_encoding': 'utf8',
             'output_encoding': 'utf8',
