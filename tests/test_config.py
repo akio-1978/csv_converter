@@ -28,14 +28,11 @@ class ConfigTest(J2SRenderTest):
         Starter(args=['csv', 'tests/csv/templates/merge_parameters.tmpl', 'tests/csv/src/parameters.csv', 
             '-o', result_file, '-H',
             '--parameters', 'list_name=Yurakucho-line-stations-in-ward', '--config-file', 'tests/csv/config/parameters.config.json', ]).execute()
-        # Starter(args=['csv', 'tests/csv/templates/merge_parameters.tmpl', 'tests/csv/src/parameters.csv', 
-        #     '-o', result_file, '-H'
-        #     , '--parameters', 'list_name=Yurakucho-line-stations-in-ward']).execute()
         self.file_test(expect_file=expect_file, result_file=result_file)
 
 
     def result_dir(self):
-        return 'starter'
+        return 'config'
 
 if __name__ == '__main__':
     unittest.main()
