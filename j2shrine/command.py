@@ -109,7 +109,7 @@ class ArgsBuilder:
         if self.has_args('config_file'):
             with open(self.args.config_file) as src:
                 config.update(json.load(src))
-        for k,v in config['args'].items():
+        for k,v in config.items():
             # 設定ファイルとコマンドラインをマージする
             if k in self.merge_keys:
                 v.update(getattr(self.args, k))
@@ -130,13 +130,11 @@ class ArgsBuilder:
         return hasattr(self.args, k) and getattr(self.args, k) is not None
 
     def default_params(self):
-        """設定ファイルにもコマンドラインにも設定されなかった値を補完する"""
+        """必ず設定される必要がある値"""
         return {
-            'args': {
-                'input_encoding': 'utf8',
-                'output_encoding': 'utf8',
-                'template_encoding': 'utf8',
-            }
+            'input_encoding': 'utf8',
+            'output_encoding': 'utf8',
+            'template_encoding': 'utf8',
         }
         
         

@@ -1,8 +1,6 @@
 {
-    "args": {
-        "parameters": {
-            "value1" : "value1",
-            "value2" : "value2"
-        }
+    "parameters": {
+        "value1" : "value1",
+        "value2" : "value2"
     }
 }
