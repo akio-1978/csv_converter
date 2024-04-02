@@ -20,7 +20,13 @@ class CsvCommand(Command):
                             dest='read_header', action='store_true')
         # flag tab separate values
         self.parser.add_argument('-d', '--delimiter', metavar='',
-                            help="カラムの区切り文字 defaultは ',' .", default=',')
+                            help="カラムの区切り文字 defaultは ',' .")
         # skip head lines
         self.parser.add_argument('-s', '--skip-lines', metavar='',
-                            type=int, help='指定した数値分だけ先頭から行を読み飛ばす.', default=0)
+                            type=int, help='指定した数値分だけ先頭から行を読み飛ばす.')
+
+    def default_params(self):
+        """デフォルトの区切り文字"""
+        params = super().default_params()
+        params['delimiter'] = ','
+        return params

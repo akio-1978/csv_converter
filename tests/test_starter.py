@@ -30,6 +30,15 @@ class StarterTest(J2SRenderTest):
             '-d',',', '-p' ,'A=B', 'C=D']).execute()
         self.file_test(expect_file=expect_file, result_file=result_file)
 
+
+    def test_header_names(self):
+        """--headerと--namesを同時に指定した場合はheaderを優先する"""
+        expect_file = expect_path(CSV, 'simple.txt')
+        result_file = self.result_file()
+        Starter(args=['csv', 'tests/csv/templates/use_column_names.tmpl', 'tests/csv/src/simple.csv', 
+            '-o', result_file, '-H', '--names', 'not', 'use', 'names', ]).execute()
+        self.file_test(expect_file=expect_file, result_file=result_file)
+
     def test_start_names(self):
         """--names指定で起動"""
         expect_file = expect_path(CSV, 'simple.txt')

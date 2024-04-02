@@ -19,8 +19,9 @@ class CsvRender(Render):
 
         # スキップ指定があれば行を読み飛ばす
         # ヘッダ行の処理は読み飛ばし後から始める
-        for n in range(self.context.skip_lines):
-            next(reader)
+        if self.context.skip_lines:
+            for n in range(self.context.skip_lines):
+                next(reader)
 
         # 指定されていれば先頭行をヘッダにする
         # context.read_headerはcontext.namesより優先される

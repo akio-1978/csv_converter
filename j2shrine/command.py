@@ -53,7 +53,7 @@ class Command():
         pass
 
     def execute(self, *, args: argparse.Namespace):
-        context = self._context(args=ArgsBuilder(args=args, merge_keys=self.merge_keyset()).build())
+        context = self._context(args=ArgsBuilder(args=args, merge_keys=self.merge_keys(), default_params=self.default_params()).build())
         render = self._render(context=context)
         self.call_render(render=render, source=args.source, out=args.out)
 
@@ -79,9 +79,18 @@ class Command():
             if out is not sys.stdout:
                 out_stream.close()
 
-    def merge_keyset(self):
+    def merge_keys(self):
         """設定ファイルとコマンドラインをマージすべき項目名を返す"""
         return set(('parameters',))
+
+    def default_params(self):
+        """argsとjsonの両方で指定されなかった場合のデフォルト値"""
+        return {
+            'input_encoding': 'utf8',
+            'output_encoding': 'utf8',
+            'template_encoding': 'utf8',
+        }
+
 
 class KeyValuesParseAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
@@ -106,16 +115,17 @@ class ArgsBuilder:
         argsはjsonより優先する。jsonとargsに同じ項目が指定された場合はsetattrしない
         一部dictについて引数と設定ファイルをマージする、この場合も同一の項目は引数側を優先する
     """
-    def __init__(self, args:argparse.Namespace, merge_keys:set) -> None:
+    def __init__(self, args:argparse.Namespace, merge_keys:set, default_params:dict) -> None:
         self.args = args
         self.merge_keys = merge_keys
+        self.default_params = default_params
         
     def build(self):
         """ jsonで記述された設定ファイルを読み込む
             設定ファイルとコマンドラインから同じ値が指定されている場合、コマンドラインの値を優先する
             引数parametersのみ、設定ファイルとコマンドラインをマージする
         """
-        config = self.default_params()
+        config = self.default_params
         if self.given('config_file'):
             with open(self.args.config_file) as src:
                 config.update(json.load(src))
@@ -134,12 +144,5 @@ class ArgsBuilder:
         """ hasattr と not None が長いのでまとめる """
         return hasattr(self.args, k) and getattr(self.args, k) is not None
 
-    def default_params(self):
-        """argsとjsonの両方で指定されなかった場合のデフォルト値"""
-        return {
-            'input_encoding': 'utf8',
-            'output_encoding': 'utf8',
-            'template_encoding': 'utf8',
-        }
         
         
