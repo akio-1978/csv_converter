@@ -13,6 +13,14 @@ def result_path(type, file):
     return RESULT.format(type, file)
 class ConfigTest(J2SRenderTest):
 
+    def test_delimiter(self):
+        """--delimiterを--config-fileから指定してタブ区切りにする"""
+        expect_file = expect_path(CSV, 'simple.txt')
+        result_file = self.result_file()
+        Starter(args=['csv', 'tests/csv/templates/use_column_names.tmpl', 'tests/csv/src/simple_tab.tsv', 
+            '-o', result_file, '--header', '--config-file', 'tests/csv/config/delimiter.json']).execute()
+        self.file_test(expect_file=expect_file, result_file=result_file)
+
     def test_skip_lines(self):
         """--skip-linesを--config-fileから指定する"""
         expect_file = expect_path(CSV, 'simple.txt')
