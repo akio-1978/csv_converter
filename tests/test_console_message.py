@@ -1,5 +1,5 @@
 import unittest
-from j2shrine.starter import Starter
+from j2shrine.runner import Runner
 from utils import J2SRenderTest
 
 class ConsoleTest(J2SRenderTest):
@@ -7,37 +7,37 @@ class ConsoleTest(J2SRenderTest):
 
     def test_no_subcommand(self):
         """サブコマンドの指定がない"""
-        starter = Starter(args=[])
+        starter = Runner(args=[])
         self.assertRaises(BaseException, starter.execute)
 
     def test_csv_invalid(self):
         """csv 引数指定がない"""
-        starter = Starter(args=['csv'])
+        starter = Runner(args=['csv'])
         self.assertRaises(BaseException, starter.execute)
 
     def test_excel_invalid(self):
         """excel 引数指定がない"""
-        starter = Starter(args=['excel'])
+        starter = Runner(args=['excel'])
         self.assertRaises(BaseException, starter.execute)
 
     def test_json_invalid(self):
         """json 引数指定がない"""
-        starter = Starter(args=['json'])
+        starter = Runner(args=['json'])
         self.assertRaises(BaseException, starter.execute)
 
     def test_csv_help(self):
         """csv ヘルプ表示"""
-        starter = Starter(args=['csv', '-h'])
+        starter = Runner(args=['csv', '-h'])
         self.assertRaises(BaseException, starter.execute)
 
     def test_excel_help(self):
         """excel ヘルプ表示"""
-        starter = Starter(args=['excel', '-h'])
+        starter = Runner(args=['excel', '-h'])
         self.assertRaises(BaseException, starter.execute)
 
     def test_json_help(self):
         """json ヘルプ表示"""
-        starter = Starter(args=['json', '-h'])
+        starter = Runner(args=['json', '-h'])
         self.assertRaises(BaseException, starter.execute)
 
 if __name__ == '__main__':

@@ -5,7 +5,7 @@ from .excel.excel_command import ExcelCommand
 from .json.json_command import JsonCommand
 
 
-class Starter():
+class Runner():
 
     def __init__(self, *, args):
         self.args = args
@@ -33,7 +33,7 @@ class Starter():
 
 
 def main():
-    starter = Starter(args=sys.argv[1:] if len(sys.argv) > 1 else ['', ''])
+    starter = Runner(args=sys.argv[1:] if len(sys.argv) > 1 else ['', ''])
     starter.execute()
 
 
