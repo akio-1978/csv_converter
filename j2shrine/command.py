@@ -11,19 +11,34 @@ from .context import RenderContext
 
 class Command():
 
-    def __init__(self,*, master: argparse.ArgumentParser):
-        self.parser = master.add_parser('nop', help='NOP for test')
-        master.set_defaults(command_instance=self)
+    def __init__(self,*, factory: argparse.ArgumentParser):
+        """このコンストラクタはテスト用で、何もしないサブコマンドを生成する"""
+        self.parser = factory.add_parser('nop', help='NOP for test')
+        factory.set_defaults(command_instance=self)
 
     _render = Render
     _context = RenderContext
 
     def setup(self):
+        """ 各コマンドの引数を定義する
+            サブコマンドでoverrideすることが前提
+        """
         self.add_defaiult_options()
         self.add_positional_arguments()
         self.add_optional_arguments()
 
+    def add_positional_arguments(self):
+        """ 位置引数をパーサに追加する
+            位置引数を書き直したい場合にオーバーライドする
+        """
+        self.parser.add_argument('template', help='使用するjinja2テンプレート.')
+        self.parser.add_argument('source', help='レンダリング対象ファイル 省略時はstdin.',
+                            nargs='?', default=sys.stdin)
+
     def add_defaiult_options(self):
+        """ オプション引数をパーサに追加する
+            ここで全てのサブコマンドで共通して使うオプションの追加を想定している
+        """
         self.parser.add_argument('-o', '--out', metavar='file',
                             help='出力先ファイル 省略時はstdout.', default=sys.stdout)
         # source encoding
@@ -44,20 +59,19 @@ class Command():
         self.parser.add_argument('--config-file', metavar='file',
                             help='names parameters absoluteの各設定をjsonに記述したファイル')
 
-    def add_positional_arguments(self):
-        self.parser.add_argument('template', help='使用するjinja2テンプレート.')
-        self.parser.add_argument('source', help='レンダリング対象ファイル 省略時はstdin.',
-                            nargs='?', default=sys.stdin)
-
     def add_optional_arguments(self):
+        """サブコマンドでオプション引数を追加する場合にオーバーライドする"""
         pass
 
     def execute(self, *, args: argparse.Namespace):
+        """ パーサから返された値を使ってコマンドの処理を実行
+            この処理はRunnerの責務かもしれない
+        """
         context = self._context(args=ArgsBuilder(args=args, merge_keys=self.merge_keys(), default_params=self.default_params()).build())
         render = self._render(context=context)
         self.call_render(render=render, source=args.source, out=args.out)
 
-    def call_render(self, *, render: Render, source, out):
+    def call_render(self, *, render: Render, source:any, out:any):
         context = render.context
         in_stream = sys.stdin
         out_stream = sys.stdout
@@ -101,7 +115,7 @@ class KeyValuesParseAction(argparse.Action):
         """
         setattr(namespace, self.dest, self.parse_key_values(values))
 
-    def parse_key_values(self, values):
+    def parse_key_values(self, values:str):
         key_values = {}
         for value in values:
             key_value = value.partition('=')
@@ -140,9 +154,9 @@ class ArgsBuilder:
                 setattr(self.args, key, value)
         return self.args
 
-    def given(self, k):
+    def given(self, k:str):
         """ hasattr と not None が長いのでまとめる """
-        return hasattr(self.args, k) and getattr(self.args, k) is not None
+        return hasattr(self.args, k) and getattr(self.args, k)
 
         
         

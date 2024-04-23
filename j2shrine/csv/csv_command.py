@@ -7,8 +7,8 @@ from .csv_context import CsvRenderContext
 
 class CsvCommand(Command):
 
-    def __init__(self,*, master: argparse.ArgumentParser):
-        self.parser = master.add_parser('csv', help='csvのレンダリングを行う')
+    def __init__(self,*, factory: argparse.ArgumentParser):
+        self.parser = factory.add_parser('csv', help='csvのレンダリングを行う')
         self.parser.set_defaults(command_instance=self)
 
     _render = CsvRender

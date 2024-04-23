@@ -13,9 +13,9 @@ class Runner():
 
     def register_subcommand(self, *, subparser_factory:argparse.ArgumentParser):
         """サブコマンドのパーサを構築する"""
-        CsvCommand(master=subparser_factory).setup()
-        ExcelCommand(master=subparser_factory).setup()
-        JsonCommand(master=subparser_factory).setup()
+        CsvCommand(factory=subparser_factory).setup()
+        ExcelCommand(factory=subparser_factory).setup()
+        JsonCommand(factory=subparser_factory).setup()
 
     def execute(self):
         """プログラムの実行本体"""
