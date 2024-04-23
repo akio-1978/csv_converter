@@ -46,7 +46,7 @@ class ConfigTest(J2SRenderTest):
         self.file_test(expect_file=expect_file, result_file=result_file)
 
     def test_merge_parameter(self):
-        """--parametersと--config-fileを両方指定すると、--parametersと--config-fileの内容がマージされる"""
+        """--parameters指定と--config-file中のparametersはマージされる"""
         expect_file = expect_path(CSV, 'merge_parameters.yml')
         result_file = self.result_file()
         Starter(args=['csv', 'tests/csv/templates/merge_parameters.tmpl', 'tests/csv/src/parameters.csv', 
@@ -55,12 +55,39 @@ class ConfigTest(J2SRenderTest):
         self.file_test(expect_file=expect_file, result_file=result_file)
 
     def test_overwrite_parameters(self):
-        """--parametersと--config-fileをマージするとき、--parametersの項目が優先される"""
+        """--parameters指定は--config-fileより優先的にマージされる"""
         expect_file = expect_path(CSV, 'overwrite_parameters.yml')
         result_file = self.result_file()
         Starter(args=['csv', 'tests/csv/templates/merge_parameters.tmpl', 'tests/csv/src/parameters.csv', 
             '-o', result_file, '-H',
             '--parameters', 'value2=overwrite', 'list_name=Yurakucho-line-stations-in-ward', '--config-file', 'tests/csv/config/parameters.json', ]).execute()
+        self.file_test(expect_file=expect_file, result_file=result_file)
+
+    def test_excel_absolute(self):
+        """excel --absoluteを--config-fileから指定する"""
+        expect_file = expect_path(EXCEL, 'read_document.txt')
+        result_file = self.result_file()
+        Starter(args=['excel', 'tests/excel/templates/read_document.tmpl', 'tests/excel/src/read_document.xlsx',
+            '1:', 'C7:H10', '-o', result_file, '--config-file', 'tests/excel/config/absolute.json',]).execute()
+        self.file_test(expect_file=expect_file, result_file=result_file)
+
+    def test_excel_merge_absolute(self):
+        """--absolute指定と--config-file中のabsoluteはマージされる"""
+        expect_file = expect_path(EXCEL, 'read_document.txt')
+        result_file = self.result_file()
+        Starter(args=['excel', 'tests/excel/templates/read_document.tmpl', 'tests/excel/src/read_document.xlsx',
+            '1:', 'C7:H10', '-o', result_file, '--absolute', 'DESCRIPTION=C4',
+            '--config-file', 'tests/excel/config/merge_absolute.json',]).execute()
+        self.file_test(expect_file=expect_file, result_file=result_file)
+
+
+    def test_excel_overwrite_absolute(self):
+        """--absolute指定は--config-fileより優先的にマージされる"""
+        expect_file = expect_path(EXCEL, 'read_document.txt')
+        result_file = self.result_file()
+        Starter(args=['excel', 'tests/excel/templates/read_document.tmpl', 'tests/excel/src/read_document.xlsx',
+            '1:', 'C7:H10', '-o', result_file, '--absolute', 'NAME=C3', 'DESCRIPTION=C4',
+            '--config-file', 'tests/excel/config/overwrite_absolute.json',]).execute()
         self.file_test(expect_file=expect_file, result_file=result_file)
 
     def result_dir(self):
