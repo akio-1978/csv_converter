@@ -1,6 +1,6 @@
 import unittest
 from j2shrine.runner import Runner
-from utils import J2SRenderTest
+from tests.testutils import J2SRenderTest
 
 class ConsoleTest(J2SRenderTest):
     """コマンドラインの不正確な引数及びヘルプ表示、このテストは例外が発生すればok"""

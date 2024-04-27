@@ -12,9 +12,9 @@ class J2SRenderTest(unittest.TestCase):
 
         return self.file_test(expect_file=expect_file, result_file=result_file)
 
-    def file_test(self, *, expect_file:str, result_file:str):
-        with open(expect_file, encoding='utf-8') as expect_reader:
-            with open(result_file, encoding='utf-8') as result_reader:
+    def file_test(self, *, expect_file:str, result_file:str, encoding:str='utf-8'):
+        with open(expect_file, encoding=encoding) as expect_reader:
+            with open(result_file, encoding=encoding) as result_reader:
                 result = result_reader.read()
                 self.assertEqual(expect_reader.read(), result)
 

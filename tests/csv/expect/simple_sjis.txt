@@ -1,0 +1,19 @@
+{
+    "persons" : [
+        {
+            "group" : "A",
+            "number" : "1001",
+            "name" : "スズキ"
+        },
+        {
+            "group" : "B",
+            "number" : "2001",
+            "name" : "ジョン"
+        },
+        {
+            "group" : "B",
+            "number" : "2002",
+            "name" : "ポール"
+        }
+    ]
+}

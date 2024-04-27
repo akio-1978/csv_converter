@@ -1,6 +1,6 @@
 import unittest
 from j2shrine.runner import Runner
-from utils import J2SRenderTest
+from tests.testutils import J2SRenderTest
 
 # テスト用のファイルパスが長たらしいのでヘルパー
 CSV = 'csv'

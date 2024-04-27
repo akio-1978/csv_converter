@@ -1,7 +1,7 @@
 import unittest
 from j2shrine.excel.excel_render import ExcelRender
 from j2shrine.excel.excel_context import ExcelRenderContext
-from tests.utils import J2SRenderTest, RenderArgs
+from tests.testutils import J2SRenderTest, RenderArgs
 
 class ExcelRenderTest(J2SRenderTest):
 

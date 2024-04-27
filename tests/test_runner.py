@@ -1,6 +1,6 @@
 import unittest
 from j2shrine.runner import Runner
-from utils import J2SRenderTest
+from tests.testutils import J2SRenderTest
 
 # テスト用のファイルパスが長たらしいのでヘルパー
 CSV = 'csv'
@@ -16,10 +16,19 @@ class RunnerTest(J2SRenderTest):
     def test_start(self):
         """最低限の引数で起動"""
         expect_file = expect_path(CSV, 'simple.txt')
-        result_file = self.result_file('demo02')
+        result_file = self.result_file()
         Runner(args=['csv', 'tests/csv/templates/simple.tmpl', 'tests/csv/src/simple.csv', 
             '-o', result_file, '-H']).execute()
         self.file_test(expect_file=expect_file, result_file=result_file)
+
+    def test_start_jp(self):
+        """日本語読み書き"""
+        expect_file = expect_path(CSV, 'simple_sjis.txt')
+        result_file = self.result_file()
+        Runner(args=['csv', 'tests/csv/templates/simple.tmpl', 'tests/csv/src/simple_sjis.csv', 
+            '-o', result_file, '-H', '--input-encoding', 'sjis', '--output-encoding', 'sjis']).execute()
+        self.file_test(expect_file=expect_file, result_file=result_file, encoding='sjis')
+
 
     def test_start_args(self):
         """オプション引数を指定して起動"""

@@ -4,7 +4,7 @@ from j2shrine.csv.csv_render import CsvRender
 from j2shrine.csv.csv_context import CsvRenderContext
 
 from jinja2 import Environment, DictLoader
-from tests.utils import J2SRenderTest, RenderArgs
+from tests.testutils import J2SRenderTest, RenderArgs
 
 class CsvRenderTest(J2SRenderTest):
 

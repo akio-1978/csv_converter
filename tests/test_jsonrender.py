@@ -1,7 +1,7 @@
 import unittest
 from j2shrine.json.json_render import JsonRender
 from j2shrine.json.json_context import JsonRenderContext
-from tests.utils import J2SRenderTest, RenderArgs
+from tests.testutils import J2SRenderTest, RenderArgs
 
 
 class JsonRenderTest(J2SRenderTest):
