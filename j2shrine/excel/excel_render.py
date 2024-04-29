@@ -22,15 +22,15 @@ class ExcelRender(Render):
 
     def read_source(self, *, reader: Workbook):
         """Workbookの中身をcontextに従って読み取る"""
-        cells = self.context.read_range
-        sheets = self.context.sheets
+        (start, end) = self.context.read_range
+        (first_sheet, end_sheet) = self.context.sheets
         # endがNoneの場合最後のシートまで読む
-        if (sheets.end is None):
-            sheets.end = len(reader.worksheets)-1
+        if (end_sheet is None):
+            end_sheet = len(reader.worksheets)-1
 
         results = []
-        sheet_idx = sheets.start
-        while sheet_idx <= sheets.end:
+        sheet_idx = first_sheet
+        while sheet_idx <= end_sheet:
             sheet = reader.worksheets[sheet_idx]
 
             # コンテンツ読込み
@@ -39,8 +39,8 @@ class ExcelRender(Render):
                 'rows': [],
                 'abs': self.absolute_cells(sheet=sheet, cells=self.context.absolute)
             }
-            for line_no, row in enumerate(sheet.iter_rows(min_col=cells.start.col, min_row=cells.start.row,
-                                       max_col=cells.end.col, max_row=cells.end.row, )):
+            for line_no, row in enumerate(sheet.iter_rows(min_col=start.col, min_row=start.row,
+                                       max_col=end.col, max_row=end.row, )):
                 sheet_data['rows'].append(self.read_row(line_no=line_no, columns=row))
 
             results.append(sheet_data)

@@ -18,7 +18,7 @@ class ExcelRenderContext(RenderContext):
         # A2:C4 read A2:C4 => 3row * 3column = 9 cells
         # A2:C read A2:C   => 3row * all_rows = 3(all_rows) cells
         self._read_range = None
-        self._sheets = Sheets(0, 0)
+        self._sheets = (0, 0)
         self.absolute = {}
         self.prefix = 'col_'
         self.names = []
@@ -52,7 +52,7 @@ class ExcelRenderContext(RenderContext):
         start = self.get_coordinate(coordinate=arg_left)
         end = self.get_coordinate(coordinate=arg_right)
 
-        return CellRange(start, end)
+        return (start, end)
 
     # セル位置またはセル範囲を取得
     def get_coordinate(self, *, coordinate: str):
@@ -75,23 +75,16 @@ class ExcelRenderContext(RenderContext):
         
         if len(params) < 2:
             # 単一のシ－トが対象 ex "1"
-            return Sheets(start, start)
+            return (start, start)
         elif params[1].isnumeric():
             # シート範囲を指定 ex "1:3"
-            return Sheets(start, int(params[1]) - 1)
+            return (start, int(params[1]) - 1)
         # 指定のシ－トより右側の全てが対象 ex "1:"
         # ワークシートのシート数が解らないのでNoneにする
-        return Sheets(start, None)
+        return (start, None)
 
 @dataclass
 class CellPosition:
+    """セル位置を表す行番号と列名"""
     row:str
     col:str
-@dataclass
-class CellRange:
-    start:CellPosition
-    end:CellPosition
-@dataclass
-class Sheets:
-    start:int
-    end:int
