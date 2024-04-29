@@ -16,8 +16,12 @@ class ExcelCommand(Command):
         self.parser = factory.add_parser('excel', help='Excelのレンダリングを行う', formatter_class=argparse.RawTextHelpFormatter)
         self.parser.set_defaults(command_instance=self)
 
-    _render = ExcelRender
-    _context = ExcelRenderContext
+    def render_class(self):
+        """Commandが使うRenderのクラスを返す"""
+        return ExcelRender
+    def context_class(self):
+        """Commandが使うContextのクラスを返す"""
+        return ExcelRenderContext
 
     def add_positional_arguments(self):
         self.parser.add_argument('template', help='使用するjinja2テンプレート.')

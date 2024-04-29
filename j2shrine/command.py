@@ -5,6 +5,7 @@ import json
 
 from .render import Render
 from .context import RenderContext
+from .renderutils import StreamWrapper
 
 # CommandRunnerのデフォルト実装
 
@@ -16,8 +17,12 @@ class Command():
         self.parser = factory.add_parser('nop', help='NOP for test')
         factory.set_defaults(command_instance=self)
 
-    _render = Render
-    _context = RenderContext
+    def render_class(self):
+        """Commandが使うRenderのクラスを返す"""
+        return Render
+    def context_class(self):
+        """Commandが使うContextのクラスを返す"""
+        return RenderContext
 
     def setup(self):
         """ 各コマンドの引数を定義する
@@ -65,33 +70,24 @@ class Command():
 
     def execute(self, *, args: argparse.Namespace):
         """ パーサから返された値を使ってコマンドの処理を実行
-            この処理はRunnerの責務かもしれない
         """
-        context = self._context(args=ArgsBuilder(args=args, merge_keys=self.merge_keys(), default_params=self.default_params()).build())
-        render = self._render(context=context)
+        # context及びrenderのクラスを取得
+        ctx_class = self.context_class()
+        render_class = self.render_class()
+
+        # context及びrenderのインスタンスを生成
+        context = ctx_class(args=ParamsBuilder(args=args, merge_keys=self.merge_keys(), default_params=self.default_params()).build())
+        render = render_class(context=context)
+        
+        # レンダリング実行
         self.call_render(render=render, source=args.source, out=args.out)
 
-    def call_render(self, *, render: Render, source:any, out:any):
+    def call_render(self, *, render: Render, source:str | io.TextIOWrapper, out:str | io.TextIOWrapper):
         context = render.context
-        in_stream = sys.stdin
-        out_stream = sys.stdout
-        try:
-            if source is not sys.stdin:
-                in_stream = open(
-                    source, encoding=context.input_encoding)
-            if out is not sys.stdout:
-                out_stream = open(context.out, mode='w',
-                                  encoding=context.output_encoding)
-            else:
-                out_stream = io.TextIOWrapper(
-                    sys.stdout.buffer, encoding=context.output_encoding)
-
-            render.render(source=in_stream, output=out_stream)
-        finally:
-            if source is not sys.stdin:
-                in_stream.close()
-            if out is not sys.stdout:
-                out_stream.close()
+        # ファイル名でもstdin stdoutでも区別せずStreamWrapperで吸収する
+        with StreamWrapper(useof=source,encoding=context.input_encoding) as src:
+            with StreamWrapper(useof=out,encoding=context.output_encoding, mode='w') as dest:
+                render.render(source=src, output=dest)
 
     def merge_keys(self):
         """設定ファイルとコマンドラインをマージすべき項目名を返す"""
@@ -122,12 +118,14 @@ class KeyValuesParseAction(argparse.Action):
             key_values[key_value[0]] = key_value[2]
         return key_values
 
-class ArgsBuilder:
-    """ コマンドライン引数argsと設定ファイルの中身をマージする
-        設定ファイルは引数--config-fileで指定されたjsonファイルであり、引数--config-fileが指定されていればロードする
-        ロードしたjsonの項目を順次argsにsetattrする形でマージを行う 
-        argsはjsonより優先する。jsonとargsに同じ項目が指定された場合はsetattrしない
-        一部dictについて引数と設定ファイルをマージする、この場合も同一の項目は引数側を優先する
+class ParamsBuilder:
+    """ argparse.Namespaceとjsonファイルをマージして、レンダリングの設定を得る。
+        jsonファイルはNamespaceに属性config_fileで指定される。このjsonはロードしてdictとして扱う。
+        dict内の全てのkey/valueをNamespaceにsetattrする。
+        ただし、Namespaceに既にkeyと同名のattrがある場合はsetattrせずにNamespaceを優先する。
+        
+        Namespace中にdictを持つ特定のキーについて、Namespaceとdictの値をマージする。
+        Namespaceとdict双方に存在しない特定のキーについて、別途指定した値で補完する。
     """
     def __init__(self, args:argparse.Namespace, merge_keys:set, default_params:dict) -> None:
         self.args = args
@@ -155,7 +153,7 @@ class ArgsBuilder:
         return self.args
 
     def given(self, k:str):
-        """ hasattr と not None が長いのでまとめる """
+        """ 属性が存在しないか、値がNoneではない """
         return hasattr(self.args, k) and getattr(self.args, k)
 
         

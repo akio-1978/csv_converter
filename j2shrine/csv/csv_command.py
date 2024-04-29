@@ -11,10 +11,17 @@ class CsvCommand(Command):
         self.parser = factory.add_parser('csv', help='csvのレンダリングを行う')
         self.parser.set_defaults(command_instance=self)
 
-    _render = CsvRender
-    _context = CsvRenderContext
+
+    def render_class(self):
+        """Commandが使うRenderのクラスを返す"""
+        return CsvRender
+    def context_class(self):
+        """Commandが使うContextのクラスを返す"""
+        return CsvRenderContext
 
     def add_optional_arguments(self):
+        """csv固有のオプション引数を定義する
+        """
         # flag first line is header
         self.parser.add_argument('-H', '--header', help='先頭行をヘッダとして解釈するか？ヘッダは各カラムの名前として使用可能.',
                             dest='read_header', action='store_true')
