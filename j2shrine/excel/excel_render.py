@@ -1,4 +1,5 @@
 import openpyxl
+from openpyxl import Workbook
 from ..render import Render
 from ..context import RenderContext
 from .excel_custom_filter import excel_time
@@ -15,18 +16,15 @@ class ExcelRender(Render):
         super().install_filters(environment=environment)
         environment.filters['excel_time'] = excel_time
 
-    def build_reader(self, *, source: any):
-        # 既にブックで渡された場合、そのまま返す
-        if (isinstance(source, openpyxl.Workbook)):
-            return source
-        # ファイルの場合はロードする
+    def build_reader(self, *, source: str) -> Workbook:
+        """openpyxlでブックを開く"""
         return openpyxl.load_workbook(source, data_only=True)
 
-    def read_source(self, *, reader):
-
+    def read_source(self, *, reader: Workbook):
+        """Workbookの中身をcontextに従って読み取る"""
         cells = self.context.read_range
         sheets = self.context.sheets
-        # endがnullの場合最後のシートまで読む
+        # endがNoneの場合最後のシートまで読む
         if (sheets.end is None):
             sheets.end = len(reader.worksheets)-1
 

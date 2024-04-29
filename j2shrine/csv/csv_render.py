@@ -1,3 +1,4 @@
+import io
 import csv
 from ..render import Render
 from ..context import RenderContext
@@ -10,7 +11,7 @@ class CsvRender(Render):
         # 変更される可能性があるためcopyする
         self.cols = context.names.copy() if context.names is not None else []
 
-    def build_reader(self, *, source):
+    def build_reader(self, *, source: io.TextIOWrapper):
         # csvヘッダの有無が不定のため、DictReaderは使用しない
         return csv.reader(source, delimiter=self.context.delimiter)
 
@@ -35,7 +36,7 @@ class CsvRender(Render):
 
         return lines
 
-    def finish(self, *, result):
+    def finish(self, *, result:list):
         final_result = {
             'rows': result,
             'cols': self.cols,
