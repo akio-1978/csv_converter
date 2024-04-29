@@ -30,7 +30,6 @@ class Render:
         self.output(final_result=final_result, output=output)
 
     def read_source(self, *, reader):
-        print('src:', reader)
         return reader
 
     def finish(self, *, result):
