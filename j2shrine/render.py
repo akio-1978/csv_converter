@@ -47,7 +47,7 @@ class Render:
 
     # カラム名取得
     # cols属性がないとこのメソッドは動かない
-    def column_name(self, index):
+    def get_name(self, index):
         if len(self.cols) <= index:
             # カラム名が定義されていない場合
             # または定義済みのカラム名よりも実際のカラムが多い場合はカラム名を追加で生成する

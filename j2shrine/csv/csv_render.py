@@ -48,7 +48,7 @@ class CsvRender(Render):
     def read_row(self, *, line_no:int, columns: str):
         line = {}
         for index, column in enumerate(columns):
-            name = self.column_name(index)
+            name = self.get_name(index)
             line[name] = column
         return line
 
