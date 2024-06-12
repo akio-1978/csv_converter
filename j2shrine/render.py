@@ -7,10 +7,10 @@ class Render:
     # jinja2テンプレートの生成
     def __init__(self, *, context):
         self.context = context
-        self.build_convert_engine(context=context)
+        self.setup_template(context=context)
 
-    # 別の方法でテンプレートを生成する場合はオーバーライドする
-    def build_convert_engine(self, *, context):
+    def setup_template(self, *, context):
+        """jinja2テンプレート生成"""
         path = Path(context.template)
         environment = Environment(loader=FileSystemLoader(
             path.parent, encoding=context.template_encoding))
@@ -18,28 +18,29 @@ class Render:
         self.template = environment.get_template(path.name)
 
     def install_filters(self, *, environment):
+        """追加のフィルタを設定する"""
         environment.filters['sequential_group_by'] = sequential_group_by
 
-    def build_reader(self, *, source):
+    def get_source_reader(self, *, source):
         return source
 
     def render(self, *, source, output):
-        reader = self.build_reader(source=source)
+        reader = self.get_source_reader(source=source)
         result = self.read_source(reader=reader)
-        final_result = self.finish(result=result)
-        self.output(final_result=final_result, output=output)
+        final_result = self.read_finish(result=result)
+        self.output_template(final_result=final_result, output=output)
 
     def read_source(self, *, reader):
         return reader
 
-    def finish(self, *, result):
+    def read_finish(self, *, result):
         final_result = {
             'data': result,
             'params': self.context.parameters
         }
         return final_result
 
-    def output(self, *, final_result, output):
+    def output_template(self, *, final_result, output):
         print(
             self.template.render(final_result),
             file=output

@@ -15,7 +15,7 @@ class ExcelRender(Render):
         super().install_filters(environment=environment)
         environment.filters['excel_time'] = excel_time
 
-    def build_reader(self, *, source: str):
+    def get_source_reader(self, *, source: str):
         """openpyxlでブックを開く"""
         return openpyxl.load_workbook(source, data_only=True)
 
@@ -76,7 +76,7 @@ class ExcelRender(Render):
         return cell.value if hasattr(cell, 'value') else None
 
     # jinja2へ渡す読み取り結果
-    def finish(self, *, result):
+    def read_finish(self, *, result):
         final_result = {
             'sheets': result,
             'params': self.context.parameters

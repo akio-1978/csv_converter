@@ -8,7 +8,7 @@ class JsonRender(Render):
     # jinja2テンプレートの生成
     def __init__(self, *, context: RenderContext):
         self.context = context
-        self.build_convert_engine(context=context)
+        self.setup_template(context=context)
 
     def read_source(self, *, reader):
         loaded = json.load(reader)

@@ -182,7 +182,7 @@ class CsvRenderTest(J2SRenderTest):
 
 class DictRender (CsvRender):
 
-    def build_convert_engine(self, *, context):
+    def setup_template(self, *, context):
         self.headers = None
         environment = Environment(loader=DictLoader(context.template))
         self.template = environment.get_template(context.template_name)
