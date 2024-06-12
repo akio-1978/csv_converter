@@ -34,7 +34,7 @@ class Runner():
         command.execute(args=namespace)
 
 def main():
-    """argparseでsys.argvではなく明示的にリストを受け取るため、リストの長さが足りない場合を補完する"""
+    """sys.argvをargparseに直接渡さない（Ruunerのテスト対策）"""
     starter = Runner(args=sys.argv[1:] if len(sys.argv) > 1 else ['', ''])
     starter.execute()
 

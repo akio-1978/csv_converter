@@ -25,24 +25,30 @@ class Command():
         return RenderContext
 
     def setup(self):
-        """ 各コマンドの引数を定義する
-            サブコマンドでoverrideすることが前提
+        """ コマンドの引数を定義する
+            引数定義は3つのメソッドに分かれており、それぞれ個別にオーバーライドできる
         """
-        self.add_defaiult_options()
+        self.add_default_options()
         self.add_positional_arguments()
         self.add_optional_arguments()
 
     def add_positional_arguments(self):
         """ 位置引数をパーサに追加する
             位置引数を書き直したい場合にオーバーライドする
+            引数templateとsourceは必須のため、サブコマンドではsuper呼出しするのが好ましい
         """
         self.parser.add_argument('template', help='使用するjinja2テンプレート.')
         self.parser.add_argument('source', help='レンダリング対象ファイル 省略時はstdin.',
                             nargs='?', default=sys.stdin)
 
-    def add_defaiult_options(self):
+    def add_optional_arguments(self):
+        """サブコマンドでオプションを追加する場合にこのメソッドをオーバーライドする"""
+        pass
+
+    def add_default_options(self):
         """ オプション引数をパーサに追加する
-            ここで全てのサブコマンドで共通して使うオプションの追加を想定している
+            全てのサブコマンドで共通して使うオプションを想定しているので
+            オーバーライドは不要
         """
         self.parser.add_argument('-o', '--out', metavar='file',
                             help='出力先ファイル 省略時はstdout.', default=sys.stdout)
@@ -64,9 +70,6 @@ class Command():
         self.parser.add_argument('--config-file', metavar='file',
                             help='names parameters absoluteの各設定をjsonに記述したファイル')
 
-    def add_optional_arguments(self):
-        """サブコマンドでオプション引数を追加する場合にオーバーライドする"""
-        pass
 
     def execute(self, *, args: argparse.Namespace):
         """ パーサから返された値を使ってコマンドの処理を実行
@@ -119,13 +122,14 @@ class Config:
             with open(args.config_file) as src:
                 config.update(json.load(src))
 
+            # 設定ファイルの中身を順次argsに反映する
             for key, value in config.items():
                 if isinstance(value, dict):
-                    # 双方にdictが設定されている場合、コマンドラインを優先にマージする
+                    # dict型の場合はマージする（コマンドラインが優先）
                     value.update(getattr(args, key))
                     setattr(args, key, value)
                 elif (not self.given(args, key)):
-                    # コマンドラインに設定がないので、設定ファイルの値を採用する
+                    # コマンドラインから設定されていなければ、設定ファイルの値を採用する
                     setattr(args, key, value)
         return args
 
