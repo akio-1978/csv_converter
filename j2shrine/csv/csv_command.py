@@ -31,9 +31,3 @@ class CsvCommand(Command):
         # skip head lines
         self.parser.add_argument('-s', '--skip-lines', metavar='',
                             type=int, help='指定した数値分だけ先頭から行を読み飛ばす.')
-
-    def default_params(self):
-        """デフォルトの区切り文字"""
-        params = super().default_params()
-        params['delimiter'] = ','
-        return params

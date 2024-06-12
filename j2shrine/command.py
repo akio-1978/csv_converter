@@ -76,7 +76,7 @@ class Command():
         render_class = self.render_class()
 
         # context及びrenderのインスタンスを生成
-        context = ctx_class(args=ParamsBuilder(args=args, merge_keys=self.merge_keys(), default_params=self.default_params()).build())
+        context = ctx_class(args=Config().configure(args=args))
         render = render_class(context=context)
         
         # レンダリング実行
@@ -88,19 +88,6 @@ class Command():
         with StreamWrapper(useof=source,encoding=context.input_encoding) as src:
             with StreamWrapper(useof=out,encoding=context.output_encoding, mode='w') as dest:
                 render.render(source=src, output=dest)
-
-    def merge_keys(self):
-        """設定ファイルとコマンドラインをマージすべき項目名を返す"""
-        return set(('parameters',))
-
-    def default_params(self):
-        """argsとjsonの両方で指定されなかった場合のデフォルト値"""
-        return {
-            'input_encoding': 'utf8',
-            'output_encoding': 'utf8',
-            'template_encoding': 'utf8',
-        }
-
 
 class KeyValuesParseAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
@@ -118,43 +105,33 @@ class KeyValuesParseAction(argparse.Action):
             key_values[key_value[0]] = key_value[2]
         return key_values
 
-class ParamsBuilder:
-    """ argparse.Namespaceとjsonファイルをマージして、レンダリングの設定を得る。
-        jsonファイルはNamespaceに属性config_fileで指定される。このjsonはロードしてdictとして扱う。
-        dict内の全てのkey/valueをNamespaceにsetattrする。
-        ただし、Namespaceに既にkeyと同名のattrがある場合はsetattrせずにNamespaceを優先する。
+class Config:
         
-        Namespace中にdictを持つ特定のキーについて、Namespaceとdictの値をマージする。
-        Namespaceとdict双方に存在しない特定のキーについて、別途指定した値で補完する。
-    """
-    def __init__(self, args:argparse.Namespace, merge_keys:set, default_params:dict) -> None:
-        self.args = args
-        self.merge_keys = merge_keys
-        self.default_params = default_params
-        
-    def build(self):
-        """ jsonで記述された設定ファイルを読み込む
-            設定ファイルとコマンドラインから同じ値が指定されている場合、コマンドラインの値を優先する
-            引数parametersのみ、設定ファイルとコマンドラインをマージする
+    def configure(self, args:argparse.Namespace):
+        """ コマンドライン引数(argparse.Namespace)と設定ファイル(json)の内容を統合する
+            設定ファイルはコマンドラインからオプション'config_file'で指定される。設定ファイルがなければ何もしない。
+            両者の間で設定が重複する場合、コマンドラインを優先する
+            ただし、設定値がdictの場合、コマンドラインを優先しつつ設定ファイルの値をマージする
         """
-        config = self.default_params
-        if self.given('config_file'):
-            with open(self.args.config_file) as src:
+        # 設定ファイルがなければ何もしない
+        if self.given(args, 'config_file'):
+            config = {}
+            with open(args.config_file) as src:
                 config.update(json.load(src))
 
-        for key, value in config.items():
-            if key in self.merge_keys:
-                # dictをマージして設定し直す
-                value.update(getattr(self.args, key))
-                setattr(self.args, key, value)
-            elif (not self.given(key)):
-                # 設定ファイルの値を引数に追加する
-                setattr(self.args, key, value)
-        return self.args
+            for key, value in config.items():
+                if isinstance(value, dict):
+                    # 双方にdictが設定されている場合、コマンドラインを優先にマージする
+                    value.update(getattr(args, key))
+                    setattr(args, key, value)
+                elif (not self.given(args, key)):
+                    # コマンドラインに設定がないので、設定ファイルの値を採用する
+                    setattr(args, key, value)
+        return args
 
-    def given(self, k:str):
+    def given(self, args:argparse.Namespace, k:str):
         """ 属性が存在しないか、値がNoneではない """
-        return hasattr(self.args, k) and getattr(self.args, k)
+        return hasattr(args, k) and getattr(args, k)
 
         
         

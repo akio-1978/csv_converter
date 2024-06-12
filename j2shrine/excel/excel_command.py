@@ -51,9 +51,3 @@ class ExcelCommand(Command):
                            encoding=render.context.output_encoding, 
                            mode='w' ) as dest:
             render.render(source=source, output=dest)
-
-    def merge_keys(self):
-        """設定ファイルとコマンドラインをマージすべき項目名を返す"""
-        keyset = super().merge_keys()
-        keyset.add('absolute')
-        return keyset

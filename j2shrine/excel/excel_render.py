@@ -21,10 +21,14 @@ class ExcelRender(Render):
 
     def read_source(self, *, reader):
         """Workbookの中身をcontextに従って読み取る"""
+        # シート内セルの読み込み範囲
         (start, end) = self.context.read_range
+        # 読み込むシートの範囲
         (first_sheet, end_sheet) = self.context.sheets
-        # endがNoneの場合最後のシートまで読む
+
+        # 読み取りシート範囲の指定
         if (end_sheet is None):
+            # endがNoneの場合最後のシートまで読む
             end_sheet = len(reader.worksheets)-1
 
         results = []
