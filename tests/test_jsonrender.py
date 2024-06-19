@@ -6,6 +6,10 @@ from tests.testutils import J2SRenderTest, RenderArgs
 
 class JsonRenderTest(J2SRenderTest):
 
+    def result_dir(self):
+        """出力ディレクトリ名を返す"""
+        return 'json'
+
     def test_simple_json(self):
         args = RenderArgs()
         args.template='tests/json/templates/simple_json.tmpl'
@@ -21,9 +25,6 @@ class JsonRenderTest(J2SRenderTest):
         render = JsonRender(context=context)
 
         self.rendering_test(render=render, expect_file=expect, source=context.src)
-        
-    def result_dir(self):
-        return 'json'
 
 
 if __name__ == '__main__':

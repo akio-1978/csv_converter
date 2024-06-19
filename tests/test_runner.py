@@ -4,6 +4,10 @@ from tests.testutils import J2SRenderTest
 
 class RunnerTest(J2SRenderTest):
 
+    def result_dir(self):
+        """出力ディレクトリ名を返す"""
+        return 'starter'
+
     def test_start(self):
         """最低限の引数で起動"""
         expect_file = self.expect_path(J2SRenderTest.CSV, 'simple.txt')
@@ -92,9 +96,6 @@ class RunnerTest(J2SRenderTest):
     def test_csv_invalid(self):
         starter = Runner(args=['csv'])
         self.assertRaises(BaseException, starter.execute)
-
-    def result_dir(self):
-        return 'starter'
 
 if __name__ == '__main__':
     unittest.main()

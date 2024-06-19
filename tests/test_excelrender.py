@@ -5,6 +5,10 @@ from tests.testutils import J2SRenderTest, RenderArgs
 
 class ExcelRenderTest(J2SRenderTest):
 
+    def result_dir(self):
+        """出力ディレクトリ名を返す"""
+        return 'excel'
+
     def test_read(self):
         """シート中の矩形範囲指定A2:G5"""
         args = RenderArgs()
@@ -157,9 +161,6 @@ class ExcelRenderTest(J2SRenderTest):
         with open(result_file, 'w', encoding=encoding) as result_writer:
             render.render(source=source, output=result_writer)
         self.file_test(expect_file=expect, result_file=result_file)
-
-    def result_dir(self):
-        return 'excel'
 
 if __name__ == '__main__':
     unittest.main()

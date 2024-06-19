@@ -4,6 +4,10 @@ from tests.testutils import J2SRenderTest
 
 class ConfigTest(J2SRenderTest):
 
+    def result_dir(self):
+        """出力ディレクトリ名を返す"""
+        return 'config'
+
     def test_delimiter(self):
         """--delimiterを--config-fileから指定してタブ区切りにする"""
         expect_file = self.expect_path(J2SRenderTest.CSV, 'simple.txt')
@@ -80,9 +84,6 @@ class ConfigTest(J2SRenderTest):
             '1:', 'C7:H10', '-o', result_file, '--absolute', 'NAME=C3', 'DESCRIPTION=C4',
             '--config-file', 'tests/excel/config/overwrite_absolute.json',]).execute()
         self.file_test(expect_file=expect_file, result_file=result_file)
-
-    def result_dir(self):
-        return 'config'
 
 if __name__ == '__main__':
     unittest.main()

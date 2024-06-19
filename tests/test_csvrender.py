@@ -8,6 +8,10 @@ from tests.testutils import J2SRenderTest, RenderArgs
 
 class CsvRenderTest(J2SRenderTest):
 
+    def result_dir(self):
+        """出力ディレクトリ名を返す"""
+        return 'csv'
+
     def test_convert_headless(self):
         """ヘッダのない単純なCSV"""
         args = RenderArgs()
@@ -174,12 +178,8 @@ class CsvRenderTest(J2SRenderTest):
 
         return self.rendering_test(render=CsvRender(context=context), expect_file=expect, source=source)
 
-    def result_dir(self):
-        return 'csv'
 
 # テスト用にDictLoaderを使うRender
-
-
 class DictRender (CsvRender):
 
     def setup_template(self, *, context):
