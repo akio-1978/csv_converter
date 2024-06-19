@@ -6,7 +6,7 @@ class RunnerTest(J2SRenderTest):
 
     def result_dir(self):
         """出力ディレクトリ名を返す"""
-        return 'starter'
+        return 'runner'
 
     def test_start(self):
         """最低限の引数で起動"""
