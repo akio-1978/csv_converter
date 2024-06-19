@@ -5,7 +5,7 @@ import json
 
 from .render import Render
 from .context import RenderContext
-from .renderutils import StreamWrapper
+from .renderutils import get_stream, KeyValuesParseAction
 
 # CommandRunnerのデフォルト実装
 
@@ -87,26 +87,10 @@ class Command():
 
     def call_render(self, *, render: Render, source:str | io.TextIOWrapper, out:str | io.TextIOWrapper):
         context = render.context
-        # ファイル名でもstdin stdoutでも区別せずStreamWrapperで吸収する
-        with StreamWrapper(useof=source,encoding=context.input_encoding) as src:
-            with StreamWrapper(useof=out,encoding=context.output_encoding, mode='w') as dest:
+        # sourceはファイル名かstdin/stdoutなので間にwrapperを挟む
+        with get_stream(source=source,encoding=context.input_encoding) as src:
+            with get_stream(source=out,encoding=context.output_encoding, mode='w') as dest:
                 render.render(source=src, output=dest)
-
-class KeyValuesParseAction(argparse.Action):
-    def __call__(self, parser, namespace, values, option_string=None):
-        """=区切りで複数与えられた値をdictで格納する
-            ex.
-            args:A=1 B=2 C=3
-            dict:{'A' : '1', 'B' : '2', 'C' : '3'}
-        """
-        setattr(namespace, self.dest, self.parse_key_values(values))
-
-    def parse_key_values(self, values:str):
-        key_values = {}
-        for value in values:
-            key_value = value.partition('=')
-            key_values[key_value[0]] = key_value[2]
-        return key_values
 
 class Config:
         
