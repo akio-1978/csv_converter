@@ -5,7 +5,7 @@ from j2shrine.context import RenderContext
 from ..command import Command, KeyValuesParseAction
 from .excel_render import ExcelRender
 from .excel_context import ExcelRenderContext
-from ..renderutils import StreamWrapper
+from ..renderutils import get_stream, KeyValuesParseAction
 
 class ExcelCommand(Command):
 
@@ -47,7 +47,7 @@ class ExcelCommand(Command):
         """
         in側はopenpyxlにファイル名を直接渡す必要があるため、call_renderをoverrideする
         """
-        with StreamWrapper(useof=out, 
+        with get_stream(source=out, 
                            encoding=render.context.output_encoding, 
                            mode='w' ) as dest:
             render.render(source=source, output=dest)
