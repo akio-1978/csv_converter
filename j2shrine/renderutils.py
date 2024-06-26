@@ -22,7 +22,7 @@ class KeyValuesParseAction(argparse.Action):
         """
         setattr(namespace, self.dest, self.parse_key_values(values))
 
-    def parse_key_values(self, values:str):
+    def parse_key_values(self, values):
         key_values = {}
         for value in values:
             key_value = value.partition('=')
