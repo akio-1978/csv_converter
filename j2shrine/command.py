@@ -15,7 +15,7 @@ class Command():
     def __init__(self,*, factory: argparse.ArgumentParser):
         """このコンストラクタはテスト用で、何もしないサブコマンドを生成する"""
         self.parser = factory.add_parser('nop', help='NOP for test')
-        factory.set_defaults(command_instance=self)
+        self.parser.set_defaults(command_instance=self)
 
     def render_class(self):
         """Commandが使うRenderのクラスを返す"""
