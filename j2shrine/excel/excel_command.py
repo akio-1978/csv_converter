@@ -12,9 +12,10 @@ class ExcelCommand(Command):
     HELP_SHEETS = """読込対象シート ('1' シート1のみ. '1:4' シート1からシート4まで. '1:' シート1からすべてのシート)"""
     HELP_READ_RANGE = """読込セル範囲 ('A1:D4' A1:D4の16セル 'A1:D' A1を起点として、AからDまでの全ての行.)"""
 
-    def __init__(self,*, factory: argparse.ArgumentParser):
-        self.parser = factory.add_parser('excel', help='Excelのレンダリングを行う', formatter_class=argparse.RawTextHelpFormatter)
+    def __init__(self,*, parsers: argparse.ArgumentParser):
+        self.parser = parsers.add_parser('excel', help='Excelのレンダリングを行う', formatter_class=argparse.RawTextHelpFormatter)
         self.parser.set_defaults(command_instance=self)
+        self.setup()
 
     def render_class(self):
         """Commandが使うRenderのクラスを返す"""

@@ -7,9 +7,10 @@ from .json_context import JsonRenderContext
 
 
 class JsonCommand(Command):
-    def __init__(self,*, factory: argparse.ArgumentParser):
-        self.parser = factory.add_parser('json', help='jsonのレンダリングを行う')
+    def __init__(self,*, parsers: argparse.ArgumentParser):
+        self.parser = parsers.add_parser('json', help='jsonのレンダリングを行う')
         self.parser.set_defaults(command_instance=self)
+        self.setup()
 
 
     def render_class(self):

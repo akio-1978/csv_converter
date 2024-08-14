@@ -11,11 +11,12 @@ class Runner():
     def __init__(self, *, args:list):
         self.args = args
 
-    def register_subcommand(self, *, subparser_factory:argparse.ArgumentParser):
+    def register_subcommand(self):
         """サブコマンドのパーサを構築する"""
-        CsvCommand(factory=subparser_factory).setup()
-        ExcelCommand(factory=subparser_factory).setup()
-        JsonCommand(factory=subparser_factory).setup()
+        parsers=self.parser.add_subparsers(required=True)
+        CsvCommand(parsers=parsers)
+        ExcelCommand(parsers=parsers)
+        JsonCommand(parsers=parsers)
 
     def execute(self):
         """プログラムの実行本体"""
@@ -25,7 +26,7 @@ class Runner():
                                               )
         # ArgumentParserにサブコマンドのパーサーを追加する
         self.register_subcommand(
-            subparser_factory=self.parser.add_subparsers(required=True))
+            )
 
         # コマンドライン引数をパースする
         namespace = self.parser.parse_args(self.args)

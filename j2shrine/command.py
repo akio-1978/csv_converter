@@ -12,10 +12,11 @@ from .renderutils import get_stream, KeyValuesParseAction
 
 class Command():
 
-    def __init__(self,*, factory: argparse.ArgumentParser):
+    def __init__(self,*, parsers: argparse.ArgumentParser):
         """このコンストラクタはテスト用で、何もしないサブコマンドを生成する"""
-        self.parser = factory.add_parser('nop', help='NOP for test')
+        self.parser = parsers.add_parser('nop', help='NOP for test')
         self.parser.set_defaults(command_instance=self)
+        self.setup()
 
     def render_class(self):
         """Commandが使うRenderのクラスを返す"""
