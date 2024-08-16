@@ -1,7 +1,15 @@
+from dataclasses import dataclass
 import openpyxl
 from ..render import Render
 from ..context import RenderContext
 from .excel_custom_filter import excel_time
+
+@dataclass
+class CellPosition:
+    """セル位置を表す行番号と列名クラス"""
+    row:str
+    col:str
+
 
 class ExcelRender(Render):
 

@@ -66,25 +66,20 @@ class Command():
                             help='テンプレート内で参照可能な追加のパラメータ [KEY=VALUE] 形式で列挙.', action=KeyValuesParseAction)
 
         self.parser.add_argument('-n', '--names', nargs='*',
-                            help='テンプレート内で各行のカラムに付ける名前を左側から列挙 defaultは col_00 col02...')
+                            help='テンプレート内で各行のカラムに付ける名前を左側から列挙 defaultは col_00 col02...', default=[])
 
         self.parser.add_argument('--config-file', metavar='file',
                             help='names parameters absoluteの各設定をjsonに記述したファイル')
 
 
-    def execute(self, *, args: argparse.Namespace):
+    def execute(self, *, context:RenderContext):
         """ パーサから返された値を使ってコマンドの処理を実行
         """
-        # context及びrenderのクラスを取得
-        ctx_class = self.context_class()
-        render_class = self.render_class()
-
-        # context及びrenderのインスタンスを生成
-        context = ctx_class(args=Config().configure(args=args))
-        render = render_class(context=context)
+        # renderインスタンスを生成
+        render = self.render_class()(context=context)
         
         # レンダリング実行
-        self.call_render(render=render, source=args.source, out=args.out)
+        self.call_render(render=render, source=context.source, out=context.out)
 
     def call_render(self, *, render: Render, source:str | io.TextIOWrapper, out:str | io.TextIOWrapper):
         context = render.context
@@ -92,35 +87,6 @@ class Command():
         with get_stream(source=source,encoding=context.input_encoding) as src:
             with get_stream(source=out,encoding=context.output_encoding, mode='w') as dest:
                 render.render(source=src, output=dest)
-
-class Config:
-        
-    def configure(self, args:argparse.Namespace):
-        """ コマンドライン引数(argparse.Namespace)と設定ファイル(json)の内容を統合する
-            設定ファイルはコマンドラインからオプション'config_file'で指定される。設定ファイルがなければ何もしない。
-            両者の間で設定が重複する場合、コマンドラインを優先する
-            ただし、設定値がdictの場合、コマンドラインを優先しつつ設定ファイルの値をマージする
-        """
-        # 設定ファイルがなければ何もしない
-        if self.given(args, 'config_file'):
-            config = {}
-            with open(args.config_file) as src:
-                config.update(json.load(src))
-
-            # 設定ファイルの中身を順次argsに反映する
-            for key, value in config.items():
-                if isinstance(value, dict):
-                    # dict型の場合はマージする（コマンドラインが優先）
-                    value.update(getattr(args, key))
-                    setattr(args, key, value)
-                elif (not self.given(args, key)):
-                    # コマンドラインから設定されていなければ、設定ファイルの値を採用する
-                    setattr(args, key, value)
-        return args
-
-    def given(self, args:argparse.Namespace, k:str):
-        """ 属性が存在しないか、値がNoneではない """
-        return hasattr(args, k) and getattr(args, k)
 
         
         

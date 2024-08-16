@@ -1,7 +1,7 @@
 import unittest
 from io import StringIO
+from j2shrine.context import RenderContext
 from j2shrine.csv.csv_render import CsvRender
-from j2shrine.csv.csv_context import CsvRenderContext
 
 from jinja2 import Environment, DictLoader
 from tests.testutils import J2SRenderTest, RenderArgs
@@ -14,12 +14,11 @@ class CsvRenderTest(J2SRenderTest):
 
     def test_convert_headless(self):
         """ヘッダのない単純なCSV"""
-        args = RenderArgs()
-        args.template = {
+        context = self.default_context()
+        context.template = {
             'template': "{% for line in rows %}{{line.col_00}}\n{% endfor %}"}
-        args.template_name = 'template'
+        context.template_name = 'template'
 
-        context = CsvRenderContext(args=args)
         converter = DictRender(context=context)
 
         source = StringIO('A0001,C0002\nB0001,C0002\nC0001,C0002')
@@ -31,11 +30,11 @@ class CsvRenderTest(J2SRenderTest):
 
     def test_convert_escaped(self):
         """CSVデータのエスケープ"""
-        args = RenderArgs()
-        args.template = {
+        context = self.default_context()
+        context.template = {
             'template': "{% for line in rows %}{{line.col_00}}\n{% endfor %}"}
-        args.template_name = 'template'
-        converter = DictRender(context=CsvRenderContext(args=args))
+        context.template_name = 'template'
+        converter = DictRender(context=context)
 
         source = StringIO('"A00,01",C0002\nB0001,C0002\nC0001,C0002')
         result = StringIO()
@@ -46,11 +45,11 @@ class CsvRenderTest(J2SRenderTest):
 
     def test_header(self):
         """ヘッダ行付き"""
-        args = RenderArgs()
-        args.template ={'template': "{% for line in rows %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"}
-        args.template_name = 'template'
-        args.read_header = True
-        converter = DictRender(context=CsvRenderContext(args=args))
+        context = self.default_context()
+        context.template ={'template': "{% for line in rows %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"}
+        context.template_name = 'template'
+        context.read_header = True
+        converter = DictRender(context=context)
 
         source = StringIO('FIRST,SECOND\nC0001,C0002')
         result = StringIO()
@@ -162,22 +161,32 @@ class CsvRenderTest(J2SRenderTest):
     def file_convert_test(self, *, template, expect, source,
                           parameters={}, skip_lines=0, read_header=True, headers=None, names=[]):
         
-        args = RenderArgs()
-        args.template = template
+        context = self.default_context()
+        context.template = template
         # headerの使用有無
-        args.read_header = read_header
-        args.headers = headers
+        context.read_header = read_header
+        context.headers = headers
         # 追加パラメータ
-        args.parameters = parameters
+        context.parameters = parameters
         # 行の読み飛ばし
-        args.skip_lines = skip_lines
+        context.skip_lines = skip_lines
         # カラム名指定
-        args.names = names
+        context.names = names
         
-        context = CsvRenderContext(args=args)
-
         return self.rendering_test(render=CsvRender(context=context), expect_file=expect, source=source)
 
+    def default_context(self):
+        ctx = RenderContext()
+        ctx.names = None
+        ctx.delimiter = ','
+        ctx.skip_lines = 0
+        ctx.read_header = False
+        ctx.parameters = {}
+        ctx.template_encoding = 'utf8'
+        ctx.input_encoding = 'utf8'
+        ctx.output_encoding = 'utf8'
+        
+        return ctx
 
 # テスト用にDictLoaderを使うRender
 class DictRender (CsvRender):
