@@ -7,7 +7,7 @@ from .excel_custom_filter import excel_time
 @dataclass
 class CellPosition:
     """セル位置を表す行番号と列名クラス"""
-    row:str
+    row:int
     col:str
 
 

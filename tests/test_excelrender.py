@@ -1,5 +1,6 @@
 import unittest
 from j2shrine.context import RenderContext
+from j2shrine.excel.excelrenderutil import parse_read_range, parse_sheet_args
 from j2shrine.excel.excel_render import ExcelRender, CellPosition
 
 from tests.testutils import J2SRenderTest
@@ -11,20 +12,21 @@ class ExcelRenderTest(J2SRenderTest):
         return 'excel'
 
     def test_read(self):
-        """シート中の矩形範囲指定A2:G5"""
+        """シート中の1列指定A2:A5"""
         context = self.default_context()
         context.template = 'tests/excel/templates/simple.tmpl'
-        # context.read_range = 'A2:G5'
-        context.read_range = (CellPosition('A', '2'), CellPosition('G', '5')) # A2:G5
+        context.read_range = parse_read_range(range_str='A2:A5')
+        context.sheets = parse_sheet_args(sheets_range_str='1')
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/simple.txt',
                                  source='tests/excel/src/simple.xlsx')
 
     def test_read_all(self):
-        """シート中の全行指定A2:G A2:G"""
+        """シート中の全行7列指定A2:G """
         context = self.default_context()
         context.template = 'tests/excel/templates/read_all.tmpl'
-        context.read_range = 'A2:G'
+        context.read_range = parse_read_range(range_str='A2:G') # A2:G
+        context.sheets = parse_sheet_args(sheets_range_str='1')
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_all.txt',
                                  source='tests/excel/src/simple.xlsx')
@@ -33,8 +35,8 @@ class ExcelRenderTest(J2SRenderTest):
         """複数シート指定 3枚目から右の全てのシート"""
         context = self.default_context()
         context.template = 'tests/excel/templates/read_multi_sheet.tmpl'
-        context.read_range = 'A2:G'
-        context.sheets = '3:'
+        context.read_range = parse_read_range(range_str='A2:G')
+        context.sheets = parse_sheet_args(sheets_range_str='3:')
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_multi_sheet.txt',
                                  source='tests/excel/src/multi.xlsx')
@@ -43,8 +45,8 @@ class ExcelRenderTest(J2SRenderTest):
         """絶対位置指定でのセル取得 A1 D2"""
         context = self.default_context()
         context.template = 'tests/excel/templates/read_absolute_cells.tmpl'
-        context.read_range = 'A4:G'
-        context.sheets = '3:'
+        context.read_range = parse_read_range(range_str='A4:G')
+        context.sheets = parse_sheet_args(sheets_range_str='3:')
         context.absolute = {'CELL_A': 'A1', 'CELL_B' : 'D2'}
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_absolute_cells.txt',
@@ -54,8 +56,8 @@ class ExcelRenderTest(J2SRenderTest):
         """複数シート指定 3枚目から4枚目までの2枚"""
         context = self.default_context()
         context.template = 'tests/excel/templates/read_multi_sheet.tmpl'
-        context.read_range = 'A2:G'
-        context.sheets = '3:4'
+        context.read_range = parse_read_range(range_str='A2:G')
+        context.sheets = parse_sheet_args(sheets_range_str='3:4')
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_multi_sheet.txt',
                                  source='tests/excel/src/range.xlsx')
@@ -64,8 +66,8 @@ class ExcelRenderTest(J2SRenderTest):
         """複数シート指定 かつセル矩形範囲（これいる？）"""
         context = self.default_context()
         context.template = 'tests/excel/templates/read_multi_sheet.tmpl'
-        context.read_range = 'A3:G4'
-        context.sheets = '3:4'
+        context.read_range = parse_read_range(range_str='A3:G4')
+        context.sheets = parse_sheet_args(sheets_range_str='3:4')
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_row_range.txt',
                                  source='tests/excel/src/range.xlsx')
@@ -74,8 +76,8 @@ class ExcelRenderTest(J2SRenderTest):
         """テンプレート内からのシート名読み取り"""
         context = self.default_context()
         context.template = 'tests/excel/templates/read_sheet_name.tmpl'
-        context.read_range = 'A2:G'
-        context.sheets = '3:'
+        context.read_range = parse_read_range(range_str='A2:G')
+        context.sheets = parse_sheet_args(sheets_range_str='3:')
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_sheet_name.txt',
                                  source='tests/excel/src/multi.xlsx')
@@ -84,7 +86,8 @@ class ExcelRenderTest(J2SRenderTest):
         """Excel日付型の読み取り"""
         context = self.default_context()
         context.template = 'tests/excel/templates/read_datetime.tmpl'
-        context.read_range = 'A2:C5'
+        context.read_range = parse_read_range(range_str='A2:C5')
+        context.sheets = parse_sheet_args(sheets_range_str='1')
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_datetime.txt',
                                  source='tests/excel/src/read_datetime.xlsx')
@@ -93,7 +96,8 @@ class ExcelRenderTest(J2SRenderTest):
         """Excel日付型の任意フォーマット"""
         context = self.default_context()
         context.template = 'tests/excel/templates/read_custom_datetime.tmpl'
-        context.read_range = 'A2:C5'
+        context.read_range = parse_read_range(range_str='A2:C5')
+        context.sheets = parse_sheet_args(sheets_range_str='1')
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_custom_datetime.txt',
                                  source='tests/excel/src/read_custom_datetime.xlsx')
@@ -102,7 +106,8 @@ class ExcelRenderTest(J2SRenderTest):
         """関数を読み込まないことの確認"""
         context = self.default_context()
         context.template = 'tests/excel/templates/read_data_only.tmpl'
-        context.read_range = 'A2:D'
+        context.read_range = parse_read_range(range_str='A2:D')
+        context.sheets = parse_sheet_args(sheets_range_str='1')
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_data_only.txt',
                                  source='tests/excel/src/data_only.xlsx')
@@ -113,8 +118,9 @@ class ExcelRenderTest(J2SRenderTest):
         context = self.default_context()
         context.template = 'tests/excel/templates/read_document.tmpl'
         context.read_range = 'C7:H10'
+        context.read_range = parse_read_range(range_str='C7:H10')
+        context.sheets = parse_sheet_args(sheets_range_str='1:')
         context.absolute = {'NAME':'C3', 'DESCRIPTION':'C4'}
-        context.sheets = '1:'
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_document.txt',
                                  source='tests/excel/src/read_document.xlsx')
@@ -123,7 +129,8 @@ class ExcelRenderTest(J2SRenderTest):
         """行をインデックス指定で取得する"""
         context = self.default_context()
         context.template = 'tests/excel/templates/read_by_row_index.tmpl'
-        context.read_range = 'A2:D'
+        context.read_range = parse_read_range(range_str='A2:D')
+        context.sheets = parse_sheet_args(sheets_range_str='1')
         self.excel_rendering_test(render=ExcelRender(context=context),
                                  expect='tests/excel/expect/read_by_row_index.txt',
                                  source='tests/excel/src/data_only.xlsx')
@@ -133,9 +140,10 @@ class ExcelRenderTest(J2SRenderTest):
         context = self.default_context()
         context.template = 'tests/excel/templates/cell_by_name.tmpl'
         # 読み取り開始列がcol_00になる、この場合C列がcol_00
-        context.read_range = 'C7:H10'
+        context.read_range = parse_read_range(range_str='C7:H10')
+        context.sheets = parse_sheet_args(sheets_range_str='1:')
+
         context.absolute = {'NAME':'C3', 'DESCRIPTION':'C4'}
-        context.sheets = '1:'
         # 使用しない列は空白にする
         context.names = ['date', 'event', '', '', '', 'price']
         self.excel_rendering_test(render=ExcelRender(context=context),
@@ -147,9 +155,9 @@ class ExcelRenderTest(J2SRenderTest):
         context = self.default_context()
         context.template = 'tests/excel/templates/over_cell_by_name.tmpl'
         # 読み取り開始列がcol_00になる、この場合C列がcol_00
-        context.read_range = 'C7:H10'
+        context.read_range = parse_read_range(range_str='C7:H10')
+        context.sheets = parse_sheet_args(sheets_range_str='1:')
         context.absolute = {'NAME':'C3', 'DESCRIPTION':'C4'}
-        context.sheets = '1:'
         # 途中までしかカラム名を指定しない
         context.names = ['date', 'event', '',]
         self.excel_rendering_test(render=ExcelRender(context=context),
@@ -169,7 +177,7 @@ class ExcelRenderTest(J2SRenderTest):
         ctx = RenderContext()
         ctx.names = None
         ctx.parameters = {}
-        ctx.ansolute = {}
+        ctx.absolute = {}
         ctx.template_encoding = 'utf8'
         ctx.input_encoding = 'utf8'
         ctx.output_encoding = 'utf8'

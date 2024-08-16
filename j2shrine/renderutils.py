@@ -20,7 +20,12 @@ class KeyValuesParseAction(argparse.Action):
             args:A=1 B=2 C=3
             dict:{'A' : '1', 'B' : '2', 'C' : '3'}
         """
-        setattr(namespace, self.dest, self.parse_key_values(values))
+        # 設定ファイルから読み込まれた値がある場合、コマンドライン側を優先してマージする
+        arg_dict = self.parse_key_values(values)
+        if hasattr(namespace, self.dest):
+            getattr(namespace, self.dest).update(arg_dict)
+        else:        
+            setattr(namespace, self.dest, self.parse_key_values(values))
 
     def parse_key_values(self, values):
         key_values = {}

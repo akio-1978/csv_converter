@@ -1,7 +1,5 @@
 import io
 import sys
-import argparse
-import json
 
 from .render import Render
 from .context import RenderContext
@@ -12,18 +10,13 @@ from .renderutils import get_stream, KeyValuesParseAction
 
 class Command():
 
-    def __init__(self,*, parsers: argparse.ArgumentParser):
-        """このコンストラクタはテスト用で、何もしないサブコマンドを生成する"""
-        self.parser = parsers.add_parser('nop', help='NOP for test')
-        self.parser.set_defaults(command_instance=self)
+    def __init__(self):
+        """このコンストラクタはテスト用で、何もしないコマンドを生成する"""
         self.setup()
 
     def render_class(self):
         """Commandが使うRenderのクラスを返す"""
         return Render
-    def context_class(self):
-        """Commandが使うContextのクラスを返す"""
-        return RenderContext
 
     def setup(self):
         """ コマンドの引数を定義する
@@ -71,10 +64,12 @@ class Command():
         self.parser.add_argument('--config-file', metavar='file',
                             help='names parameters absoluteの各設定をjsonに記述したファイル')
 
-
-    def execute(self, *, context:RenderContext):
-        """ パーサから返された値を使ってコマンドの処理を実行
-        """
+    def execute(self, *, args:list, context:RenderContext):
+        """ レンダリング実行 """
+        # コマンドのパース argsをサブコマンドひとつ分読み進めたいので、長さをチェックする
+        context = self.parser.parse_args(args[1:] if len(args) > 0 else [], 
+                               namespace=context)
+        
         # renderインスタンスを生成
         render = self.render_class()(context=context)
         
