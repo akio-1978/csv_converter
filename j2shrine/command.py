@@ -3,7 +3,7 @@ import sys
 
 from .render import Render
 from .context import RenderContext
-from .renderutils import get_stream, KeyValuesParseAction
+from .commandutils import get_stream, KeyValuesParseAction
 
 # CommandRunnerのデフォルト実装
 

@@ -2,7 +2,7 @@ import argparse
 import j2shrine
 from ..command import Command, KeyValuesParseAction
 from .excel_render import ExcelRender
-from ..renderutils import get_stream, KeyValuesParseAction
+from ..commandutils import get_stream, KeyValuesParseAction
 from .excelrenderutil import parse_read_range, parse_sheet_args
 
 class ExcelCommand(Command):
