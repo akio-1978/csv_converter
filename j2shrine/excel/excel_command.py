@@ -1,4 +1,5 @@
 import argparse
+import j2shrine
 from ..command import Command, KeyValuesParseAction
 from .excel_render import ExcelRender
 from ..renderutils import get_stream, KeyValuesParseAction
@@ -10,7 +11,7 @@ class ExcelCommand(Command):
     HELP_READ_RANGE = """読込セル範囲 ('A1:D4' A1:D4の16セル 'A1:D' A1を起点として、AからDまでの全ての行.)"""
 
     def __init__(self):
-        self.parser = argparse.ArgumentParser(prog='j2render excel mode', formatter_class=argparse.RawTextHelpFormatter)
+        self.parser = argparse.ArgumentParser(prog=f'{j2shrine.PROG_NAME} excel mode', formatter_class=argparse.RawTextHelpFormatter)
         self.setup()
 
     def render_class(self):

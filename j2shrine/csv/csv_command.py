@@ -1,4 +1,5 @@
 import argparse
+import j2shrine
 from ..command import Command
 from .csv_render import CsvRender
 
@@ -6,7 +7,7 @@ from .csv_render import CsvRender
 class CsvCommand(Command):
 
     def __init__(self):
-        self.parser = argparse.ArgumentParser(prog='j2render csv mode')
+        self.parser = argparse.ArgumentParser(prog=f'{j2shrine.PROG_NAME} csv mode')
         self.setup()
 
 
