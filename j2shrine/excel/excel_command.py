@@ -53,7 +53,6 @@ class CellRangeAction(argparse.Action):
         A2:C4 => 3row * 3column = 9 cells
         A2:C  => 3row * all_rows = 3(all_rows) cells
         setattrされる値は2つのCellPositionのタプル（起点、終点）
-        以下のコメントは引数がA2:C4またはA2:Cだった場合で書く
     """
     
     def __call__(self, parser, namespace, values, option_string=None):
