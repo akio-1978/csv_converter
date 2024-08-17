@@ -25,7 +25,7 @@ class KeyValuesParseAction(argparse.Action):
         if hasattr(namespace, self.dest):
             getattr(namespace, self.dest).update(arg_dict)
         else:        
-            setattr(namespace, self.dest, self.parse_key_values(values))
+            setattr(namespace, self.dest, arg_dict)
 
     def parse_key_values(self, values):
         key_values = {}
