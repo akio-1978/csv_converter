@@ -1,4 +1,6 @@
 import unittest
+import sys
+import contextlib
 from j2shrine.runner import Runner
 from tests.testutils import J2SRenderTest
 
@@ -80,6 +82,55 @@ class RunnerTest(J2SRenderTest):
         Runner(args=['excel', 'tests/excel/templates/read_demo02.tmpl', 'tests/excel/src/read_demo.xlsx',
             '1:', 'A6:G', '-o', result_file, '--absolute', 'TABLE=C3', 'LABEL=C4']).execute()
         self.file_test(expect_file=expect_file, result_file=result_file)
+
+    def test_stdout(self):
+        """標準出力への書き出し"""
+        expect_file = self.expect_path(J2SRenderTest.CSV, 'simple.txt')
+        result_file = self.result_file()
+        with open(result_file, mode='w', encoding='utf8') as file:
+            with contextlib.redirect_stdout(file):
+                Runner(args=['csv', 'tests/csv/templates/simple.tmpl', 'tests/csv/src/simple.csv', 
+                    '-H']).execute()
+        self.file_test(expect_file=expect_file, result_file=result_file, delete_on_success=False)
+
+    def test_stdout_sjis(self):
+        """標準出力日本語読み書き"""
+        expect_file = self.expect_path(J2SRenderTest.CSV, 'simple_sjis.txt')
+        result_file = self.result_file()
+        with open(result_file, mode='w', encoding='utf8') as file:
+            with contextlib.redirect_stdout(file):
+                Runner(args=['csv', 'tests/csv/templates/simple.tmpl', 'tests/csv/src/simple_sjis.csv', 
+                    '-H', '--input-encoding', 'sjis', '--output-encoding', 'sjis']).execute()
+        self.file_test(expect_file=expect_file, result_file=result_file, encoding='sjis', delete_on_success=False)
+
+    def test_stdin(self):
+        """標準入力から読込み"""
+        expect_file = self.expect_path(J2SRenderTest.CSV, 'simple.txt')
+        result_file = self.result_file()
+        tmp_stdin = sys.stdin
+        try:
+            with open('tests/csv/src/simple.csv', encoding='utf8') as file:
+                sys.stdin = file
+                Runner(args=['csv', 'tests/csv/templates/simple.tmpl', 
+                    '-o', result_file, '-H']).execute()
+        finally:
+            sys.stdin = tmp_stdin
+        self.file_test(expect_file=expect_file, result_file=result_file)
+
+    def test_stdin_jp(self):
+        """標準入力から日本語読込み"""
+        expect_file = self.expect_path(J2SRenderTest.CSV, 'simple_sjis.txt')
+        result_file = self.result_file()
+        tmp_stdin = sys.stdin
+        try:
+            with open('tests/csv/src/simple_sjis.csv', encoding='utf8') as file:
+                sys.stdin = file
+                Runner(args=['csv', 'tests/csv/templates/simple.tmpl', 
+                    '-o', result_file, '-H', '--input-encoding', 'sjis', '--output-encoding', 'sjis']).execute()
+        finally:
+            sys.stdin = tmp_stdin
+        self.file_test(expect_file=expect_file, result_file=result_file, encoding='sjis')
+
 
     def test_csv_help(self):
         starter = Runner(args=['csv', '-h'])

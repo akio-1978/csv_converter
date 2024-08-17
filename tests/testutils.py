@@ -4,7 +4,7 @@ from pathlib import Path
 
 class J2SRenderTest(unittest.TestCase):
     """テストのベースクラス ファイル変換の検証に関するユーティリティを持つ """
-    def rendering_test(self, *, render, expect_file, source):
+    def rendering_test(self, *, render, expect_file, source, delete_on_success=True):
         """renderのレンダリングを行ってファイル比較を行う"""
         result_file = self.result_file()
         
@@ -12,9 +12,9 @@ class J2SRenderTest(unittest.TestCase):
             with open(result_file, 'w') as result_writer:
                 render.render(source=source_reader, output=result_writer)
 
-        return self.file_test(expect_file=expect_file, result_file=result_file)
+        return self.file_test(expect_file=expect_file, result_file=result_file, delete_on_success=delete_on_success)
 
-    def file_test(self, *, expect_file:str, result_file:str, encoding:str='utf-8'):
+    def file_test(self, *, expect_file:str, result_file:str, encoding:str='utf-8', delete_on_success=True):
         """ファイル比較のみを行う
             テストに成功したファイルはexpect_fileと内容が同じなので削除し、失敗したファイルだけ残す
         """
@@ -23,8 +23,9 @@ class J2SRenderTest(unittest.TestCase):
                 result = result_reader.read()
                 self.assertEqual(expect_reader.read(), result)
 
-            # テストに成功したファイルは削除する            
-            Path(result_file).unlink()
+            # テストに成功したファイルは削除する
+            if delete_on_success:
+                Path(result_file).unlink()
 
     def result_file(self, name=None):
         """変換結果ファイルのファイル名を組み立てる"""

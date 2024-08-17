@@ -11,7 +11,7 @@ def get_stream(*, source:str | io.TextIOWrapper, encoding:str='utf8', mode:str='
     if not isinstance(source, io.TextIOWrapper):
         return contextlib.closing(open(source, encoding=encoding, mode=mode))
     else:
-        return contextlib.nullcontext(io.TextIOWrapper(source, encoding=encoding))
+        return contextlib.nullcontext(io.TextIOWrapper(source.buffer, encoding=encoding))
     
 class KeyValuesParseAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
