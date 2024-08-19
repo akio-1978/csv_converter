@@ -54,7 +54,7 @@ class Runner():
 class CustomHelpParser(argparse.ArgumentParser):
     
     def format_usage(self) -> str:
-        """一回目の予備パースでエラーが出た時、congi-fileオプションについて表示しない"""
+        """一回目の予備パースでエラーが出た時、config-fileオプションについて表示しない"""
         return f'usage: {j2shrine.PROG_NAME} [-h] {{csv,excel,json}} ...\n'
 
 def main():
