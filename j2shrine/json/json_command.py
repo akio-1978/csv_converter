@@ -12,6 +12,6 @@ class JsonCommand(Command):
         self.setup()
 
 
-    def render_class(self):
+    def loader_class(self):
         """Commandが使うRenderのクラスを返す"""
         return JsonRender

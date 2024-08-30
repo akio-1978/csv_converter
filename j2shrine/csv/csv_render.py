@@ -1,48 +1,43 @@
-import io
 import csv
-from ..render import Render
+from ..loader import Loader
 from ..context import RenderContext
+from ..processors import Processor
+from ..utils import get_stream
 
-class CsvRender(Render):
+class CsvLoader(Loader):
 
     # jinja2テンプレートの生成
-    def __init__(self, *, context: RenderContext):
-        super().__init__(context=context)
-        # 変更される可能性があるためcopyする
+    def __init__(self, *, context: RenderContext, processor: Processor):
+        super().__init__(context=context, processor=processor)
+        # カラム名は追加される可能性があるためcopyする
         self.cols = context.names.copy() if context.names is not None else []
 
-    def get_source_reader(self, *, source: io.TextIOWrapper):
-        # csvヘッダの有無が不定のため、DictReaderは使用しない
-        return csv.reader(source, delimiter=self.context.delimiter)
+    def loading(self):
+        with get_stream(source=self.context.source,encoding=self.context.input_encoding) as src:
+            reader = csv.reader(src, delimiter=self.context.delimiter)
+            # スキップ指定があれば行を読み飛ばす
+            # ヘッダ行の処理は読み飛ばし後から始める
+            if self.context.skip_lines:
+                for n in range(self.context.skip_lines):
+                    next(reader)
 
-    def read_source(self, *, reader):
-        lines = []
+            # 指定されていれば先頭行をヘッダにする
+            # context.read_headerはcontext.namesより優先される
+            if self.context.read_header:
+                self.cols = next(reader)
 
-        # スキップ指定があれば行を読み飛ばす
-        # ヘッダ行の処理は読み飛ばし後から始める
-        if self.context.skip_lines:
-            for n in range(self.context.skip_lines):
-                next(reader)
+            # line単位ループ
+            lines = []
+            for line_no, columns in enumerate(reader):
+                line = self.read_row(line_no=line_no, columns=columns)
+                lines.append(line)
 
-        # 指定されていれば先頭行をヘッダにする
-        # context.read_headerはcontext.namesより優先される
-        if self.context.read_header:
-            self.cols = next(reader)
+            return {
+                'rows': lines,
+                'cols': self.cols,
+                'params': self.context.parameters
+            }
 
-        # line単位ループ
-        for line_no, columns in enumerate(reader):
-            line = self.read_row(line_no=line_no, columns=columns)
-            lines.append(line)
-
-        return lines
-
-    def read_finish(self, *, result:list):
-        final_result = {
-            'rows': result,
-            'cols': self.cols,
-            'params': self.context.parameters
-        }
-        return final_result
 
     # カラムのlistをdictに変換する。
     def read_row(self, *, line_no:int, columns: str):

@@ -14,6 +14,10 @@ class J2SRenderTest(unittest.TestCase):
 
         return self.file_test(expect_file=expect_file, result_file=result_file, delete_on_success=delete_on_success)
 
+    def processor_test(self, *, loader, expect_file, delete_on_success=True):
+        loader.execute()
+        return self.file_test(expect_file=expect_file, result_file=loader.context.out, delete_on_success=delete_on_success)
+
     def file_test(self, *, expect_file:str, result_file:str, encoding:str='utf-8', delete_on_success=True):
         """ファイル比較のみを行う
             テストに成功したファイルはexpect_fileと内容が同じなので削除し、失敗したファイルだけ残す

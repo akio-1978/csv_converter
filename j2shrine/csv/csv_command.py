@@ -1,7 +1,7 @@
 import argparse
 import j2shrine
 from ..command import Command
-from .csv_render import CsvRender
+from .csv_render import CsvLoader
 
 
 class CsvCommand(Command):
@@ -11,9 +11,9 @@ class CsvCommand(Command):
         self.setup()
 
 
-    def render_class(self):
+    def loader_class(self):
         """Commandが使うRenderのクラスを返す"""
-        return CsvRender
+        return CsvLoader
 
     def add_optional_arguments(self):
         """csv固有のオプション引数を定義する
@@ -27,3 +27,4 @@ class CsvCommand(Command):
         # skip head lines
         self.parser.add_argument('-s', '--skip-lines', metavar='',
                             type=int, help='指定した数値分だけ先頭から行を読み飛ばす.', default=0)
+        self.parser.add_argument('--col-prefix', default='col_')

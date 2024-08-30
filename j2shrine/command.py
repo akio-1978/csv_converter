@@ -1,9 +1,10 @@
 import io
 import sys
+import argparse
 
-from .render import Render
+from .loader import Loader
 from .context import RenderContext
-from .commandutils import get_stream, KeyValuesParseAction
+from .utils import get_stream
 
 # CommandRunnerのデフォルト実装
 
@@ -14,9 +15,9 @@ class Command():
         """このコンストラクタはテスト用で、何もしないコマンドを生成する"""
         self.setup()
 
-    def render_class(self):
-        """Commandが使うRenderのクラスを返す"""
-        return Render
+    def loader_class(self):
+        """Commandが使うLoaderのクラスを返す"""
+        return Loader
 
     def setup(self):
         """ コマンドの引数を定義する
@@ -71,17 +72,37 @@ class Command():
                                namespace=context)
         
         # renderインスタンスを生成
-        render = self.render_class()(context=context)
+        render = self.loader_class()(context=context)
         
         # レンダリング実行
         self.call_render(render=render, source=context.source, out=context.out)
 
-    def call_render(self, *, render: Render, source:str | io.TextIOWrapper, out:str | io.TextIOWrapper):
+    def call_render(self, *, render: Loader, source:str | io.TextIOWrapper, out:str | io.TextIOWrapper):
         context = render.context
         # sourceはファイル名かstdin/stdoutなので間にwrapperを挟む
         with get_stream(source=source,encoding=context.input_encoding) as src:
             with get_stream(source=out,encoding=context.output_encoding, mode='w') as dest:
                 render.render(source=src, output=dest)
 
-        
+class KeyValuesParseAction(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        """=区切りで複数与えられた値をdictで格納する
+            ex.
+            args:A=1 B=2 C=3
+            dict:{'A' : '1', 'B' : '2', 'C' : '3'}
+        """
+        # 設定ファイルから読み込まれた値がある場合、コマンドライン側を優先してマージする
+        arg_dict = self.parse_key_values(values)
+        if hasattr(namespace, self.dest):
+            getattr(namespace, self.dest).update(arg_dict)
+        else:        
+            setattr(namespace, self.dest, arg_dict)
+
+    def parse_key_values(self, values):
+        key_values = {}
+        for value in values:
+            key_value = value.partition('=')
+            key_values[key_value[0]] = key_value[2]
+        return key_values
+
         

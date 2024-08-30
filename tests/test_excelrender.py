@@ -1,7 +1,7 @@
 import unittest
 from j2shrine.context import RenderContext
 from j2shrine.excel.excelrenderutil import parse_read_range, parse_sheet_args
-from j2shrine.excel.excel_render import ExcelRender, CellPosition
+from j2shrine.excel.excel_render import ExcelLoader, CellPosition
 
 from tests.testutils import J2SRenderTest
 
@@ -17,7 +17,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/simple.tmpl'
         context.read_range = parse_read_range(range_str='A2:A5')
         context.sheets = parse_sheet_args(sheets_range_str='1')
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/simple.txt',
                                  source='tests/excel/src/simple.xlsx')
 
@@ -27,7 +27,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/read_all.tmpl'
         context.read_range = parse_read_range(range_str='A2:G') # A2:G
         context.sheets = parse_sheet_args(sheets_range_str='1')
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_all.txt',
                                  source='tests/excel/src/simple.xlsx')
 
@@ -37,7 +37,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/read_multi_sheet.tmpl'
         context.read_range = parse_read_range(range_str='A2:G')
         context.sheets = parse_sheet_args(sheets_range_str='3:')
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_multi_sheet.txt',
                                  source='tests/excel/src/multi.xlsx')
 
@@ -48,7 +48,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.read_range = parse_read_range(range_str='A4:G')
         context.sheets = parse_sheet_args(sheets_range_str='3:')
         context.absolute = {'CELL_A': 'A1', 'CELL_B' : 'D2'}
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_absolute_cells.txt',
                                  source='tests/excel/src/read_absolute_cells.xlsx')
 
@@ -58,7 +58,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/read_multi_sheet.tmpl'
         context.read_range = parse_read_range(range_str='A2:G')
         context.sheets = parse_sheet_args(sheets_range_str='3:4')
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_multi_sheet.txt',
                                  source='tests/excel/src/range.xlsx')
 
@@ -68,7 +68,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/read_multi_sheet.tmpl'
         context.read_range = parse_read_range(range_str='A3:G4')
         context.sheets = parse_sheet_args(sheets_range_str='3:4')
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_row_range.txt',
                                  source='tests/excel/src/range.xlsx')
 
@@ -78,7 +78,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/read_sheet_name.tmpl'
         context.read_range = parse_read_range(range_str='A2:G')
         context.sheets = parse_sheet_args(sheets_range_str='3:')
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_sheet_name.txt',
                                  source='tests/excel/src/multi.xlsx')
 
@@ -88,7 +88,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/read_datetime.tmpl'
         context.read_range = parse_read_range(range_str='A2:C5')
         context.sheets = parse_sheet_args(sheets_range_str='1')
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_datetime.txt',
                                  source='tests/excel/src/read_datetime.xlsx')
 
@@ -98,7 +98,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/read_custom_datetime.tmpl'
         context.read_range = parse_read_range(range_str='A2:C5')
         context.sheets = parse_sheet_args(sheets_range_str='1')
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_custom_datetime.txt',
                                  source='tests/excel/src/read_custom_datetime.xlsx')
 
@@ -108,7 +108,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/read_data_only.tmpl'
         context.read_range = parse_read_range(range_str='A2:D')
         context.sheets = parse_sheet_args(sheets_range_str='1')
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_data_only.txt',
                                  source='tests/excel/src/data_only.xlsx')
 
@@ -121,7 +121,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.read_range = parse_read_range(range_str='C7:H10')
         context.sheets = parse_sheet_args(sheets_range_str='1:')
         context.absolute = {'NAME':'C3', 'DESCRIPTION':'C4'}
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_document.txt',
                                  source='tests/excel/src/read_document.xlsx')
 
@@ -131,7 +131,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/read_by_row_index.tmpl'
         context.read_range = parse_read_range(range_str='A2:D')
         context.sheets = parse_sheet_args(sheets_range_str='1')
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_by_row_index.txt',
                                  source='tests/excel/src/data_only.xlsx')
 
@@ -146,7 +146,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.absolute = {'NAME':'C3', 'DESCRIPTION':'C4'}
         # 使用しない列は空白にする
         context.names = ['date', 'event', '', '', '', 'price']
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_document.txt',
                                  source='tests/excel/src/read_document.xlsx')
 
@@ -160,7 +160,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.absolute = {'NAME':'C3', 'DESCRIPTION':'C4'}
         # 途中までしかカラム名を指定しない
         context.names = ['date', 'event', '',]
-        self.excel_rendering_test(render=ExcelRender(context=context),
+        self.excel_rendering_test(render=ExcelLoader(context=context),
                                  expect='tests/excel/expect/read_document.txt',
                                  source='tests/excel/src/read_document.xlsx')
 

@@ -1,8 +1,8 @@
 import argparse
 import j2shrine
 from ..command import Command, KeyValuesParseAction
-from .excel_render import ExcelRender
-from ..commandutils import get_stream, KeyValuesParseAction
+from .excel_render import ExcelLoader
+from ..utils import get_stream, KeyValuesParseAction
 from .excelrenderutil import parse_read_range, parse_sheet_args
 
 class ExcelCommand(Command):
@@ -14,9 +14,9 @@ class ExcelCommand(Command):
         self.parser = argparse.ArgumentParser(prog=f'{j2shrine.PROG_NAME} excel mode', formatter_class=argparse.RawTextHelpFormatter)
         self.setup()
 
-    def render_class(self):
+    def loader_class(self):
         """Commandが使うRenderのクラスを返す"""
-        return ExcelRender
+        return ExcelLoader
 
     def add_positional_arguments(self):
         """excel固有の必須引数があるので、位置引数を定義しなおす
@@ -37,6 +37,7 @@ class ExcelCommand(Command):
         # 絶対位置指定セルを追加する
         self.parser.add_argument(
             '-a', '--absolute', help='絶対位置指定でセル値を固定で取得する [セル位置=名前]の形式で列挙する. ex: A1=NAME1 A2=NAME2...', dest='absolute', nargs='*', default={}, action=KeyValuesParseAction)
+        self.parser.add_argument('--col-prefix', default='col_')
 
     def call_render(self, *, render, source, out):
         """

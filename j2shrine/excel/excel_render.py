@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 import openpyxl
-from ..render import Render
+from ..loader import Loader
 from ..context import RenderContext
-from .excel_custom_filter import excel_time
+from ..processors import Processor
 
 @dataclass
 class CellPosition:
@@ -11,24 +11,18 @@ class CellPosition:
     col:str
 
 
-class ExcelRender(Render):
+class ExcelLoader(Loader):
 
     # jinja2テンプレートの生成
-    def __init__(self, *, context: RenderContext):
-        super().__init__(context=context)
-        # 変更される可能性があるためcopyする
+    def __init__(self, *, context: RenderContext, processor: Processor):
+        super().__init__(context=context, processor=processor)
+        # カラム名は追加される可能性があるためcopyする
         self.cols = context.names.copy() if context.names is not None else []
 
-    def install_filters(self, *, environment):
-        super().install_filters(environment=environment)
-        environment.filters['excel_time'] = excel_time
-
-    def get_source_reader(self, *, source: str):
-        """openpyxlでブックを開く"""
-        return openpyxl.load_workbook(source, data_only=True)
-
-    def read_source(self, *, reader):
+    def loading(self):
         """Workbookの中身をcontextに従って読み取る"""
+        # Workbookを開く
+        reader = openpyxl.load_workbook(self.context.source, data_only=True)
         # シート内セルの読み込み範囲
         (start, end) = self.context.read_range
         # 読み込むシートの範囲
@@ -61,7 +55,10 @@ class ExcelRender(Render):
 
             results.append(sheet_data)
             sheet_idx = 1 + sheet_idx
-        return results
+        return {
+            'sheets': results,
+            'params': self.context.parameters
+        }
 
     def read_row(self, *, line_no:int, cells:list):
         """カラムのlistをdictに変換する。dictのキーはcontext.namesで与えられた名前か、連番になる。"""
@@ -82,11 +79,3 @@ class ExcelRender(Render):
     def read_value(self, *, name, cell):
         """value属性が存在すればセルの値を取得する"""
         return cell.value if hasattr(cell, 'value') else None
-
-    # jinja2へ渡す読み取り結果
-    def read_finish(self, *, result):
-        final_result = {
-            'sheets': result,
-            'params': self.context.parameters
-        }
-        return final_result

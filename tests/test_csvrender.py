@@ -1,8 +1,8 @@
 import unittest
 from io import StringIO
 from j2shrine.context import RenderContext
-from j2shrine.csv.csv_render import CsvRender
-
+from j2shrine.csv.csv_render import CsvLoader
+from j2shrine.processors import Jinja2Processor
 from jinja2 import Environment, DictLoader
 from tests.testutils import J2SRenderTest, RenderArgs
 
@@ -14,49 +14,17 @@ class CsvRenderTest(J2SRenderTest):
 
     def test_convert_headless(self):
         """ヘッダのない単純なCSV"""
-        context = self.default_context()
-        context.template = {
-            'template': "{% for line in rows %}{{line.col_00}}\n{% endfor %}"}
-        context.template_name = 'template'
-
-        converter = DictRender(context=context)
-
-        source = StringIO('A0001,C0002\nB0001,C0002\nC0001,C0002')
-        result = StringIO()
-
-        converter.render(source=source, output=result)
-
-        self.assertEqual('A0001\nB0001\nC0001\n\n', result.getvalue())
+        self.file_convert_test(template='tests/csv/templates/convert_headless.tmpl',
+                               expect='tests/csv/expect/convert_headless.txt',
+                               source='tests/csv/src/convert_headless.csv',
+                               read_header=False)
 
     def test_convert_escaped(self):
         """CSVデータのエスケープ"""
-        context = self.default_context()
-        context.template = {
-            'template': "{% for line in rows %}{{line.col_00}}\n{% endfor %}"}
-        context.template_name = 'template'
-        converter = DictRender(context=context)
-
-        source = StringIO('"A00,01",C0002\nB0001,C0002\nC0001,C0002')
-        result = StringIO()
-
-        converter.render(source=source, output=result)
-
-        self.assertEqual('A00,01\nB0001\nC0001\n\n', result.getvalue())
-
-    def test_header(self):
-        """ヘッダ行付き"""
-        context = self.default_context()
-        context.template ={'template': "{% for line in rows %}{{line.FIRST}}<=>{{line.SECOND}}{% endfor %}"}
-        context.template_name = 'template'
-        context.read_header = True
-        converter = DictRender(context=context)
-
-        source = StringIO('FIRST,SECOND\nC0001,C0002')
-        result = StringIO()
-
-        converter.render(source=source, output=result)
-
-        self.assertEqual('C0001<=>C0002\n', result.getvalue())
+        self.file_convert_test(template='tests/csv/templates/convert_escaped.tmpl',
+                               expect='tests/csv/expect/convert_escaped.txt',
+                               source='tests/csv/src/convert_escaped.csv',
+                               read_header=False)
 
     def test_simple(self):
         """ヘッダ付きCSVからjsonファイル変換"""
@@ -172,8 +140,15 @@ class CsvRenderTest(J2SRenderTest):
         context.skip_lines = skip_lines
         # カラム名指定
         context.names = names
+        # ソース指定
+        context.source = source
+        # 出力先指定
+        context.out = self.result_file()
         
-        return self.rendering_test(render=CsvRender(context=context), expect_file=expect, source=source)
+        processor = Jinja2Processor(context=context)
+        loader = CsvLoader(context=context, processor=processor)
+        
+        return self.processor_test(loader=loader, expect_file=expect)
 
     def default_context(self):
         ctx = RenderContext()
@@ -185,11 +160,12 @@ class CsvRenderTest(J2SRenderTest):
         ctx.template_encoding = 'utf8'
         ctx.input_encoding = 'utf8'
         ctx.output_encoding = 'utf8'
+        ctx.col_prefix = 'col_'
         
         return ctx
 
 # テスト用にDictLoaderを使うRender
-class DictRender (CsvRender):
+class DictRender (CsvLoader):
 
     def setup_template(self, *, context):
         self.headers = None
