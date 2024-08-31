@@ -1,7 +1,8 @@
 import unittest
 from j2shrine.context import RenderContext
 from j2shrine.excel.excelrenderutil import parse_read_range, parse_sheet_args
-from j2shrine.excel.excel_render import ExcelLoader, CellPosition
+from j2shrine.excel.excel_render import ExcelLoader
+from j2shrine.processors import Jinja2Processor
 
 from tests.testutils import J2SRenderTest
 
@@ -17,7 +18,7 @@ class ExcelRenderTest(J2SRenderTest):
         context.template = 'tests/excel/templates/simple.tmpl'
         context.read_range = parse_read_range(range_str='A2:A5')
         context.sheets = parse_sheet_args(sheets_range_str='1')
-        self.excel_rendering_test(render=ExcelLoader(context=context),
+        self.excel_rendering_test(context=context,
                                  expect='tests/excel/expect/simple.txt',
                                  source='tests/excel/src/simple.xlsx')
 
@@ -165,11 +166,12 @@ class ExcelRenderTest(J2SRenderTest):
                                  source='tests/excel/src/read_document.xlsx')
 
 
-    def excel_rendering_test(self, *, render, expect, source, encoding='utf8'):
+    def excel_rendering_test(self, *, context, expect, source, encoding='utf8'):
         result_file = self.result_file()
-
-        with open(result_file, 'w', encoding=encoding) as result_writer:
-            render.render(source=source, output=result_writer)
+        context.source = source
+        context.out = self.result_file()
+        loader = ExcelLoader(context=context, processor=Jinja2Processor(context=context))
+        loader.execute()
         self.file_test(expect_file=expect, result_file=result_file)
 
     def default_context(self):
@@ -178,6 +180,7 @@ class ExcelRenderTest(J2SRenderTest):
         ctx.names = None
         ctx.parameters = {}
         ctx.absolute = {}
+        ctx.col_prefix = 'col_'
         ctx.template_encoding = 'utf8'
         ctx.input_encoding = 'utf8'
         ctx.output_encoding = 'utf8'
