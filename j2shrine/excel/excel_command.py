@@ -14,9 +14,9 @@ class ExcelCommand(Command):
         self.parser = argparse.ArgumentParser(prog=f'{j2shrine.PROG_NAME} excel mode', formatter_class=argparse.RawTextHelpFormatter)
         self.setup()
 
-    def loader_class(self):
+    def get_loader(self, context):
         """Commandが使うRenderのクラスを返す"""
-        return ExcelLoader
+        return ExcelLoader(context=context, processor=self.get_processor(context=context))
 
     def add_positional_arguments(self):
         """excel固有の必須引数があるので、位置引数を定義しなおす

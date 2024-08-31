@@ -10,10 +10,9 @@ class CsvCommand(Command):
         self.parser = argparse.ArgumentParser(prog=f'{j2shrine.PROG_NAME} csv mode')
         self.setup()
 
-
-    def loader_class(self):
+    def get_loader(self, context):
         """Commandが使うRenderのクラスを返す"""
-        return CsvLoader
+        return CsvLoader(context=context, processor=self.get_processor(context=context))
 
     def add_optional_arguments(self):
         """csv固有のオプション引数を定義する

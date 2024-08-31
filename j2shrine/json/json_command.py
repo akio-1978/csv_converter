@@ -11,7 +11,6 @@ class JsonCommand(Command):
         self.parser = argparse.ArgumentParser(prog=f'{j2shrine.PROG_NAME} json mode')
         self.setup()
 
-
-    def loader_class(self):
+    def get_loader(self, context):
         """Commandが使うRenderのクラスを返す"""
-        return JsonLoader
+        return JsonLoader(context=context, processor=self.get_processor(context=context))

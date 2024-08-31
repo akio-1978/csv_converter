@@ -5,6 +5,7 @@ import argparse
 from .loader import Loader
 from .context import RenderContext
 from .utils import get_stream
+from .processors import Jinja2Processor
 
 # CommandRunnerのデフォルト実装
 
@@ -15,9 +16,12 @@ class Command():
         """このコンストラクタはテスト用で、何もしないコマンドを生成する"""
         self.setup()
 
-    def loader_class(self):
+    def get_processor(self, context):
+        return Jinja2Processor(context=context)
+
+    def get_loader(self, *, context):
         """Commandが使うLoaderのクラスを返す"""
-        return Loader
+        return Loader(context=context, processor=self.get_processor(context=context))
 
     def setup(self):
         """ コマンドの引数を定義する
@@ -72,17 +76,10 @@ class Command():
                                namespace=context)
         
         # renderインスタンスを生成
-        render = self.loader_class()(context=context)
+        render = self.get_loader(context=context)
         
         # レンダリング実行
-        self.call_render(render=render, source=context.source, out=context.out)
-
-    def call_render(self, *, render: Loader, source:str | io.TextIOWrapper, out:str | io.TextIOWrapper):
-        context = render.context
-        # sourceはファイル名かstdin/stdoutなので間にwrapperを挟む
-        with get_stream(source=source,encoding=context.input_encoding) as src:
-            with get_stream(source=out,encoding=context.output_encoding, mode='w') as dest:
-                render.render(source=src, output=dest)
+        render.execute()
 
 class KeyValuesParseAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
