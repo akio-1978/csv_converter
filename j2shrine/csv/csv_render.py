@@ -35,7 +35,6 @@ class CsvLoader(Loader):
             return {
                 'rows': lines,
                 'cols': self.cols,
-                'params': self.context.parameters
             }
 
 
