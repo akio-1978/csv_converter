@@ -1,12 +1,12 @@
 import pathlib
 from jinja2 import Environment, FileSystemLoader
-from .context import RenderContext
+from .context import AppContext
 from .jinja2_custom_filter import sequential_group_by
 from .excel.excel_custom_filter import excel_time
 from .utils import get_stream
 
 class Processor:
-    def __init__(self, context:RenderContext) -> None:
+    def __init__(self, context:AppContext) -> None:
         self.context = context
         self._setup()
 
@@ -17,7 +17,7 @@ class Processor:
         pass
 
 class Jinja2Processor(Processor):
-    def __init__(self, context:RenderContext) -> None:
+    def __init__(self, context:AppContext) -> None:
         super().__init__(context)
     
     def _setup(self):

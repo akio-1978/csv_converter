@@ -1,11 +1,11 @@
 import unittest
-from j2shrine.context import RenderContext
-from j2shrine.json.json_render import JsonLoader
+from j2shrine.context import AppContext
+from j2shrine.json.json_loader import JsonLoader
 from j2shrine.processors import Jinja2Processor
-from tests.testutils import J2SRenderTest
+from tests.testutils import J2SRenderingTest
 
 
-class JsonRenderTest(J2SRenderTest):
+class JsonTest(J2SRenderingTest):
 
     def result_dir(self):
         """出力ディレクトリ名を返す"""
@@ -28,7 +28,7 @@ class JsonRenderTest(J2SRenderTest):
         self.processor_test(loader=loader, expect_file=expect)
 
     def default_context(self):
-        ctx = RenderContext()
+        ctx = AppContext()
         ctx.parameters = {}
         ctx.template_encoding = 'utf8'
         ctx.input_encoding = 'utf8'

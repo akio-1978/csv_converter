@@ -1,13 +1,13 @@
 import csv
 from ..loader import Loader
-from ..context import RenderContext
+from ..context import AppContext
 from ..processors import Processor
 from ..utils import get_stream
 
 class CsvLoader(Loader):
 
     # jinja2テンプレートの生成
-    def __init__(self, *, context: RenderContext, processor: Processor):
+    def __init__(self, *, context: AppContext, processor: Processor):
         super().__init__(context=context, processor=processor)
         # カラム名は追加される可能性があるためcopyする
         self.cols = context.names.copy() if context.names is not None else []

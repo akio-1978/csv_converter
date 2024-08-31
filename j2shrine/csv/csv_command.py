@@ -1,7 +1,7 @@
 import argparse
 import j2shrine
 from ..command import Command
-from .csv_render import CsvLoader
+from .csv_loader import CsvLoader
 
 
 class CsvCommand(Command):

@@ -1,5 +1,5 @@
 import openpyxl
-from .excel_render import CellPosition
+from .excel_loader import CellPosition
 
 def parse_read_range(*, range_str: str):
     """引数文字列を起点と終点に分割"""

@@ -5,7 +5,7 @@ import j2shrine
 from .csv.csv_command import CsvCommand
 from .excel.excel_command import ExcelCommand
 from .json.json_command import JsonCommand
-from .context import RenderContext
+from .context import AppContext
 
 
 class Runner():
@@ -36,7 +36,7 @@ class Runner():
         ns, unknown = ctx_parser.parse_known_args(args)
 
         # コマンドからコンテキストの取得
-        ctx = RenderContext()
+        ctx = AppContext()
         if ns.config_file:
             # 設定ファイルが存在すればコンテキストに書き込む
             self.load_config(ctx=ctx, filename=ns.config_file)

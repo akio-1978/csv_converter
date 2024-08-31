@@ -1,12 +1,12 @@
 import unittest
-from j2shrine.context import RenderContext
-from j2shrine.excel.excelrenderutil import parse_read_range, parse_sheet_args
-from j2shrine.excel.excel_render import ExcelLoader
+from j2shrine.context import AppContext
+from j2shrine.excel.excelutils import parse_read_range, parse_sheet_args
+from j2shrine.excel.excel_loader import ExcelLoader
 from j2shrine.processors import Jinja2Processor
 
-from tests.testutils import J2SRenderTest
+from tests.testutils import J2SRenderingTest
 
-class ExcelRenderTest(J2SRenderTest):
+class ExcelTest(J2SRenderingTest):
 
     def result_dir(self):
         """出力ディレクトリ名を返す"""
@@ -176,7 +176,7 @@ class ExcelRenderTest(J2SRenderTest):
 
     def default_context(self):
         """テスト用コンテキストのデフォルト値"""
-        ctx = RenderContext()
+        ctx = AppContext()
         ctx.names = None
         ctx.parameters = {}
         ctx.absolute = {}

@@ -1,10 +1,10 @@
 from .jinja2_custom_filter import sequential_group_by
 from .processors import Processor
-from .context import RenderContext
+from .context import AppContext
 
 class Loader:
 
-    def __init__(self, *, context : RenderContext, processor : Processor):
+    def __init__(self, *, context : AppContext, processor : Processor):
         self.context = context
         self.processor = processor
 

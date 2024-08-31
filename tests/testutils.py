@@ -2,7 +2,7 @@ import unittest
 import argparse
 from pathlib import Path
 
-class J2SRenderTest(unittest.TestCase):
+class J2SRenderingTest(unittest.TestCase):
     """テストのベースクラス ファイル変換の検証に関するユーティリティを持つ """
     def rendering_test(self, *, render, expect_file, source, delete_on_success=True):
         """renderのレンダリングを行ってファイル比較を行う"""
@@ -47,10 +47,4 @@ class J2SRenderTest(unittest.TestCase):
     def expect_path(self, type, file):
         """比較元ファイル"""
         return f'tests/{type}/expect/{file}'
-
-class RenderArgs(argparse.Namespace):
-    
-    def __init__(self):
-        self.template_encoding = 'utf-8'
-        self.parameters = {}
 

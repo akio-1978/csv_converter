@@ -1,6 +1,6 @@
 import argparse
 from ..command import Command
-from .json_render import JsonLoader
+from .json_loader import JsonLoader
 import j2shrine
 
 # CommandRunnerのデフォルト実装

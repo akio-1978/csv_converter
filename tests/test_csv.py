@@ -1,12 +1,11 @@
 import unittest
-from io import StringIO
-from j2shrine.context import RenderContext
-from j2shrine.csv.csv_render import CsvLoader
+from j2shrine.context import AppContext
+from j2shrine.csv.csv_loader import CsvLoader
 from j2shrine.processors import Jinja2Processor
 from jinja2 import Environment, DictLoader
-from tests.testutils import J2SRenderTest, RenderArgs
+from tests.testutils import J2SRenderingTest
 
-class CsvRenderTest(J2SRenderTest):
+class CsvTest(J2SRenderingTest):
 
     def result_dir(self):
         """出力ディレクトリ名を返す"""
@@ -151,7 +150,7 @@ class CsvRenderTest(J2SRenderTest):
         return self.processor_test(loader=loader, expect_file=expect)
 
     def default_context(self):
-        ctx = RenderContext()
+        ctx = AppContext()
         ctx.names = None
         ctx.delimiter = ','
         ctx.skip_lines = 0

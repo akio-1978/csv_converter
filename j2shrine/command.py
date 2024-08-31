@@ -3,7 +3,7 @@ import sys
 import argparse
 
 from .loader import Loader
-from .context import RenderContext
+from .context import AppContext
 from .utils import get_stream
 from .processors import Jinja2Processor
 
@@ -69,7 +69,7 @@ class Command():
         self.parser.add_argument('--config-file', metavar='file',
                             help='names parameters absoluteの各設定をjsonに記述したファイル')
 
-    def execute(self, *, args:list, context:RenderContext):
+    def execute(self, *, args:list, context:AppContext):
         """ レンダリング実行 """
         # コマンドのパース argsをサブコマンドひとつ分読み進めたいので、長さをチェックする
         context = self.parser.parse_args(args[1:] if len(args) > 0 else [], 

@@ -1,8 +1,8 @@
 import unittest
 from j2shrine.runner import Runner
-from tests.testutils import J2SRenderTest
+from tests.testutils import J2SRenderingTest
 
-class ConsoleTest(J2SRenderTest):
+class ConsoleTest(J2SRenderingTest):
     """コマンドラインの不正確な引数及びヘルプ表示、このテストは例外が発生すればok"""
 
     def test_no_subcommand(self):
