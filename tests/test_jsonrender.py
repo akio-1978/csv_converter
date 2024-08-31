@@ -1,6 +1,7 @@
 import unittest
 from j2shrine.context import RenderContext
-from j2shrine.json.json_render import JsonRender
+from j2shrine.json.json_render import JsonLoader
+from j2shrine.processors import Jinja2Processor
 from tests.testutils import J2SRenderTest
 
 
@@ -13,7 +14,7 @@ class JsonRenderTest(J2SRenderTest):
     def test_simple_json(self):
         ctx = self.default_context()
         ctx.template='tests/json/templates/simple_json.tmpl'
-        ctx.src = 'tests/json/src/simple_json.json'
+        ctx.source = 'tests/json/src/simple_json.json'
         
         
         self.file_convert_test(context=ctx,
@@ -21,9 +22,10 @@ class JsonRenderTest(J2SRenderTest):
                                )
 
     def file_convert_test(self, *, context, expect):
-        render = JsonRender(context=context)
+        context.out = self.result_file()
+        loader = JsonLoader(context=context, processor=Jinja2Processor(context))
 
-        self.rendering_test(render=render, expect_file=expect, source=context.src)
+        self.processor_test(loader=loader, expect_file=expect)
 
     def default_context(self):
         ctx = RenderContext()

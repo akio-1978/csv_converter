@@ -35,4 +35,5 @@ class Jinja2Processor(Processor):
         
     def execute(self, loaded_object):
         with get_stream(source=self.context.out ,encoding=self.context.output_encoding, mode='w') as dest:
+            loaded_object['params'] = self.context.parameters
             dest.write(self.template.render(loaded_object))

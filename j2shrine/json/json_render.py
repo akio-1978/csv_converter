@@ -1,15 +1,12 @@
 from ..loader import Loader
-from ..context import RenderContext
 import json
 
 
-class JsonRender(Loader):
+class JsonLoader(Loader):
 
-    # jinja2テンプレートの生成
-    def __init__(self, *, context: RenderContext):
-        self.context = context
-        self.setup_template(context=context)
+    def execute(self):
+        self.processor.execute(self.loading())
 
-    def loading(self, *, reader):
-        loaded = json.load(reader)
-        return loaded
+    def loading(self):
+        with open(self.context.source, encoding=self.context.input_encoding) as f:
+            return {'data' : json.load(f)}

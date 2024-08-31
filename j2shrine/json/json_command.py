@@ -1,6 +1,6 @@
 import argparse
 from ..command import Command
-from .json_render import JsonRender
+from .json_render import JsonLoader
 import j2shrine
 
 # CommandRunnerのデフォルト実装
@@ -14,4 +14,4 @@ class JsonCommand(Command):
 
     def loader_class(self):
         """Commandが使うRenderのクラスを返す"""
-        return JsonRender
+        return JsonLoader
