@@ -1,5 +1,5 @@
 import argparse
-import j2shrine
+import toj2
 from ..command import Command
 from .csv_loader import CsvLoader
 
@@ -7,7 +7,7 @@ from .csv_loader import CsvLoader
 class CsvCommand(Command):
 
     def __init__(self):
-        self.parser = argparse.ArgumentParser(prog=f'{j2shrine.PROG_NAME} csv mode')
+        self.parser = argparse.ArgumentParser(prog=f'{toj2.PROG_NAME} csv mode')
         self.setup()
 
     def get_loader(self, context):

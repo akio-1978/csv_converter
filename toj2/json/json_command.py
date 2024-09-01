@@ -1,14 +1,14 @@
 import argparse
 from ..command import Command
 from .json_loader import JsonLoader
-import j2shrine
+import toj2
 
 # CommandRunnerのデフォルト実装
 
 
 class JsonCommand(Command):
     def __init__(self):
-        self.parser = argparse.ArgumentParser(prog=f'{j2shrine.PROG_NAME} json mode')
+        self.parser = argparse.ArgumentParser(prog=f'{toj2.PROG_NAME} json mode')
         self.setup()
 
     def get_loader(self, context):

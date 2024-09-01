@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "j2shrine"
+name = "toj2"
 version = "0.1.1"
 description = ""
 authors = ["akio-1978 <akio.ogawa01@gmail.com>"]
@@ -18,4 +18,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-j2shrine = 'j2shrine.runner:main'
+toj2 = 'toj2.runner:main'

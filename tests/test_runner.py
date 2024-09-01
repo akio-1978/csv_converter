@@ -1,7 +1,7 @@
 import unittest
 import sys
 import contextlib
-from j2shrine.runner import Runner
+from toj2.runner import Runner
 from tests.testutils import J2SRenderingTest
 
 class RunnerTest(J2SRenderingTest):

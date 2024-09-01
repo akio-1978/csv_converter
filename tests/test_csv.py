@@ -1,7 +1,7 @@
 import unittest
-from j2shrine.context import AppContext
-from j2shrine.csv.csv_loader import CsvLoader
-from j2shrine.processors import Jinja2Processor
+from toj2.context import AppContext
+from toj2.csv.csv_loader import CsvLoader
+from toj2.processors import Jinja2Processor
 from jinja2 import Environment, DictLoader
 from tests.testutils import J2SRenderingTest
 

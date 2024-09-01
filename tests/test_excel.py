@@ -1,8 +1,8 @@
 import unittest
-from j2shrine.context import AppContext
-from j2shrine.excel.excelutils import parse_read_range, parse_sheet_args
-from j2shrine.excel.excel_loader import ExcelLoader
-from j2shrine.processors import Jinja2Processor
+from toj2.context import AppContext
+from toj2.excel.excelutils import parse_read_range, parse_sheet_args
+from toj2.excel.excel_loader import ExcelLoader
+from toj2.processors import Jinja2Processor
 
 from tests.testutils import J2SRenderingTest
 

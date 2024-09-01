@@ -1,7 +1,7 @@
 import sys
 import argparse
 import json
-import j2shrine
+import toj2
 from .csv.csv_command import CsvCommand
 from .excel.excel_command import ExcelCommand
 from .json.json_command import JsonCommand
@@ -30,7 +30,7 @@ class Runner():
     def get_context(self, *, args:list):
         """引数を一部だけパースしてcontextとcommandを取得する"""
         # サブコマンドと設定ファイルだけを取得する、サブコマンドが対象外の場合ここで終了する
-        ctx_parser = CustomHelpParser(prog=j2shrine.PROG_NAME)
+        ctx_parser = CustomHelpParser(prog=toj2.PROG_NAME)
         ctx_parser.add_argument('cmd', choices=['csv', 'excel', 'json'], default='')
         ctx_parser.add_argument('--config-file', default=None)
         ns, unknown = ctx_parser.parse_known_args(args)
@@ -55,7 +55,7 @@ class CustomHelpParser(argparse.ArgumentParser):
     
     def format_usage(self) -> str:
         """一回目の予備パースでエラーが出た時、config-fileオプションについて表示しない"""
-        return f'usage: {j2shrine.PROG_NAME} [-h] {{csv,excel,json}} ...\n'
+        return f'usage: {toj2.PROG_NAME} [-h] {{csv,excel,json}} ...\n'
 
 def main():
     """sys.argvをargparseに直接渡さない（Ruunerのテスト対策）"""

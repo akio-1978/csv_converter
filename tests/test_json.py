@@ -1,7 +1,7 @@
 import unittest
-from j2shrine.context import AppContext
-from j2shrine.json.json_loader import JsonLoader
-from j2shrine.processors import Jinja2Processor
+from toj2.context import AppContext
+from toj2.json.json_loader import JsonLoader
+from toj2.processors import Jinja2Processor
 from tests.testutils import J2SRenderingTest
 
 
