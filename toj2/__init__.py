@@ -1,1 +1,1 @@
-PROG_NAME='j2render'
+PROG_NAME='toj2'
