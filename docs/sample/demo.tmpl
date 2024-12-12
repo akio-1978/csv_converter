@@ -1,0 +1,8 @@
+{
+    {%- for class_no, students in rows | groupby('col_00')%}
+    "{{class_no}}組" : [
+    {% for student in students %}
+        "{{student.col_01}}"{% if not loop.last %},{% endif -%}
+    {% endfor %}
+    ]{% if not loop.last %},{% endif %}{% endfor %}
+}

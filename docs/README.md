@@ -1,5 +1,5 @@
 # toj2
-このツールはまだ内部向けのものであり、ドキュメントは最小限しか用意されていません。最終的に分割してドキュメントを書く予定です。
+ドキュメントは作成中ですが、動作可能なものができたので一度リリースします。
 
 - コマンドラインからjinja2を実行し、テンプレートによる行うツールです。
   - 対応するファイル形式が特徴で、現在以下のファイル形式に対応し、jinja2で自由にレンダリングできます。
@@ -15,8 +15,9 @@ python3.10 以上（おそらく）
 pip install git+https://github.com/akio-1978/toj2
 ```
 
-## CSVファイルを変換する例
+## 使い方の例
 実際にtoj2を使用してCSVファイルをjsonに変換してみましょう。
+ここで使用するデータとテンプレートはdocs/samplesディレクトリに置いてあります。
 ### テストデータ
 以下のcsvはとある学校の1年生をクラスごとに分類した学生の名簿です。名簿と言ってもクラスごとにソートもされていない、ただ
 ```csv
@@ -86,11 +87,11 @@ toj2をコマンドラインから実行する例を上げ、個々のオプシ�
 すべてのコマンドはcsv/excel/jsonのいずれかから始まります。以下に例を示します。
 ```sh
 # csvファイルの場合
-toj2 csv csvtemplate.tmpl data.csv -o result.txt
+toj2 csv csvtemplate.tmpl data.csv --out result.txt
 # excelファイルの場合
-toj2 excel exceltemplate.tmpl data.xlsx 1 A1:D4 -o result.txt
+toj2 excel exceltemplate.tmpl data.xlsx 1 A1:D4 --out result.txt
 # jsonファイルの場合
-toj2 json jsontemplate.tmpl data.json -o result.txt
+toj2 json jsontemplate.tmpl data.json --out result.txt
 ```
 
 #### jinja2テンプレートファイル
@@ -117,7 +118,7 @@ toj2 json jsontemplate.tmpl data.json -o result.txt
 #### テンプレートパラメータ
 jinja2テンプレートに任意の値を渡すことができます。値は`=`でキーと値に区切って指定します。指定できる数に制限はありません。
 
-`--pamaeter PARAM1=A PARAM2=B `
+`--parameter PARAM1=A PARAM2=B `
 
 この値は、テンプレート中で`param['PARAM1']`のようにして参照できます。
 
