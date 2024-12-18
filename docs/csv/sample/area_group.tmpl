@@ -1,6 +1,6 @@
 {{params.line}}:
   自治体別分類:
-{%- for area, stations in rows | groupby('area') %}
+{%- for area, stations in rows | sequential_group_by('area') %}
     - {{area}}: 
 {%- for station in stations %}
       - {{station.number}}: {{station.name}}
