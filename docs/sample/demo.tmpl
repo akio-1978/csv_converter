@@ -1,8 +1,15 @@
-{
-    {%- for class_no, students in rows | groupby('col_00')%}
-    "{{class_no}}組" : [
-    {% for student in students %}
-        "{{student.col_01}}"{% if not loop.last %},{% endif -%}
-    {% endfor %}
-    ]{% if not loop.last %},{% endif %}{% endfor %}
-}
+<html>
+<head><title>部活別生徒リスト</title></head>
+<body>
+<ul>
+{%- for club_name, students in rows | groupby('col_02')%}
+    <li>{{club_name}}
+        <ul>
+            {%- for student in students %}
+            <li>{{student.col_01}}</li>
+            {%- endfor %}
+        </ul>
+    </li>
+    {%- endfor %}
+</ul>
+</body></html>
