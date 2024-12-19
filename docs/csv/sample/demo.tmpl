@@ -1,0 +1,20 @@
+<html>
+<head> {# コマンドラインからパラメータ受け取り #}
+    <title>{{params.title}}</title>
+</head>
+<body>
+<ul>
+{# 部活名(col_02)でグループ化 #}
+{%- for club_name, students in rows | groupby('col_02')%}
+    <li>{{club_name}}
+        <ul>
+            {%- for student in students %}
+            <li>{{student.col_01}}</li>
+            {%- endfor %}
+        </ul>
+    </li>
+    {%- endfor %}
+
+</ul>
+</body>
+</html>
