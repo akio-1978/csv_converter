@@ -1,0 +1,25 @@
+<html>
+<head> 
+    <title>クラス別部活分類</title>
+</head>
+<body>
+<h1>クラス別部活分類</h1>
+{%- for sheet in sheets %}
+<h2>{{sheet.name}}</h2>
+    <div>担任 {{sheet.abs.teacher}}</div>
+    <div>{{sheet.abs.memo}}</div>
+<ul>
+{%- for club_name, students in sheet.rows | groupby('col_02')%}
+    <li>{{club_name}}
+        <ul>
+            {%- for student in students %}
+            <li>{{student.col_01}}</li>
+            {%- endfor %}
+        </ul>
+    </li>
+    {%- endfor %}
+</ul>
+{%- endfor %}
+</ul>
+</body>
+</html>
