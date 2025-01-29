@@ -4,10 +4,16 @@
 ## 一言でいうとこれは何？
 csvやexcelをjinja2で処理できるツールです。
 
-## 使用例
+## 使用方法 使用例
+ファイル変換の例を紹介します。ファイル形式に固有のオプションがある場合はこちらで解説します。
 ### csvファイルを変換する例
-オプションの解説も一緒に書いてあります。
-[csvファイルをjinja2で変換してみる](./csv/tutorial.md)
+[toj2によるCSVファイル変換](./csv/tutorial.md)
+
+### excelファイルを変換する例
+[toj2によるExcelファイル変換](./excel/tutorial.md)
+
+### jsonファイルを変換する例
+[jsonについてはごくシンプルな動作のみ](JSONファイルの変換)なので、このファイル内で解説します。
 
 ## 動作条件
 #### pythonバージョン
@@ -20,9 +26,17 @@ pip install git+https://github.com/akio-1978/toj2
 #### 依存性
 jinja2とopenpyxlを使用しています。
 
+## 実行方法
+コマンドとして実行します。例えば以下のような形になります。
+
+```sh
+toj2 csv demo.tmpl demo.csv
+```
+引数については以下で解説します。
+他に、変換するファイル形式ごとに固有のオプションを持つ場合もあります。それらは各ファイル形式のチュートリアルで解説します。
+
 ## 共通コマンド引数
-どのデータ種別を扱うときでも共通して使用する引数の解説です。
-変換対象によっては共通より拡張されていることがあります。詳しくは各変換仕様を参照願います（主にExcel）。
+全てのファイル形式に対して共通で使用する引数です。[^except-excel]
 
 ### 位置引数
 記述位置で意味が決まる引数です。
@@ -50,120 +64,80 @@ toj2 csv demo.tmpl demo.csv
 ### オプション引数
 すべてのデータ形式で設定可能なオプション引数です。
 
-#### 出力ファイル
+#### --out 出力ファイル
 `-o output_file` または `--out output_file`
 
 変換結果を出力するファイルを指定します。省略された場合、`sys.stdout`に出力されます。
 
-#### 文字列エンコーディング
+#### --input-encoding --output-encoding 文字列エンコーディング
 
 `--input-encoding enc`
 `--output-encoding enc`
 
 入出力ファイルのエンコーディングを指定します。デフォルトはUTF8です。**excelでは`--input-encoding`は無視されます。**
 
-#### テンプレートパラメータ
+#### --parameter テンプレートパラメータ
 jinja2テンプレートに任意の値を渡すことができます。値は`=`でキーと値に区切って指定します。指定できる数に制限はありません。
 
 `--parameter PARAM1=A PARAM2=B `
 
-この値は、テンプレート中で`param['PARAM1']`のようにして参照できます。
+この値は、テンプレート中で`param.PARAM1`のようにして参照できます。
 
+#### --config-file 設定ファイル
+ときどき、toj2の引数が長いものになることがあります。そのような場合、オプション引数をjsonにまとめることができます。
 
-### Excelファイルの処理
-**Excel変換の解説を記述次第この記述は移動します。**
-Excelファイルを処理する際の動作及びコマンドオプションについて説明します。
-
-#### コマンド実行イメージ
-excelでは処理対象のシート及びセルの指定などが含まれるため、引数が多くなります。
+以下のようなコマンドが少し長いと感じるでしょう（以下はcsv変換用のオプションを含みます）。
 
 ```sh
-toj2 excel exceltemplate.tmpl data.xlsx 1 A1:D4 --out result.txt
+toj2 csv sample.tmpl sample.csv --skip-lines 1 --out result.txt  --names one two three four --parameters PARAM1=A PARAM2=B PARAM3=C
 ```
 
-#### jinja2への出力形式
-toj2はExcelファイルをシートごとに読み込み、以下の形式にしてjinja2に渡します。
-多数のシートを扱うためにCSVより複雑になっています。
-```python
+このオプションを以下のような`config.json`としてまとめて記述します。設定ファイル内ではオプション名の先頭のふたつのハイフンは除去し、途中に現れるハイフンはアンダースコアに置き換えます。
+
+```json
 {
-  # 各シートごとのリスト
-  'sheets' : [
-    {
-      'name': 'sheet_name',           # シート名
-      'abs': {'PARAM' : 'VALUE'},     # 指定座標セル
-      'rows': [[dict,dict, dict...]], # シート内容の行と列
-    }
-    ...
-  ]
-  # 起動時に渡したパラメータ
-  'params' : {'LABEL' : 'VALUE'}
+  "skip_lines": 1,
+  "names": ["one", "two", "three", "four"],
+  "parameters": {
+      "PARAM1" : "A",
+      "PARAM2" : "B",
+      "PARAM3" : "C"
+  }
 }
 ```
 
-### Excelファイル処理オプション
-Excelファイルはオプション以外にも固有の位置引数を持ちます。
-#### **読込みファイル**
-必須の位置引数です。**共通ではオプションですが、excelファイルの場合は必須です。**
-変換元として読み込むファイルを指定します。excelの場合は`sys.stdin`からの読込みは行えず、**必ずファイルを指定する必要があります。**
-#### **シート範囲**
-必須の位置引数です。
-読込むシートを指定します。シートは1度に複数指定可能です。**数値は1オリジンです。**シート番号の後に`:`を付与することで、指定したシート番号に続く全てのシートを取得できます。
-```
-# 1枚目のシートのB2:E4を取得する
-toj2 excel exceltemplate.tmpl data.xlsx 1 B2:E4 -o result.txt
-# 3枚目のシートのB2:E4を取得する
-toj2 excel exceltemplate.tmpl data.xlsx 3 B2:E4 -o result.txt
-# 1枚目の全てのシートから全てのシートのB2:E4を取得する
-toj2 excel exceltemplate.tmpl data.xlsx 1: B2:E4 -o result.txt
-```
-#### **セル範囲指定**
-必須の位置引数です。
-シート内から読みだすセルの範囲を指定します。excelでは読み取ったセルの先頭からjinja2に渡すカラム名の自動生成が始まります。**指定したセル範囲がA2:E4の場合、カラム名`col_00`はB列を示します。**
-
-以下のような書き方で、データを持つすべての行を指定することも可能です。（全ての、という範囲はopenpyxlに依存します）
-```
-# 1枚目のシートのB2からE列の全てのデータを読み取る
-toj2 excel exceltemplate.tmpl data.xlsx 1 B2:E -o result.txt
+そして、コマンドを以下のように実行すると、`config.json`の内容がオプションとして使用されます。
+```sh
+toj2 csv sample.tmpl sample.csv --config-file config.json
 ```
 
-#### カラム名指定
-csvと似た機能オプションです。
-jinja2テンプレートが受け取るカラムの名前を指定します。省略された場合、カラム名は左から順に`col_00, col_01...`と連番で自動生成されます。
-ただし、excelでは取得したセル範囲から順に`--names`が適用されます。
+これだけではなく、**設定ファイルはコマンドラインからオーバーライドすることができます。**
+```sh
+toj2 csv sample.tmpl sample.csv --config-file config.json --skip-lines 0 --parameters PARAM1=X PARAM4=D
 ```
-# 1枚目のシートのB2:E4を取得する
-toj2 excel exceltemplate.tmpl data.xlsx 1 B2:E4 --names a b c -o result.txt
-```
-この場合、カラム名`a`はB列のカラムに対して適用されます。
+設定ファイル中の`skip-lines`は`1`ですが、ここでは`0`に置き換わります。
 
-#### 指定位置セル指定
+`--parameters`オプションのうち、パラメータ`PARAM1`の値は`X`に変更され、新たに`PARAM4`が追加されますが**`PARAM2`と`PARAM3`は影響を受けません。**設定ファイル内で値またはリストで記述するものは置き換えられ、オブジェクトで記述されるものはマージされます。**常にコマンドラインからの設定が優先して採用されます。
 
-各シート内で指定したセル範囲外にある値を取得してjinja2テンプレートに任意の値を`--absolute`オプションで取得します。値は`LABEL=CELL`の形式です。
-
-```
-# セルA1とA2にある値を取得
-toj2 excel exceltemplate.tmpl data.xlsx 1 B2:E --absolute LABEL=A1 -o result.txt
-```
-この値は、テンプレート中で`sheet.abs.A1`のようにして参照できます。
-
-### JSON処理
-JSONの処理については特に固有のオプションはありません。
+### JSONファイルの変換
+JSONの処理については特に固有のオプションはなく、共通オプションのみが使用できます。
 
 ```sh
-toj2 json jsontemplate.tmpl data.json --out result.txt
+toj2 json jsontemplate.tmpl data.json
 ```
 
 #### jinja2への出力形式
 toj2はjsonを以下の形式にしてjinja2に渡します。
 ```python
 {
-    # 受け取ったjson
+    # 受け取ったjsonをjson.loadした結果
     'data': {},
     # 起動時に渡したパラメータ
     'params' : {'PARAM' : 'VALUE'}
 }
 
 ```
+JSONに関しては、toj2は単純にjinja2へのデータの中継を行うだけです。
 
-JSON処理については現時点では注力していません。JSON、XML、YAMLなどをjinja2で処理してくれるソフトウェアは既にあるので、信頼性の面でそちらをお勧めします。ただしサポートは継続します。
 [^out-option]: この例だと変換結果は`sys.stdout`に出力されます。`sys.stdin`からの入力と`sys.stdout`への出力を両方可能にするために出力先`--out`はオプションになっています。
+[^except-excel]: Excel変換だけは位置引数から違っていたりして共通性がないのですが、それはExcel用の引数解説で解説します。
