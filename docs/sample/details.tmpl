@@ -1,0 +1,16 @@
+<html><body>
+<ul>
+{%- for club_name, students in rows | groupby('col_02')%}
+    <li>
+        <details>
+            <summary>{{club_name}}</summary>
+            <ul>
+                {%- for student in students %}
+                <li>{{student.col_01}}</li>
+                {%- endfor %}
+            </ul>
+        </details>
+    </li>
+    {%- endfor %}
+</ul>
+</body></html>

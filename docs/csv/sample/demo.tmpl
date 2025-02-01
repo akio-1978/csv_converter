@@ -1,7 +1,12 @@
 <html>
-<head><title>部活別生徒リスト</title></head>
+<head> 
+    <title>部活別生徒一覧</title>
+</head>
 <body>
+<h1>部活別生徒一覧</h1>
+担任 {{params.teacher}}
 <ul>
+{# 部活名(col_02)でグループ化 #}
 {%- for club_name, students in rows | groupby('col_02')%}
     <li>{{club_name}}
         <ul>
@@ -11,5 +16,7 @@
         </ul>
     </li>
     {%- endfor %}
+
 </ul>
-</body></html>
+</body>
+</html>
