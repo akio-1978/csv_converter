@@ -19,12 +19,14 @@ class CsvLoader(Loader):
             # ヘッダ行の処理は読み飛ばし後から始める
             if self.context.skip_lines:
                 for n in range(self.context.skip_lines):
-                    next(reader)
+                    # 行がなければNoneを返してskipしたことにする
+                    next(reader, None)
 
             # 指定されていれば先頭行をヘッダにする
             # context.read_headerはcontext.namesより優先される
             if self.context.read_header:
-                self.cols = next(reader)
+                # 行が残っていない場合はそのままself.colsをつかう
+                self.cols = next(reader, self.cols)
 
             # line単位ループ
             lines = []

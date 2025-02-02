@@ -124,6 +124,19 @@ class CsvTest(J2SRenderingTest):
                                expect='tests/csv/expect/simple.txt',
                                source='tests/csv/src/simple.csv')
 
+    def test_header_empty_file(self):
+        """空のファイルに--headerを指定した時にクラッシュしないこと"""
+        self.file_convert_test(template='tests/csv/templates/empty.tmpl',
+                               expect='tests/csv/expect/empty.txt',
+                               source='tests/csv/src/empty.csv')
+
+    def test_skip_over(self):
+        """ファイル行数よりも多く--skip-linesしたときにクラッシュしない"""
+        self.file_convert_test(template='tests/csv/templates/empty.tmpl',
+                               expect='tests/csv/expect/empty.txt',
+                               source='tests/csv/src/empty.csv',
+                               skip_lines=2)
+
 
     def file_convert_test(self, *, template, expect, source,
                           parameters={}, skip_lines=0, read_header=True, headers=None, names=[]):
