@@ -1,5 +1,4 @@
 import unittest
-import argparse
 from pathlib import Path
 
 class J2SRenderingTest(unittest.TestCase):
