@@ -57,6 +57,7 @@ class ExcelLoader(Loader):
             sheet_idx = 1 + sheet_idx
         return {
             'sheets': results,
+            'cols' : self.cols,
             'params': self.context.parameters
         }
 

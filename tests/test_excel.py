@@ -165,6 +165,39 @@ class ExcelTest(J2SRenderingTest):
                                  expect='tests/excel/expect/read_document.txt',
                                  source='tests/excel/src/read_document.xlsx')
 
+    def test_cols(self):
+        """loaderがcolsを読み取っているテスト"""
+        context = self.default_context()
+        context.template = 'tests/excel/templates/cols_all.tmpl'
+        context.read_range = parse_read_range(range_str='A1:D2')
+        context.sheets = parse_sheet_args(sheets_range_str='1')
+        context.names = ['one', 'two', 'three', 'four']
+        self.excel_rendering_test(context=context,
+                                 expect='tests/excel/expect/cols_normal.txt',
+                                 source='tests/excel/src/cols.xlsx')
+
+    def test_cols_empty(self):
+        """colsを指定していない場合のテスト"""
+        context = self.default_context()
+        context.template = 'tests/excel/templates/cols_all.tmpl'
+        context.read_range = parse_read_range(range_str='A1:D2')
+        context.sheets = parse_sheet_args(sheets_range_str='1')
+        self.excel_rendering_test(context=context,
+                                 expect='tests/excel/expect/cols_empty.txt',
+                                 source='tests/excel/src/cols.xlsx')
+        
+    def test_cols_over(self):
+        """loaderがnamesより長い領域のcolsを補完するテスト"""
+        context = self.default_context()
+        context.template = 'tests/excel/templates/cols_all.tmpl'
+        context.read_range = parse_read_range(range_str='A1:E2')
+        context.sheets = parse_sheet_args(sheets_range_str='1')
+        # namesは4つだが。読み取り範囲は5つになる
+        context.names = ['one', 'two', 'three', 'four']
+        self.excel_rendering_test(context=context,
+                                 expect='tests/excel/expect/cols_over.txt',
+                                 source='tests/excel/src/cols.xlsx')
+
 
     def excel_rendering_test(self, *, context, expect, source, encoding='utf8'):
         result_file = self.result_file()
