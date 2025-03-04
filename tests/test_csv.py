@@ -2,7 +2,6 @@ import unittest
 from toj2.context import AppContext
 from toj2.csv.csv_loader import CsvLoader
 from toj2.processors import Jinja2Processor
-from jinja2 import Environment, DictLoader
 from tests.testutils import J2SRenderingTest
 
 class CsvTest(J2SRenderingTest):
@@ -175,15 +174,6 @@ class CsvTest(J2SRenderingTest):
         ctx.col_prefix = 'col_'
         
         return ctx
-
-# テスト用にDictLoaderを使うRender
-class DictRender (CsvLoader):
-
-    def setup_template(self, *, context):
-        self.headers = None
-        environment = Environment(loader=DictLoader(context.template))
-        self.template = environment.get_template(context.template_name)
-
 
 if __name__ == '__main__':
     unittest.main()
